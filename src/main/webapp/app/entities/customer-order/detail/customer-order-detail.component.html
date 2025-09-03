@@ -1,0 +1,58 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (customerOrder(); as customerOrderRef) {
+      <div>
+        <h2 data-cy="customerOrderDetailsHeading"><span jhiTranslate="clothyApp.customerOrder.detail.title">Customer Order</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ customerOrderRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.customerOrder.orderNumber">Order Number</span></dt>
+          <dd>
+            <span>{{ customerOrderRef.orderNumber }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.customerOrder.createdAt">Created At</span></dt>
+          <dd>
+            <span>{{ customerOrderRef.createdAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.customerOrder.total">Total</span></dt>
+          <dd>
+            <span>{{ customerOrderRef.total }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.customerOrder.customer">Customer</span></dt>
+          <dd>
+            @if (customerOrder()!.customer) {
+              <div>
+                <a [routerLink]="['/customer', customerOrder()!.customer?.id, 'view']">{{ customerOrderRef.customer?.email }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="clothyApp.customerOrder.shippingAddress">Shipping Address</span></dt>
+          <dd>
+            @if (customerOrder()!.shippingAddress) {
+              <div>
+                <a [routerLink]="['/address', customerOrder()!.shippingAddress?.id, 'view']">{{ customerOrderRef.shippingAddress?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/customer-order', customerOrderRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>
