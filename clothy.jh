@@ -1,0 +1,72 @@
+entity Category {
+  name String required unique,
+  slug String required unique,
+  isActive Boolean required
+}
+
+entity Product {
+  name String required,
+  sku String required unique,
+  price BigDecimal required
+}
+
+entity Customer {
+  email String required unique,
+  fullName String required,
+  createdAt Instant required,
+  passwordHash String required
+}
+
+entity Address {
+  line1 String required,
+  city String required,
+  country String required
+}
+
+entity Cart {
+  cartKey UUID required unique,
+  createdAt Instant required,
+  isCheckedOut Boolean required
+}
+
+entity CartItem {
+  quantity Integer required min(1),
+  unitPrice BigDecimal required,
+  lineTotal BigDecimal required
+}
+
+entity CustomerOrder {
+  orderNumber String required unique,
+  createdAt Instant required,
+  total BigDecimal required
+}
+
+entity OrderItem {
+  quantity Integer required min(1),
+  unitPrice BigDecimal required,
+  lineTotal BigDecimal required
+}
+
+// -------- RELATIONSHIPS (ne comptent pas comme champs)
+relationship ManyToOne {
+  Product{category(name)} to Category,
+
+  Address{customer(email)} to Customer,
+
+  CartItem{cart} to Cart,
+  CartItem{product(sku)} to Product,
+
+  CustomerOrder{customer(email)} to Customer,
+  CustomerOrder{shippingAddress} to Address,
+  OrderItem{order(orderNumber)} to CustomerOrder,
+  OrderItem{product(sku)} to Product
+}
+
+relationship OneToOne {
+  Cart{customer(email) required} to Customer
+}
+
+// -------- (Optionnel) Options JHipster si tu génères le code
+// dto * with mapstruct
+// service * with serviceClass
+// paginate Product, CustomerOrder with pagination
