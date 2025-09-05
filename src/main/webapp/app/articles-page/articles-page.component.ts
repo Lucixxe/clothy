@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
-import { Routes } from '@angular/router';
-import { ArticleComponent } from 'app/shared/article/article.component';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ArticleComponent } from 'app/shared/article/article.component';
+import { ProductService } from 'app/entities/product/service/product.service';
+import { IProduct } from 'app/entities/product/product.model';
 
 @Component({
   selector: 'jhi-articles-page',
@@ -10,21 +11,27 @@ import { CommonModule } from '@angular/common';
   templateUrl: './articles-page.component.html',
   styleUrls: ['./articles-page.component.scss'],
 })
-export class ArticlesPageComponent {
-  products = [
-    { id: 1, name: 'T-shirt Blanc', price: 19.99 },
-    { id: 2, name: 'Pantalon Noir', price: 39.99 },
-    { id: 3, name: 'Chaussures Sport', price: 59.99 },
-    { id: 4, name: 'Pull Gris', price: 29.99 },
-    { id: 5, name: 'Sac à Dos', price: 49.99 },
-    { id: 6, name: 'Casquette', price: 14.99 },
-  ];
-}
+export class ArticlesPageComponent implements OnInit {
+  products: IProduct[] = [];
+  loading = true;
 
-export const cartPageRoute: Routes = [
-  {
-    path: '',
-    component: ArticlesPageComponent,
-    data: { pageTitle: 'Articles' },
-  },
-];
+  private readonly productService = inject(ProductService);
+
+  ngOnInit(): void {
+    this.loadProducts();
+  }
+
+  loadProducts(): void {
+    this.loading = true;
+    this.productService.query().subscribe({
+      next: response => {
+        this.products = response.body ?? [];
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        console.error('Erreur lors du chargement des produits');
+      },
+    });
+  }
+}

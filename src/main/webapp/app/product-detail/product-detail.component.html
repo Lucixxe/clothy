@@ -1,0 +1,24 @@
+<div class="product-detail">
+  <div class="container">
+    <button class="back-btn" (click)="goBack()"><i class="fas fa-arrow-left"></i> Retour à la collection</button>
+
+    <div *ngIf="loading" class="loading">
+      <p>Chargement...</p>
+    </div>
+
+    <div *ngIf="!loading && product" class="product-content">
+      <div class="product-image">
+        <img [src]="'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=600&q=80'" [alt]="product.name" />
+      </div>
+
+      <div class="product-info">
+        <h1>{{ product.name }}</h1>
+        <p class="category">{{ product.category?.name || product.category || 'Catégorie' }}</p>
+        <p class="sku">SKU: {{ product.sku || 'N/A' }}</p>
+        <div class="price">{{ product.price }} €</div>
+        <p class="description">On a pas mis de description pour le moment.</p>
+        <button class="add-to-cart-btn"><i class="fas fa-shopping-cart"></i> Ajouter au panier</button>
+      </div>
+    </div>
+  </div>
+</div>

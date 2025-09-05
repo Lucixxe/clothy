@@ -1,6 +1,15 @@
 <div class="articles-page">
   <h2 class="page-title">Tous les Articles</h2>
-  <div class="articles-grid">
+
+  <div *ngIf="loading" class="loading">
+    <p>Chargement des produits...</p>
+  </div>
+
+  <div *ngIf="!loading && products.length === 0" class="no-products">
+    <p>Aucun produit trouvé</p>
+  </div>
+
+  <div *ngIf="!loading && products.length > 0" class="articles-grid">
     <jhi-article *ngFor="let product of products" [product]="product"></jhi-article>
   </div>
 </div>

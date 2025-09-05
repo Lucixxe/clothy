@@ -17,6 +17,14 @@ const routes: Routes = [
     outlet: 'navbar',
   },
   {
+    path: 'product/:id',
+    loadComponent: () => import('./product-detail/product-detail.component').then(m => m.ProductDetailComponent),
+    title: 'Product Detail',
+    data: {
+      authorities: [],
+    },
+  },
+  {
     path: 'admin',
     data: {
       authorities: [Authority.ADMIN],
