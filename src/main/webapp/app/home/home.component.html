@@ -1,83 +1,210 @@
-<div class="row">
-  <div class="col-md-3">
-    <span class="hipster img-fluid rounded"></span>
-  </div>
-
-  <div class="col-md-9">
-    <h1 class="display-4"><span jhiTranslate="home.title">Bienvenue, Java Hipster !</span> (Clothy)</h1>
-
-    <p class="lead" jhiTranslate="home.subtitle">Ceci est votre page d&apos;accueil</p>
-
-    <div>
-      @if (account() !== null) {
-        <div class="alert alert-success">
-          @if (account(); as accountRef) {
-            <span id="home-logged-message" jhiTranslate="home.logged.message" [translateValues]="{ username: accountRef.login }"
-              >Vous êtes connecté en tant que &quot;{{ accountRef.login }}&quot;.</span
-            >
-          }
-        </div>
-      } @else {
-        <div class="alert alert-warning">
-          <span jhiTranslate="global.messages.info.authenticated.prefix">Si vous voulez vous </span>
-          <a class="alert-link" (click)="login()" jhiTranslate="global.messages.info.authenticated.link">connecter</a
-          ><span jhiTranslate="global.messages.info.authenticated.suffix"
-            >, vous pouvez utiliser les comptes par défaut : <br />
-            - Administrateur (nom d&apos;utilisateur=&quot;admin&quot; et mot de passe =&quot;admin&quot;) <br />
-            - Utilisateur (nom d&apos;utilisateur=&quot;user&quot; et mot de passe =&quot;user&quot;).</span
-          >
-        </div>
-
-        <div class="alert alert-warning">
-          <span jhiTranslate="global.messages.info.register.noaccount">Vous n&apos;avez pas encore de compte ?</span>&nbsp;
-          <a class="alert-link" routerLink="/account/register" jhiTranslate="global.messages.info.register.link">Créer un compte</a>
-        </div>
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clothy - Homepage</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background: #f8f9fa;
+        color: #2b2d42;
       }
-    </div>
 
-    <p jhiTranslate="home.question">Si vous avez des questions à propos de JHipster :</p>
+      /* Hero */
+      .hero {
+        background: url('https://images.unsplash.com/photo-1521335629791-ce4aec67dd47?auto=format&fit=crop&w=1600&q=80') no-repeat
+          center/cover;
+        color: white;
+        text-align: center;
+        padding: 120px 20px;
+      }
+      .hero h1 {
+        font-size: 50px;
+        margin-bottom: 15px;
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+      }
+      .hero p {
+        font-size: 20px;
+        margin-bottom: 25px;
+      }
+      .hero button {
+        background: #ef233c;
+        border: none;
+        padding: 12px 25px;
+        font-size: 18px;
+        color: white;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .hero button:hover {
+        background: #d90429;
+      }
 
-    <ul>
-      <li>
-        <a href="https://www.jhipster.tech/" target="_blank" rel="noopener noreferrer" jhiTranslate="home.link.homepage"
-          >Page d&apos;accueil de JHipster</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://stackoverflow.com/tags/jhipster/info"
-          target="_blank"
-          rel="noopener noreferrer"
-          jhiTranslate="home.link.stackoverflow"
-          >JHipster sur Stack Overflow</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/jhipster/generator-jhipster/issues?state=open"
-          target="_blank"
-          rel="noopener noreferrer"
-          jhiTranslate="home.link.bugtracker"
-          >JHipster bug tracker</a
-        >
-      </li>
-      <li>
-        <a href="https://gitter.im/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer" jhiTranslate="home.link.chat"
-          >JHipster public chat room</a
-        >
-      </li>
-      <li>
-        <a href="https://twitter.com/jhipster" target="_blank" rel="noopener noreferrer" jhiTranslate="home.link.follow"
-          >Suivez &#64;jhipster sur Twitter</a
-        >
-      </li>
-    </ul>
+      /* Sections */
+      section {
+        padding: 60px 20px;
+        text-align: center;
+      }
+      section h2 {
+        font-size: 30px;
+        margin-bottom: 40px;
+        color: #ef233c;
+      }
 
-    <p>
-      <span jhiTranslate="home.like">Si vous aimez JHipster, donnez nous une étoile sur</span>
-      <a href="https://github.com/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer" jhiTranslate="home.github"
-        >GitHub </a
-      >!
-    </p>
-  </div>
-</div>
+      /* Catégories */
+      .categories {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+      }
+      .category-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: transform 0.3s;
+      }
+      .category-card:hover {
+        transform: translateY(-5px);
+      }
+
+      /* Produits */
+      .products {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 25px;
+      }
+      .product-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      .product-card img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+      }
+      .product-info {
+        padding: 15px;
+        text-align: left;
+      }
+      .product-info h4 {
+        margin: 0;
+        font-size: 18px;
+      }
+      .product-info p {
+        margin: 5px 0;
+        color: #666;
+      }
+      .product-info .price {
+        color: #ef233c;
+        font-weight: bold;
+      }
+
+      /* Promo */
+      .promo {
+        background: linear-gradient(90deg, #ef233c, #d90429);
+        color: white;
+        padding: 40px 20px;
+        border-radius: 12px;
+      }
+      .promo h3 {
+        font-size: 28px;
+        margin-bottom: 15px;
+      }
+
+      /* Newsletter */
+      .newsletter input {
+        padding: 12px;
+        border-radius: 25px;
+        border: 1px solid #ccc;
+        width: 250px;
+        margin-right: 10px;
+        outline: none;
+      }
+      .newsletter button {
+        padding: 12px 20px;
+        border-radius: 25px;
+        border: none;
+        background: #ef233c;
+        color: white;
+        cursor: pointer;
+      }
+      .newsletter button:hover {
+        background: #d90429;
+      }
+
+      /* Footer */
+      footer {
+        background: #2b2d42;
+        color: #edf2f4;
+        padding: 40px 20px;
+        text-align: center;
+      }
+      footer a {
+        color: #edf2f4;
+        text-decoration: none;
+        margin: 0 10px;
+      }
+      footer a:hover {
+        color: #ef233c;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hero -->
+    <section class="hero">
+      <h1>Bienvenue sur Clothy</h1>
+      <p>La mode qui vous ressemble – Hommes, Femmes et Tendances</p>
+      <button>Découvrir la collection</button>
+    </section>
+
+    <!-- Catégories -->
+    <section>
+      <h2>Nos Catégories</h2>
+      <div class="categories">
+        <div class="category-card">👔 Hommes</div>
+        <div class="category-card">👗 Femmes</div>
+        <div class="category-card">✨ Enfants</div>
+        <div class="category-card">🔥 Nouveautés</div>
+      </div>
+    </section>
+
+    <!-- Produits en avant -->
+    <section>
+      <h2>Produits en Avant</h2>
+      <div class="products">
+        <div class="product-card">
+          <img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=600&q=80" alt="Produit 1" />
+          <div class="product-info">
+            <h4>T-shirt Clothy</h4>
+            <p>Confortable et stylé</p>
+            <span class="price">19.99€</span>
+          </div>
+        </div>
+        <div class="product-card">
+          <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=600&q=80" alt="Produit 2" />
+          <div class="product-info">
+            <h4>Veste tendance</h4>
+            <p>Nouvelle collection</p>
+            <span class="price">49.99€</span>
+          </div>
+        </div>
+        <div class="product-card">
+          <img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=600&q=80" alt="Produit 3" />
+          <div class="product-info">
+            <h4>Chaussures Clothy</h4>
+            <p>Confort ultime</p>
+            <span class="price">59.99€</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

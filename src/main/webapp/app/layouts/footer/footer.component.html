@@ -1,3 +1,132 @@
-<div class="footer">
-  <p jhiTranslate="footer">Ceci est votre pied de page</p>
-</div>
+<footer class="footer">
+  <style>
+    .footer {
+      background: #2b2d42;
+      color: #edf2f4;
+      padding: 40px 20px 20px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .footer-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+
+    .footer-section h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #ef233c;
+    }
+
+    .footer-section h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #ef233c;
+    }
+
+    .footer-section p {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .footer-section ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .footer-section ul li {
+      margin: 8px 0;
+    }
+
+    .footer-section ul li a {
+      text-decoration: none;
+      color: #edf2f4;
+      transition: color 0.3s;
+    }
+
+    .footer-section ul li a:hover {
+      color: #ef233c;
+    }
+
+    /* Réseaux sociaux */
+    .social-icons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .social-icons a {
+      font-size: 20px;
+      color: #edf2f4;
+      transition: color 0.3s;
+    }
+
+    .social-icons a:hover {
+      color: #ef233c;
+    }
+
+    /* Bas de page */
+    .footer-bottom {
+      border-top: 1px solid #8d99ae;
+      text-align: center;
+      padding-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+
+  <div class="footer-container">
+    <!-- Section Logo -->
+    <div class="footer-section brand">
+      <h2>Clothy</h2>
+      <p>Votre boutique de vêtements tendance. Mode homme et femme à prix abordables.</p>
+    </div>
+
+    <!-- Navigation -->
+    <div class="footer-section">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="#">Accueil</a></li>
+        <li><a href="#">Hommes</a></li>
+        <li><a href="#">Femmes</a></li>
+        <li><a href="#">Nouveautés</a></li>
+      </ul>
+    </div>
+
+    <!-- Compte -->
+    <div class="footer-section">
+      <h3>Compte</h3>
+      <ul>
+        <li><a href="#">Connexion</a></li>
+        <li><a href="#">Inscription</a></li>
+      </ul>
+    </div>
+
+    <!-- Informations -->
+    <div class="footer-section">
+      <h3>Informations</h3>
+      <ul>
+        <li><a href="#">À propos</a></li>
+        <li><a href="#">Contactez-nous</a></li>
+        <li><a href="#">FAQ</a></li>
+      </ul>
+    </div>
+
+    <!-- Réseaux sociaux -->
+    <div class="footer-section social">
+      <h3>Suivez-nous</h3>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2025 Clothy - Tous droits réservés.</p>
+  </div>
+</footer>
+
+<!-- Font Awesome pour les icônes -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />

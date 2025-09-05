@@ -1,36 +1,114 @@
-@import 'bootstrap/scss/functions';
-@import 'bootstrap/scss/variables';
-
-/* ==========================================================================
-Navbar
-========================================================================== */
-
-.navbar-version {
-  font-size: 0.65em;
-  color: $navbar-dark-color;
+/* Style global du header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  background: linear-gradient(90deg, #2b2d42, #8d99ae);
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-.profile-image {
-  height: 1.75em;
-  width: 1.75em;
+/* Logo stylé */
+.logo .brand {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #edf2f4;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
 }
 
-.navbar {
-  padding: 0.2rem 1rem;
-
-  a.nav-link {
-    font-weight: 400;
-  }
+/* Navigation */
+.nav-links {
+  display: flex;
+  gap: 25px;
 }
 
-/* ==========================================================================
-Logo styles
-========================================================================== */
-.logo-img {
-  height: 45px;
-  width: 45px;
-  display: inline-block;
-  vertical-align: middle;
-  background: url('/content/images/logo-jhipster.png') no-repeat center center;
-  background-size: contain;
+.nav-links a {
+  text-decoration: none;
+  color: #edf2f4;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #ef233c;
+}
+
+/* Boutons */
+.auth-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Connexion */
+.btn.login {
+  background: transparent;
+  border: 2px solid #edf2f4;
+  color: #edf2f4;
+}
+
+.btn.login:hover {
+  background: #edf2f4;
+  color: #2b2d42;
+}
+
+/* Inscription */
+.btn.signup {
+  background: #ef233c;
+  color: white;
+}
+
+.btn.signup:hover {
+  background: #d90429;
+}
+/* Panier flottant dans le body */
+.floating-cart {
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  background: #ef233c;
+  color: white;
+  padding: 12px 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition:
+    transform 0.2s,
+    background 0.3s;
+}
+
+.floating-cart:hover {
+  transform: scale(1.1);
+  background: #d90429;
+}
+
+.floating-cart .cart-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: white;
+  color: #ef233c;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
 }

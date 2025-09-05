@@ -37,6 +37,12 @@ const routes: Routes = [
     path: '',
     loadChildren: () => import(`./entities/entity.routes`),
   },
+  {
+    path: 'cart',
+    loadComponent: () => import('./cart-page/cart-page.component').then(m => m.CartPageComponent),
+    title: 'Cart',
+  },
+
   ...errorRoute,
 ];
 
