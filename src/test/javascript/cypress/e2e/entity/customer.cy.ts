@@ -16,10 +16,11 @@ describe('Customer e2e test', () => {
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
   const customerSample = {
-    email: 'Flodoard68@hotmail.fr',
-    fullName: 'tant secouriste derechef',
-    createdAt: '2025-09-02T18:13:44.068Z',
-    passwordHash: 'près de au point que étant donné que',
+    email: 'Marianne51@gmail.com',
+    fullName: 'assez près de',
+    createdAt: '2025-09-02T16:36:02.106Z',
+    passwordHash: 'police planter chef de cuisine',
+    address: 'au lieu de grrr en outre de',
   };
 
   let customer;
@@ -162,18 +163,21 @@ describe('Customer e2e test', () => {
     });
 
     it('should create an instance of Customer', () => {
-      cy.get(`[data-cy="email"]`).type('Quieta_Baron@gmail.com');
-      cy.get(`[data-cy="email"]`).should('have.value', 'Quieta_Baron@gmail.com');
+      cy.get(`[data-cy="email"]`).type('Anais_Nicolas46@hotmail.fr');
+      cy.get(`[data-cy="email"]`).should('have.value', 'Anais_Nicolas46@hotmail.fr');
 
-      cy.get(`[data-cy="fullName"]`).type('ressentir');
-      cy.get(`[data-cy="fullName"]`).should('have.value', 'ressentir');
+      cy.get(`[data-cy="fullName"]`).type('lier');
+      cy.get(`[data-cy="fullName"]`).should('have.value', 'lier');
 
-      cy.get(`[data-cy="createdAt"]`).type('2025-09-03T02:49');
+      cy.get(`[data-cy="createdAt"]`).type('2025-09-03T07:04');
       cy.get(`[data-cy="createdAt"]`).blur();
-      cy.get(`[data-cy="createdAt"]`).should('have.value', '2025-09-03T02:49');
+      cy.get(`[data-cy="createdAt"]`).should('have.value', '2025-09-03T07:04');
 
-      cy.get(`[data-cy="passwordHash"]`).type('ding à raison de si bien que');
-      cy.get(`[data-cy="passwordHash"]`).should('have.value', 'ding à raison de si bien que');
+      cy.get(`[data-cy="passwordHash"]`).type('triathlète de sorte que trop');
+      cy.get(`[data-cy="passwordHash"]`).should('have.value', 'triathlète de sorte que trop');
+
+      cy.get(`[data-cy="address"]`).type('svelte même si');
+      cy.get(`[data-cy="address"]`).should('have.value', 'svelte même si');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

@@ -9,10 +9,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { ICustomer } from 'app/entities/customer/customer.model';
 import { CustomerService } from 'app/entities/customer/service/customer.service';
-import { IAddress } from 'app/entities/address/address.model';
-import { AddressService } from 'app/entities/address/service/address.service';
-import { CustomerOrderService } from '../service/customer-order.service';
 import { ICustomerOrder } from '../customer-order.model';
+import { CustomerOrderService } from '../service/customer-order.service';
 import { CustomerOrderFormGroup, CustomerOrderFormService } from './customer-order-form.service';
 
 @Component({
@@ -25,20 +23,16 @@ export class CustomerOrderUpdateComponent implements OnInit {
   customerOrder: ICustomerOrder | null = null;
 
   customersSharedCollection: ICustomer[] = [];
-  addressesSharedCollection: IAddress[] = [];
 
   protected customerOrderService = inject(CustomerOrderService);
   protected customerOrderFormService = inject(CustomerOrderFormService);
   protected customerService = inject(CustomerService);
-  protected addressService = inject(AddressService);
   protected activatedRoute = inject(ActivatedRoute);
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   editForm: CustomerOrderFormGroup = this.customerOrderFormService.createCustomerOrderFormGroup();
 
   compareCustomer = (o1: ICustomer | null, o2: ICustomer | null): boolean => this.customerService.compareCustomer(o1, o2);
-
-  compareAddress = (o1: IAddress | null, o2: IAddress | null): boolean => this.addressService.compareAddress(o1, o2);
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ customerOrder }) => {
@@ -92,10 +86,6 @@ export class CustomerOrderUpdateComponent implements OnInit {
       this.customersSharedCollection,
       customerOrder.customer,
     );
-    this.addressesSharedCollection = this.addressService.addAddressToCollectionIfMissing<IAddress>(
-      this.addressesSharedCollection,
-      customerOrder.shippingAddress,
-    );
   }
 
   protected loadRelationshipsOptions(): void {
@@ -108,15 +98,5 @@ export class CustomerOrderUpdateComponent implements OnInit {
         ),
       )
       .subscribe((customers: ICustomer[]) => (this.customersSharedCollection = customers));
-
-    this.addressService
-      .query()
-      .pipe(map((res: HttpResponse<IAddress[]>) => res.body ?? []))
-      .pipe(
-        map((addresses: IAddress[]) =>
-          this.addressService.addAddressToCollectionIfMissing<IAddress>(addresses, this.customerOrder?.shippingAddress),
-        ),
-      )
-      .subscribe((addresses: IAddress[]) => (this.addressesSharedCollection = addresses));
   }
 }

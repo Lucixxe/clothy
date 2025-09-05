@@ -6,10 +6,8 @@ import { Subject, from, of } from 'rxjs';
 
 import { ICustomer } from 'app/entities/customer/customer.model';
 import { CustomerService } from 'app/entities/customer/service/customer.service';
-import { IAddress } from 'app/entities/address/address.model';
-import { AddressService } from 'app/entities/address/service/address.service';
-import { ICustomerOrder } from '../customer-order.model';
 import { CustomerOrderService } from '../service/customer-order.service';
+import { ICustomerOrder } from '../customer-order.model';
 import { CustomerOrderFormService } from './customer-order-form.service';
 
 import { CustomerOrderUpdateComponent } from './customer-order-update.component';
@@ -21,7 +19,6 @@ describe('CustomerOrder Management Update Component', () => {
   let customerOrderFormService: CustomerOrderFormService;
   let customerOrderService: CustomerOrderService;
   let customerService: CustomerService;
-  let addressService: AddressService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -45,7 +42,6 @@ describe('CustomerOrder Management Update Component', () => {
     customerOrderFormService = TestBed.inject(CustomerOrderFormService);
     customerOrderService = TestBed.inject(CustomerOrderService);
     customerService = TestBed.inject(CustomerService);
-    addressService = TestBed.inject(AddressService);
 
     comp = fixture.componentInstance;
   });
@@ -73,40 +69,15 @@ describe('CustomerOrder Management Update Component', () => {
       expect(comp.customersSharedCollection).toEqual(expectedCollection);
     });
 
-    it('should call Address query and add missing value', () => {
-      const customerOrder: ICustomerOrder = { id: 9643 };
-      const shippingAddress: IAddress = { id: 2318 };
-      customerOrder.shippingAddress = shippingAddress;
-
-      const addressCollection: IAddress[] = [{ id: 2318 }];
-      jest.spyOn(addressService, 'query').mockReturnValue(of(new HttpResponse({ body: addressCollection })));
-      const additionalAddresses = [shippingAddress];
-      const expectedCollection: IAddress[] = [...additionalAddresses, ...addressCollection];
-      jest.spyOn(addressService, 'addAddressToCollectionIfMissing').mockReturnValue(expectedCollection);
-
-      activatedRoute.data = of({ customerOrder });
-      comp.ngOnInit();
-
-      expect(addressService.query).toHaveBeenCalled();
-      expect(addressService.addAddressToCollectionIfMissing).toHaveBeenCalledWith(
-        addressCollection,
-        ...additionalAddresses.map(expect.objectContaining),
-      );
-      expect(comp.addressesSharedCollection).toEqual(expectedCollection);
-    });
-
     it('should update editForm', () => {
       const customerOrder: ICustomerOrder = { id: 9643 };
       const customer: ICustomer = { id: 26915 };
       customerOrder.customer = customer;
-      const shippingAddress: IAddress = { id: 2318 };
-      customerOrder.shippingAddress = shippingAddress;
 
       activatedRoute.data = of({ customerOrder });
       comp.ngOnInit();
 
       expect(comp.customersSharedCollection).toContainEqual(customer);
-      expect(comp.addressesSharedCollection).toContainEqual(shippingAddress);
       expect(comp.customerOrder).toEqual(customerOrder);
     });
   });
@@ -187,16 +158,6 @@ describe('CustomerOrder Management Update Component', () => {
         jest.spyOn(customerService, 'compareCustomer');
         comp.compareCustomer(entity, entity2);
         expect(customerService.compareCustomer).toHaveBeenCalledWith(entity, entity2);
-      });
-    });
-
-    describe('compareAddress', () => {
-      it('should forward to addressService', () => {
-        const entity = { id: 2318 };
-        const entity2 = { id: 19327 };
-        jest.spyOn(addressService, 'compareAddress');
-        comp.compareAddress(entity, entity2);
-        expect(addressService.compareAddress).toHaveBeenCalledWith(entity, entity2);
       });
     });
   });

@@ -136,6 +136,9 @@ public class CustomerResource {
                 if (customer.getPasswordHash() != null) {
                     existingCustomer.setPasswordHash(customer.getPasswordHash());
                 }
+                if (customer.getAddress() != null) {
+                    existingCustomer.setAddress(customer.getAddress());
+                }
 
                 return existingCustomer;
             })

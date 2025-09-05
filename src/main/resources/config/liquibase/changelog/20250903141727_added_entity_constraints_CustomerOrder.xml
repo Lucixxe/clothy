@@ -16,12 +16,5 @@
                                  referencedColumnNames="id"
                                  referencedTableName="customer"
                                  />
-
-        <addForeignKeyConstraint baseColumnNames="shipping_address_id"
-                                 baseTableName="customer_order"
-                                 constraintName="fk_customer_order__shipping_address_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="address"
-                                 />
     </changeSet>
 </databaseChangeLog>

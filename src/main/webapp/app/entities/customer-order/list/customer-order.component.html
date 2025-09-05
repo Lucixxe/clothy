@@ -67,12 +67,6 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="shippingAddress.id">
-              <div class="d-flex">
-                <span jhiTranslate="clothyApp.customerOrder.shippingAddress">Shipping Address</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
             <th scope="col"></th>
           </tr>
         </thead>
@@ -89,13 +83,6 @@
                 @if (customerOrder.customer) {
                   <div>
                     <a [routerLink]="['/customer', customerOrder.customer.id, 'view']">{{ customerOrder.customer.email }}</a>
-                  </div>
-                }
-              </td>
-              <td>
-                @if (customerOrder.shippingAddress) {
-                  <div>
-                    <a [routerLink]="['/address', customerOrder.shippingAddress.id, 'view']">{{ customerOrder.shippingAddress.id }}</a>
                   </div>
                 }
               </td>

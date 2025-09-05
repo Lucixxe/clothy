@@ -23,11 +23,22 @@
             <column name="price" type="decimal(21,2)">
                 <constraints nullable="false" />
             </column>
-            <column name="category_id" type="bigint">
-                <constraints nullable="true" />
-            </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
+    </changeSet>
+
+    <changeSet id="20250903141722-1-relations" author="jhipster">
+
+        <createTable tableName="rel_product__category">
+            <column name="category_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="product_id, category_id" tableName="rel_product__category"/>
     </changeSet>
 
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->

@@ -35,14 +35,6 @@
               </div>
             }
           </dd>
-          <dt><span jhiTranslate="clothyApp.customerOrder.shippingAddress">Shipping Address</span></dt>
-          <dd>
-            @if (customerOrder()!.shippingAddress) {
-              <div>
-                <a [routerLink]="['/address', customerOrder()!.shippingAddress?.id, 'view']">{{ customerOrderRef.shippingAddress?.id }}</a>
-              </div>
-            }
-          </dd>
         </dl>
 
         <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">

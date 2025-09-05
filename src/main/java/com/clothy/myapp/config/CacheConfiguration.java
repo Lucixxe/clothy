@@ -58,6 +58,8 @@ public class CacheConfiguration {
             createCache(cm, com.clothy.myapp.domain.CartItem.class.getName());
             createCache(cm, com.clothy.myapp.domain.CustomerOrder.class.getName());
             createCache(cm, com.clothy.myapp.domain.OrderItem.class.getName());
+            createCache(cm, com.clothy.myapp.domain.Category.class.getName() + ".products");
+            createCache(cm, com.clothy.myapp.domain.Product.class.getName() + ".categories");
             // jhipster-needle-ehcache-add-entry
         };
     }

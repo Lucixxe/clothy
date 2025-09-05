@@ -28,12 +28,6 @@
       "relationshipName": "customer",
       "relationshipSide": "left",
       "relationshipType": "many-to-one"
-    },
-    {
-      "otherEntityName": "address",
-      "relationshipName": "shippingAddress",
-      "relationshipSide": "left",
-      "relationshipType": "many-to-one"
     }
   ],
   "searchEngine": "no"

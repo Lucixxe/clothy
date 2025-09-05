@@ -24,6 +24,7 @@ describe('Customer Form Service', () => {
             fullName: expect.any(Object),
             createdAt: expect.any(Object),
             passwordHash: expect.any(Object),
+            address: expect.any(Object),
           }),
         );
       });
@@ -38,6 +39,7 @@ describe('Customer Form Service', () => {
             fullName: expect.any(Object),
             createdAt: expect.any(Object),
             passwordHash: expect.any(Object),
+            address: expect.any(Object),
           }),
         );
       });

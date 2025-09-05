@@ -27,6 +27,15 @@
           <dd>
             <span>{{ categoryRef.isActive }}</span>
           </dd>
+          <dt><span jhiTranslate="clothyApp.category.product">Product</span></dt>
+          <dd>
+            @for (product of categoryRef.products; track $index; let last = $last) {
+              <span>
+                <a [routerLink]="['/product', product.id, 'view']">{{ product?.id }}</a
+                >{{ last ? '' : ', ' }}
+              </span>
+            }
+          </dd>
         </dl>
 
         <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">

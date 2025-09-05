@@ -4,6 +4,8 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, from, of } from 'rxjs';
 
+import { IProduct } from 'app/entities/product/product.model';
+import { ProductService } from 'app/entities/product/service/product.service';
 import { CategoryService } from '../service/category.service';
 import { ICategory } from '../category.model';
 import { CategoryFormService } from './category-form.service';
@@ -16,6 +18,7 @@ describe('Category Management Update Component', () => {
   let activatedRoute: ActivatedRoute;
   let categoryFormService: CategoryFormService;
   let categoryService: CategoryService;
+  let productService: ProductService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -38,17 +41,43 @@ describe('Category Management Update Component', () => {
     activatedRoute = TestBed.inject(ActivatedRoute);
     categoryFormService = TestBed.inject(CategoryFormService);
     categoryService = TestBed.inject(CategoryService);
+    productService = TestBed.inject(ProductService);
 
     comp = fixture.componentInstance;
   });
 
   describe('ngOnInit', () => {
-    it('should update editForm', () => {
+    it('should call Product query and add missing value', () => {
       const category: ICategory = { id: 4374 };
+      const products: IProduct[] = [{ id: 21536 }];
+      category.products = products;
+
+      const productCollection: IProduct[] = [{ id: 21536 }];
+      jest.spyOn(productService, 'query').mockReturnValue(of(new HttpResponse({ body: productCollection })));
+      const additionalProducts = [...products];
+      const expectedCollection: IProduct[] = [...additionalProducts, ...productCollection];
+      jest.spyOn(productService, 'addProductToCollectionIfMissing').mockReturnValue(expectedCollection);
 
       activatedRoute.data = of({ category });
       comp.ngOnInit();
 
+      expect(productService.query).toHaveBeenCalled();
+      expect(productService.addProductToCollectionIfMissing).toHaveBeenCalledWith(
+        productCollection,
+        ...additionalProducts.map(expect.objectContaining),
+      );
+      expect(comp.productsSharedCollection).toEqual(expectedCollection);
+    });
+
+    it('should update editForm', () => {
+      const category: ICategory = { id: 4374 };
+      const product: IProduct = { id: 21536 };
+      category.products = [product];
+
+      activatedRoute.data = of({ category });
+      comp.ngOnInit();
+
+      expect(comp.productsSharedCollection).toContainEqual(product);
       expect(comp.category).toEqual(category);
     });
   });
@@ -118,6 +147,18 @@ describe('Category Management Update Component', () => {
       expect(categoryService.update).toHaveBeenCalled();
       expect(comp.isSaving).toEqual(false);
       expect(comp.previousState).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Compare relationships', () => {
+    describe('compareProduct', () => {
+      it('should forward to productService', () => {
+        const entity = { id: 21536 };
+        const entity2 = { id: 11926 };
+        jest.spyOn(productService, 'compareProduct');
+        comp.compareProduct(entity, entity2);
+        expect(productService.compareProduct).toHaveBeenCalledWith(entity, entity2);
+      });
     });
   });
 });

@@ -100,25 +100,6 @@
             }
           </select>
         </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_shippingAddress" jhiTranslate="clothyApp.customerOrder.shippingAddress"
-            >Shipping Address</label
-          >
-          <select
-            class="form-control"
-            id="field_shippingAddress"
-            data-cy="shippingAddress"
-            name="shippingAddress"
-            formControlName="shippingAddress"
-            [compareWith]="compareAddress"
-          >
-            <option [ngValue]="null"></option>
-            @for (addressOption of addressesSharedCollection; track $index) {
-              <option [ngValue]="addressOption">{{ addressOption.id }}</option>
-            }
-          </select>
-        </div>
       </div>
 
       <div>

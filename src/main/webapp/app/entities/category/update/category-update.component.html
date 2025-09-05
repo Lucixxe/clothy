@@ -53,6 +53,23 @@
             </div>
           }
         </div>
+
+        <div class="mb-3">
+          <label for="field_products" jhiTranslate="clothyApp.category.product">Product</label>
+          <select
+            class="form-control"
+            id="field_products"
+            data-cy="product"
+            multiple
+            name="products"
+            formControlName="products"
+            [compareWith]="compareProduct"
+          >
+            @for (productOption of productsSharedCollection; track $index) {
+              <option [ngValue]="productOption">{{ productOption.id }}</option>
+            }
+          </select>
+        </div>
       </div>
 
       <div>

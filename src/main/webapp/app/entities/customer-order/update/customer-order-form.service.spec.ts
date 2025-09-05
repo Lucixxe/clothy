@@ -24,7 +24,6 @@ describe('CustomerOrder Form Service', () => {
             createdAt: expect.any(Object),
             total: expect.any(Object),
             customer: expect.any(Object),
-            shippingAddress: expect.any(Object),
           }),
         );
       });
@@ -39,7 +38,6 @@ describe('CustomerOrder Form Service', () => {
             createdAt: expect.any(Object),
             total: expect.any(Object),
             customer: expect.any(Object),
-            shippingAddress: expect.any(Object),
           }),
         );
       });

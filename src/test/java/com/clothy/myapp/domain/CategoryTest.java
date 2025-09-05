@@ -1,9 +1,12 @@
 package com.clothy.myapp.domain;
 
 import static com.clothy.myapp.domain.CategoryTestSamples.*;
+import static com.clothy.myapp.domain.ProductTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.clothy.myapp.web.rest.TestUtil;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 class CategoryTest {
@@ -20,5 +23,27 @@ class CategoryTest {
 
         category2 = getCategorySample2();
         assertThat(category1).isNotEqualTo(category2);
+    }
+
+    @Test
+    void productTest() {
+        Category category = getCategoryRandomSampleGenerator();
+        Product productBack = getProductRandomSampleGenerator();
+
+        category.addProduct(productBack);
+        assertThat(category.getProducts()).containsOnly(productBack);
+        assertThat(productBack.getCategories()).containsOnly(category);
+
+        category.removeProduct(productBack);
+        assertThat(category.getProducts()).doesNotContain(productBack);
+        assertThat(productBack.getCategories()).doesNotContain(category);
+
+        category.products(new HashSet<>(Set.of(productBack)));
+        assertThat(category.getProducts()).containsOnly(productBack);
+        assertThat(productBack.getCategories()).containsOnly(category);
+
+        category.setProducts(new HashSet<>());
+        assertThat(category.getProducts()).doesNotContain(productBack);
+        assertThat(productBack.getCategories()).doesNotContain(category);
     }
 }

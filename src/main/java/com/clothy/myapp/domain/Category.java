@@ -1,8 +1,11 @@
 package com.clothy.myapp.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -34,6 +37,11 @@ public class Category implements Serializable {
     @NotNull
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "categories")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "categories" }, allowSetters = true)
+    private Set<Product> products = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -87,6 +95,37 @@ public class Category implements Serializable {
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public Set<Product> getProducts() {
+        return this.products;
+    }
+
+    public void setProducts(Set<Product> products) {
+        if (this.products != null) {
+            this.products.forEach(i -> i.removeCategory(this));
+        }
+        if (products != null) {
+            products.forEach(i -> i.addCategory(this));
+        }
+        this.products = products;
+    }
+
+    public Category products(Set<Product> products) {
+        this.setProducts(products);
+        return this;
+    }
+
+    public Category addProduct(Product product) {
+        this.products.add(product);
+        product.getCategories().add(this);
+        return this;
+    }
+
+    public Category removeProduct(Product product) {
+        this.products.remove(product);
+        product.getCategories().remove(this);
+        return this;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
