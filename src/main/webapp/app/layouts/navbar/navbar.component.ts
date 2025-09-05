@@ -13,14 +13,17 @@ import { EntityNavbarItems } from 'app/entities/entity-navbar-items';
 import { environment } from 'environments/environment';
 import ActiveMenuDirective from './active-menu.directive';
 import NavbarItem from './navbar-item.model';
+import { CartComponent } from 'app/shared/cart/cart.component';
 
 @Component({
   selector: 'jhi-navbar',
+  standalone: true,
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
-  imports: [RouterModule, SharedModule, HasAnyAuthorityDirective, ActiveMenuDirective],
+  imports: [RouterModule, SharedModule, HasAnyAuthorityDirective, ActiveMenuDirective, CartComponent],
 })
 export default class NavbarComponent implements OnInit {
+  [x: string]: any;
   inProduction?: boolean;
   isNavbarCollapsed = signal(true);
   languages = LANGUAGES;

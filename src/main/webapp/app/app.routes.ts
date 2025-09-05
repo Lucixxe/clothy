@@ -38,11 +38,15 @@ const routes: Routes = [
     loadChildren: () => import(`./entities/entity.routes`),
   },
   {
-    path: 'cart',
+    path: 'cart-page',
     loadComponent: () => import('./cart-page/cart-page.component').then(m => m.CartPageComponent),
-    title: 'Cart',
+    title: 'Cart-page',
   },
-
+  {
+    path: 'articles-page',
+    loadComponent: () => import('./articles-page/articles-page.component').then(m => m.ArticlesPageComponent),
+    title: 'Articles-page',
+  },
   ...errorRoute,
 ];
 
