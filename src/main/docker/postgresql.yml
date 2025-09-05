@@ -3,8 +3,8 @@ name: clothy
 services:
   postgresql:
     image: postgres:17.4
-    # volumes:
-    #   - ~/volumes/jhipster/Clothy/postgresql/:/var/lib/postgresql/data/
+    volumes:
+      - ~/volumes/jhipster/Clothy/postgresql/:/var/lib/postgresql/data/
     environment:
       - POSTGRES_USER=Clothy
       - POSTGRES_HOST_AUTH_METHOD=trust
