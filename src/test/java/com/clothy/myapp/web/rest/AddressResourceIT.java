@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.clothy.myapp.IntegrationTest;
 import com.clothy.myapp.domain.Address;
 import com.clothy.myapp.repository.AddressRepository;
+import com.clothy.myapp.service.AddressService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
@@ -63,6 +64,9 @@ class AddressResourceIT {
 
     @Mock
     private AddressRepository addressRepositoryMock;
+
+    @Mock
+    private AddressService addressServiceMock;
 
     @Autowired
     private EntityManager em;
@@ -213,16 +217,16 @@ class AddressResourceIT {
 
     @SuppressWarnings({ "unchecked" })
     void getAllAddressesWithEagerRelationshipsIsEnabled() throws Exception {
-        when(addressRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+        when(addressServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         restAddressMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
 
-        verify(addressRepositoryMock, times(1)).findAllWithEagerRelationships(any());
+        verify(addressServiceMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @SuppressWarnings({ "unchecked" })
     void getAllAddressesWithEagerRelationshipsIsNotEnabled() throws Exception {
-        when(addressRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+        when(addressServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         restAddressMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
         verify(addressRepositoryMock, times(1)).findAll(any(Pageable.class));

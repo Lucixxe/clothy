@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.clothy.myapp.IntegrationTest;
 import com.clothy.myapp.domain.CustomerOrder;
 import com.clothy.myapp.repository.CustomerOrderRepository;
+import com.clothy.myapp.service.CustomerOrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
@@ -67,6 +68,9 @@ class CustomerOrderResourceIT {
 
     @Mock
     private CustomerOrderRepository customerOrderRepositoryMock;
+
+    @Mock
+    private CustomerOrderService customerOrderServiceMock;
 
     @Autowired
     private EntityManager em;
@@ -217,16 +221,16 @@ class CustomerOrderResourceIT {
 
     @SuppressWarnings({ "unchecked" })
     void getAllCustomerOrdersWithEagerRelationshipsIsEnabled() throws Exception {
-        when(customerOrderRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+        when(customerOrderServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         restCustomerOrderMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
 
-        verify(customerOrderRepositoryMock, times(1)).findAllWithEagerRelationships(any());
+        verify(customerOrderServiceMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @SuppressWarnings({ "unchecked" })
     void getAllCustomerOrdersWithEagerRelationshipsIsNotEnabled() throws Exception {
-        when(customerOrderRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+        when(customerOrderServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         restCustomerOrderMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
         verify(customerOrderRepositoryMock, times(1)).findAll(any(Pageable.class));

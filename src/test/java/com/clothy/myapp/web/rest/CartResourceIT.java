@@ -12,6 +12,7 @@ import com.clothy.myapp.IntegrationTest;
 import com.clothy.myapp.domain.Cart;
 import com.clothy.myapp.domain.Customer;
 import com.clothy.myapp.repository.CartRepository;
+import com.clothy.myapp.service.CartService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.time.Instant;
@@ -67,6 +68,9 @@ class CartResourceIT {
 
     @Mock
     private CartRepository cartRepositoryMock;
+
+    @Mock
+    private CartService cartServiceMock;
 
     @Autowired
     private EntityManager em;
@@ -239,16 +243,16 @@ class CartResourceIT {
 
     @SuppressWarnings({ "unchecked" })
     void getAllCartsWithEagerRelationshipsIsEnabled() throws Exception {
-        when(cartRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+        when(cartServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         restCartMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
 
-        verify(cartRepositoryMock, times(1)).findAllWithEagerRelationships(any());
+        verify(cartServiceMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @SuppressWarnings({ "unchecked" })
     void getAllCartsWithEagerRelationshipsIsNotEnabled() throws Exception {
-        when(cartRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+        when(cartServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         restCartMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
         verify(cartRepositoryMock, times(1)).findAll(any(Pageable.class));

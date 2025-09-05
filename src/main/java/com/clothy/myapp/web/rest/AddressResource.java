@@ -2,6 +2,7 @@ package com.clothy.myapp.web.rest;
 
 import com.clothy.myapp.domain.Address;
 import com.clothy.myapp.repository.AddressRepository;
+import com.clothy.myapp.service.AddressService;
 import com.clothy.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -24,7 +24,6 @@ import tech.jhipster.web.util.ResponseUtil;
  */
 @RestController
 @RequestMapping("/api/addresses")
-@Transactional
 public class AddressResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(AddressResource.class);
@@ -34,9 +33,12 @@ public class AddressResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final AddressService addressService;
+
     private final AddressRepository addressRepository;
 
-    public AddressResource(AddressRepository addressRepository) {
+    public AddressResource(AddressService addressService, AddressRepository addressRepository) {
+        this.addressService = addressService;
         this.addressRepository = addressRepository;
     }
 
@@ -53,7 +55,7 @@ public class AddressResource {
         if (address.getId() != null) {
             throw new BadRequestAlertException("A new address cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        address = addressRepository.save(address);
+        address = addressService.save(address);
         return ResponseEntity.created(new URI("/api/addresses/" + address.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, address.getId().toString()))
             .body(address);
@@ -86,7 +88,7 @@ public class AddressResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        address = addressRepository.save(address);
+        address = addressService.update(address);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, address.getId().toString()))
             .body(address);
@@ -120,22 +122,7 @@ public class AddressResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Address> result = addressRepository
-            .findById(address.getId())
-            .map(existingAddress -> {
-                if (address.getLine1() != null) {
-                    existingAddress.setLine1(address.getLine1());
-                }
-                if (address.getCity() != null) {
-                    existingAddress.setCity(address.getCity());
-                }
-                if (address.getCountry() != null) {
-                    existingAddress.setCountry(address.getCountry());
-                }
-
-                return existingAddress;
-            })
-            .map(addressRepository::save);
+        Optional<Address> result = addressService.partialUpdate(address);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -152,11 +139,7 @@ public class AddressResource {
     @GetMapping("")
     public List<Address> getAllAddresses(@RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload) {
         LOG.debug("REST request to get all Addresses");
-        if (eagerload) {
-            return addressRepository.findAllWithEagerRelationships();
-        } else {
-            return addressRepository.findAll();
-        }
+        return addressService.findAll();
     }
 
     /**
@@ -168,7 +151,7 @@ public class AddressResource {
     @GetMapping("/{id}")
     public ResponseEntity<Address> getAddress(@PathVariable("id") Long id) {
         LOG.debug("REST request to get Address : {}", id);
-        Optional<Address> address = addressRepository.findOneWithEagerRelationships(id);
+        Optional<Address> address = addressService.findOne(id);
         return ResponseUtil.wrapOrNotFound(address);
     }
 
@@ -181,7 +164,7 @@ public class AddressResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAddress(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Address : {}", id);
-        addressRepository.deleteById(id);
+        addressService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();

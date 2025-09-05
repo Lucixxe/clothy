@@ -2,6 +2,7 @@ package com.clothy.myapp.web.rest;
 
 import com.clothy.myapp.domain.Product;
 import com.clothy.myapp.repository.ProductRepository;
+import com.clothy.myapp.service.ProductService;
 import com.clothy.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -24,7 +24,6 @@ import tech.jhipster.web.util.ResponseUtil;
  */
 @RestController
 @RequestMapping("/api/products")
-@Transactional
 public class ProductResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProductResource.class);
@@ -34,9 +33,12 @@ public class ProductResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final ProductService productService;
+
     private final ProductRepository productRepository;
 
-    public ProductResource(ProductRepository productRepository) {
+    public ProductResource(ProductService productService, ProductRepository productRepository) {
+        this.productService = productService;
         this.productRepository = productRepository;
     }
 
@@ -53,7 +55,7 @@ public class ProductResource {
         if (product.getId() != null) {
             throw new BadRequestAlertException("A new product cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        product = productRepository.save(product);
+        product = productService.save(product);
         return ResponseEntity.created(new URI("/api/products/" + product.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, product.getId().toString()))
             .body(product);
@@ -86,7 +88,7 @@ public class ProductResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        product = productRepository.save(product);
+        product = productService.update(product);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, product.getId().toString()))
             .body(product);
@@ -120,22 +122,7 @@ public class ProductResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Product> result = productRepository
-            .findById(product.getId())
-            .map(existingProduct -> {
-                if (product.getName() != null) {
-                    existingProduct.setName(product.getName());
-                }
-                if (product.getSku() != null) {
-                    existingProduct.setSku(product.getSku());
-                }
-                if (product.getPrice() != null) {
-                    existingProduct.setPrice(product.getPrice());
-                }
-
-                return existingProduct;
-            })
-            .map(productRepository::save);
+        Optional<Product> result = productService.partialUpdate(product);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -152,11 +139,7 @@ public class ProductResource {
     @GetMapping("")
     public List<Product> getAllProducts(@RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload) {
         LOG.debug("REST request to get all Products");
-        if (eagerload) {
-            return productRepository.findAllWithEagerRelationships();
-        } else {
-            return productRepository.findAll();
-        }
+        return productService.findAll();
     }
 
     /**
@@ -168,7 +151,7 @@ public class ProductResource {
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProduct(@PathVariable("id") Long id) {
         LOG.debug("REST request to get Product : {}", id);
-        Optional<Product> product = productRepository.findOneWithEagerRelationships(id);
+        Optional<Product> product = productService.findOne(id);
         return ResponseUtil.wrapOrNotFound(product);
     }
 
@@ -181,7 +164,7 @@ public class ProductResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Product : {}", id);
-        productRepository.deleteById(id);
+        productService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();

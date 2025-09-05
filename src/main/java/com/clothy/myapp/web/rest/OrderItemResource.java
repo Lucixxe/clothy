@@ -2,6 +2,7 @@ package com.clothy.myapp.web.rest;
 
 import com.clothy.myapp.domain.OrderItem;
 import com.clothy.myapp.repository.OrderItemRepository;
+import com.clothy.myapp.service.OrderItemService;
 import com.clothy.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -24,7 +24,6 @@ import tech.jhipster.web.util.ResponseUtil;
  */
 @RestController
 @RequestMapping("/api/order-items")
-@Transactional
 public class OrderItemResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(OrderItemResource.class);
@@ -34,9 +33,12 @@ public class OrderItemResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final OrderItemService orderItemService;
+
     private final OrderItemRepository orderItemRepository;
 
-    public OrderItemResource(OrderItemRepository orderItemRepository) {
+    public OrderItemResource(OrderItemService orderItemService, OrderItemRepository orderItemRepository) {
+        this.orderItemService = orderItemService;
         this.orderItemRepository = orderItemRepository;
     }
 
@@ -53,7 +55,7 @@ public class OrderItemResource {
         if (orderItem.getId() != null) {
             throw new BadRequestAlertException("A new orderItem cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        orderItem = orderItemRepository.save(orderItem);
+        orderItem = orderItemService.save(orderItem);
         return ResponseEntity.created(new URI("/api/order-items/" + orderItem.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, orderItem.getId().toString()))
             .body(orderItem);
@@ -86,7 +88,7 @@ public class OrderItemResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        orderItem = orderItemRepository.save(orderItem);
+        orderItem = orderItemService.update(orderItem);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, orderItem.getId().toString()))
             .body(orderItem);
@@ -120,22 +122,7 @@ public class OrderItemResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<OrderItem> result = orderItemRepository
-            .findById(orderItem.getId())
-            .map(existingOrderItem -> {
-                if (orderItem.getQuantity() != null) {
-                    existingOrderItem.setQuantity(orderItem.getQuantity());
-                }
-                if (orderItem.getUnitPrice() != null) {
-                    existingOrderItem.setUnitPrice(orderItem.getUnitPrice());
-                }
-                if (orderItem.getLineTotal() != null) {
-                    existingOrderItem.setLineTotal(orderItem.getLineTotal());
-                }
-
-                return existingOrderItem;
-            })
-            .map(orderItemRepository::save);
+        Optional<OrderItem> result = orderItemService.partialUpdate(orderItem);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -152,11 +139,7 @@ public class OrderItemResource {
     @GetMapping("")
     public List<OrderItem> getAllOrderItems(@RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload) {
         LOG.debug("REST request to get all OrderItems");
-        if (eagerload) {
-            return orderItemRepository.findAllWithEagerRelationships();
-        } else {
-            return orderItemRepository.findAll();
-        }
+        return orderItemService.findAll();
     }
 
     /**
@@ -168,7 +151,7 @@ public class OrderItemResource {
     @GetMapping("/{id}")
     public ResponseEntity<OrderItem> getOrderItem(@PathVariable("id") Long id) {
         LOG.debug("REST request to get OrderItem : {}", id);
-        Optional<OrderItem> orderItem = orderItemRepository.findOneWithEagerRelationships(id);
+        Optional<OrderItem> orderItem = orderItemService.findOne(id);
         return ResponseUtil.wrapOrNotFound(orderItem);
     }
 
@@ -181,7 +164,7 @@ public class OrderItemResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrderItem(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete OrderItem : {}", id);
-        orderItemRepository.deleteById(id);
+        orderItemService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
