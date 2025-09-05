@@ -35,7 +35,6 @@ type CustomerOrderFormGroupContent = {
   createdAt: FormControl<CustomerOrderFormRawValue['createdAt']>;
   total: FormControl<CustomerOrderFormRawValue['total']>;
   customer: FormControl<CustomerOrderFormRawValue['customer']>;
-  shippingAddress: FormControl<CustomerOrderFormRawValue['shippingAddress']>;
 };
 
 export type CustomerOrderFormGroup = FormGroup<CustomerOrderFormGroupContent>;
@@ -65,7 +64,6 @@ export class CustomerOrderFormService {
         validators: [Validators.required],
       }),
       customer: new FormControl(customerOrderRawValue.customer),
-      shippingAddress: new FormControl(customerOrderRawValue.shippingAddress),
     });
   }
 

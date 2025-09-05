@@ -6,6 +6,7 @@ export interface ICustomer {
   fullName?: string | null;
   createdAt?: dayjs.Dayjs | null;
   passwordHash?: string | null;
+  address?: string | null;
 }
 
 export type NewCustomer = Omit<ICustomer, 'id'> & { id: null };

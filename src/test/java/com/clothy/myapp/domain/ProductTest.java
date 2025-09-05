@@ -5,6 +5,8 @@ import static com.clothy.myapp.domain.ProductTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.clothy.myapp.web.rest.TestUtil;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 class ProductTest {
@@ -28,10 +30,16 @@ class ProductTest {
         Product product = getProductRandomSampleGenerator();
         Category categoryBack = getCategoryRandomSampleGenerator();
 
-        product.setCategory(categoryBack);
-        assertThat(product.getCategory()).isEqualTo(categoryBack);
+        product.addCategory(categoryBack);
+        assertThat(product.getCategories()).containsOnly(categoryBack);
 
-        product.category(null);
-        assertThat(product.getCategory()).isNull();
+        product.removeCategory(categoryBack);
+        assertThat(product.getCategories()).doesNotContain(categoryBack);
+
+        product.categories(new HashSet<>(Set.of(categoryBack)));
+        assertThat(product.getCategories()).containsOnly(categoryBack);
+
+        product.setCategories(new HashSet<>());
+        assertThat(product.getCategories()).doesNotContain(categoryBack);
     }
 }

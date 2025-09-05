@@ -1,6 +1,5 @@
 package com.clothy.myapp.domain;
 
-import static com.clothy.myapp.domain.AddressTestSamples.*;
 import static com.clothy.myapp.domain.CustomerOrderTestSamples.*;
 import static com.clothy.myapp.domain.CustomerTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,17 +33,5 @@ class CustomerOrderTest {
 
         customerOrder.customer(null);
         assertThat(customerOrder.getCustomer()).isNull();
-    }
-
-    @Test
-    void shippingAddressTest() {
-        CustomerOrder customerOrder = getCustomerOrderRandomSampleGenerator();
-        Address addressBack = getAddressRandomSampleGenerator();
-
-        customerOrder.setShippingAddress(addressBack);
-        assertThat(customerOrder.getShippingAddress()).isEqualTo(addressBack);
-
-        customerOrder.shippingAddress(null);
-        assertThat(customerOrder.getShippingAddress()).isNull();
     }
 }

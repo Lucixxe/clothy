@@ -62,7 +62,6 @@ public class CustomerOrderAsserts {
     public static void assertCustomerOrderUpdatableRelationshipsEquals(CustomerOrder expected, CustomerOrder actual) {
         assertThat(actual)
             .as("Verify CustomerOrder relationships")
-            .satisfies(a -> assertThat(a.getCustomer()).as("check customer").isEqualTo(expected.getCustomer()))
-            .satisfies(a -> assertThat(a.getShippingAddress()).as("check shippingAddress").isEqualTo(expected.getShippingAddress()));
+            .satisfies(a -> assertThat(a.getCustomer()).as("check customer").isEqualTo(expected.getCustomer()));
     }
 }

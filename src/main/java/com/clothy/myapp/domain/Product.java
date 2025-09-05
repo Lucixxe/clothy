@@ -1,9 +1,12 @@
 package com.clothy.myapp.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -36,8 +39,15 @@ public class Product implements Serializable {
     @Column(name = "price", precision = 21, scale = 2, nullable = false)
     private BigDecimal price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Category category;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "rel_product__category",
+        joinColumns = @JoinColumn(name = "product_id"),
+        inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "products" }, allowSetters = true)
+    private Set<Category> categories = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -93,16 +103,26 @@ public class Product implements Serializable {
         this.price = price;
     }
 
-    public Category getCategory() {
-        return this.category;
+    public Set<Category> getCategories() {
+        return this.categories;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
     }
 
-    public Product category(Category category) {
-        this.setCategory(category);
+    public Product categories(Set<Category> categories) {
+        this.setCategories(categories);
+        return this;
+    }
+
+    public Product addCategory(Category category) {
+        this.categories.add(category);
+        return this;
+    }
+
+    public Product removeCategory(Category category) {
+        this.categories.remove(category);
         return this;
     }
 

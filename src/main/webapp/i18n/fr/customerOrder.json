@@ -21,8 +21,7 @@
       "orderNumber": "Order Number",
       "createdAt": "Created At",
       "total": "Total",
-      "customer": "Customer",
-      "shippingAddress": "Shipping Address"
+      "customer": "Customer"
     }
   }
 }

@@ -41,6 +41,10 @@ public class Customer implements Serializable {
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
+    @NotNull
+    @Column(name = "address", nullable = false)
+    private String address;
+
     @JsonIgnoreProperties(value = { "customer" }, allowSetters = true)
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "customer")
     private Cart cart;
@@ -112,6 +116,19 @@ public class Customer implements Serializable {
         this.passwordHash = passwordHash;
     }
 
+    public String getAddress() {
+        return this.address;
+    }
+
+    public Customer address(String address) {
+        this.setAddress(address);
+        return this;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public Cart getCart() {
         return this.cart;
     }
@@ -159,6 +176,7 @@ public class Customer implements Serializable {
             ", fullName='" + getFullName() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
             ", passwordHash='" + getPasswordHash() + "'" +
+            ", address='" + getAddress() + "'" +
             "}";
     }
 }

@@ -84,7 +84,7 @@ export class ProductUpdateComponent implements OnInit {
 
     this.categoriesSharedCollection = this.categoryService.addCategoryToCollectionIfMissing<ICategory>(
       this.categoriesSharedCollection,
-      product.category,
+      ...(product.categories ?? []),
     );
   }
 
@@ -94,7 +94,7 @@ export class ProductUpdateComponent implements OnInit {
       .pipe(map((res: HttpResponse<ICategory[]>) => res.body ?? []))
       .pipe(
         map((categories: ICategory[]) =>
-          this.categoryService.addCategoryToCollectionIfMissing<ICategory>(categories, this.product?.category),
+          this.categoryService.addCategoryToCollectionIfMissing<ICategory>(categories, ...(this.product?.categories ?? [])),
         ),
       )
       .subscribe((categories: ICategory[]) => (this.categoriesSharedCollection = categories));

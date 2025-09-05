@@ -35,6 +35,7 @@ type CustomerFormGroupContent = {
   fullName: FormControl<CustomerFormRawValue['fullName']>;
   createdAt: FormControl<CustomerFormRawValue['createdAt']>;
   passwordHash: FormControl<CustomerFormRawValue['passwordHash']>;
+  address: FormControl<CustomerFormRawValue['address']>;
 };
 
 export type CustomerFormGroup = FormGroup<CustomerFormGroupContent>;
@@ -64,6 +65,9 @@ export class CustomerFormService {
         validators: [Validators.required],
       }),
       passwordHash: new FormControl(customerRawValue.passwordHash, {
+        validators: [Validators.required],
+      }),
+      address: new FormControl(customerRawValue.address, {
         validators: [Validators.required],
       }),
     });

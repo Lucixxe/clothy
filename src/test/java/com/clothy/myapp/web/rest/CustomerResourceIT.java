@@ -46,6 +46,9 @@ class CustomerResourceIT {
     private static final String DEFAULT_PASSWORD_HASH = "AAAAAAAAAA";
     private static final String UPDATED_PASSWORD_HASH = "BBBBBBBBBB";
 
+    private static final String DEFAULT_ADDRESS = "AAAAAAAAAA";
+    private static final String UPDATED_ADDRESS = "BBBBBBBBBB";
+
     private static final String ENTITY_API_URL = "/api/customers";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -79,7 +82,8 @@ class CustomerResourceIT {
             .email(DEFAULT_EMAIL)
             .fullName(DEFAULT_FULL_NAME)
             .createdAt(DEFAULT_CREATED_AT)
-            .passwordHash(DEFAULT_PASSWORD_HASH);
+            .passwordHash(DEFAULT_PASSWORD_HASH)
+            .address(DEFAULT_ADDRESS);
     }
 
     /**
@@ -93,7 +97,8 @@ class CustomerResourceIT {
             .email(UPDATED_EMAIL)
             .fullName(UPDATED_FULL_NAME)
             .createdAt(UPDATED_CREATED_AT)
-            .passwordHash(UPDATED_PASSWORD_HASH);
+            .passwordHash(UPDATED_PASSWORD_HASH)
+            .address(UPDATED_ADDRESS);
     }
 
     @BeforeEach
@@ -214,6 +219,22 @@ class CustomerResourceIT {
 
     @Test
     @Transactional
+    void checkAddressIsRequired() throws Exception {
+        long databaseSizeBeforeTest = getRepositoryCount();
+        // set the field null
+        customer.setAddress(null);
+
+        // Create the Customer, which fails.
+
+        restCustomerMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(customer)))
+            .andExpect(status().isBadRequest());
+
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     void getAllCustomers() throws Exception {
         // Initialize the database
         insertedCustomer = customerRepository.saveAndFlush(customer);
@@ -227,7 +248,8 @@ class CustomerResourceIT {
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
             .andExpect(jsonPath("$.[*].fullName").value(hasItem(DEFAULT_FULL_NAME)))
             .andExpect(jsonPath("$.[*].createdAt").value(hasItem(DEFAULT_CREATED_AT.toString())))
-            .andExpect(jsonPath("$.[*].passwordHash").value(hasItem(DEFAULT_PASSWORD_HASH)));
+            .andExpect(jsonPath("$.[*].passwordHash").value(hasItem(DEFAULT_PASSWORD_HASH)))
+            .andExpect(jsonPath("$.[*].address").value(hasItem(DEFAULT_ADDRESS)));
     }
 
     @Test
@@ -245,7 +267,8 @@ class CustomerResourceIT {
             .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL))
             .andExpect(jsonPath("$.fullName").value(DEFAULT_FULL_NAME))
             .andExpect(jsonPath("$.createdAt").value(DEFAULT_CREATED_AT.toString()))
-            .andExpect(jsonPath("$.passwordHash").value(DEFAULT_PASSWORD_HASH));
+            .andExpect(jsonPath("$.passwordHash").value(DEFAULT_PASSWORD_HASH))
+            .andExpect(jsonPath("$.address").value(DEFAULT_ADDRESS));
     }
 
     @Test
@@ -267,7 +290,12 @@ class CustomerResourceIT {
         Customer updatedCustomer = customerRepository.findById(customer.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedCustomer are not directly saved in db
         em.detach(updatedCustomer);
-        updatedCustomer.email(UPDATED_EMAIL).fullName(UPDATED_FULL_NAME).createdAt(UPDATED_CREATED_AT).passwordHash(UPDATED_PASSWORD_HASH);
+        updatedCustomer
+            .email(UPDATED_EMAIL)
+            .fullName(UPDATED_FULL_NAME)
+            .createdAt(UPDATED_CREATED_AT)
+            .passwordHash(UPDATED_PASSWORD_HASH)
+            .address(UPDATED_ADDRESS);
 
         restCustomerMockMvc
             .perform(
@@ -349,7 +377,8 @@ class CustomerResourceIT {
             .email(UPDATED_EMAIL)
             .fullName(UPDATED_FULL_NAME)
             .createdAt(UPDATED_CREATED_AT)
-            .passwordHash(UPDATED_PASSWORD_HASH);
+            .passwordHash(UPDATED_PASSWORD_HASH)
+            .address(UPDATED_ADDRESS);
 
         restCustomerMockMvc
             .perform(
@@ -381,7 +410,8 @@ class CustomerResourceIT {
             .email(UPDATED_EMAIL)
             .fullName(UPDATED_FULL_NAME)
             .createdAt(UPDATED_CREATED_AT)
-            .passwordHash(UPDATED_PASSWORD_HASH);
+            .passwordHash(UPDATED_PASSWORD_HASH)
+            .address(UPDATED_ADDRESS);
 
         restCustomerMockMvc
             .perform(

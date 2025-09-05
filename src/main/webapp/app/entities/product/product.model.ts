@@ -5,7 +5,7 @@ export interface IProduct {
   name?: string | null;
   sku?: string | null;
   price?: number | null;
-  category?: ICategory | null;
+  categories?: ICategory[] | null;
 }
 
 export type NewProduct = Omit<IProduct, 'id'> & { id: null };

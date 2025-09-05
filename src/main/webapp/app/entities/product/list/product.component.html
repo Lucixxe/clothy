@@ -80,10 +80,11 @@
               <td>{{ product.sku }}</td>
               <td>{{ product.price }}</td>
               <td>
-                @if (product.category) {
-                  <div>
-                    <a [routerLink]="['/category', product.category.id, 'view']">{{ product.category.name }}</a>
-                  </div>
+                @for (category of product.categories; track $index; let last = $last) {
+                  <span>
+                    <a class="form-control-static" [routerLink]="['/category', category.id, 'view']">{{ category.name }}</a
+                    >{{ last ? '' : ', ' }}
+                  </span>
                 }
               </td>
               <td class="text-end">

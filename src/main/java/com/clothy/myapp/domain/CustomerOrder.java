@@ -42,10 +42,6 @@ public class CustomerOrder implements Serializable {
     @JsonIgnoreProperties(value = { "cart" }, allowSetters = true)
     private Customer customer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "customer" }, allowSetters = true)
-    private Address shippingAddress;
-
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
@@ -110,19 +106,6 @@ public class CustomerOrder implements Serializable {
 
     public CustomerOrder customer(Customer customer) {
         this.setCustomer(customer);
-        return this;
-    }
-
-    public Address getShippingAddress() {
-        return this.shippingAddress;
-    }
-
-    public void setShippingAddress(Address address) {
-        this.shippingAddress = address;
-    }
-
-    public CustomerOrder shippingAddress(Address address) {
-        this.setShippingAddress(address);
         return this;
     }
 

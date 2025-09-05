@@ -23,7 +23,7 @@ describe('Product Form Service', () => {
             name: expect.any(Object),
             sku: expect.any(Object),
             price: expect.any(Object),
-            category: expect.any(Object),
+            categories: expect.any(Object),
           }),
         );
       });
@@ -37,7 +37,7 @@ describe('Product Form Service', () => {
             name: expect.any(Object),
             sku: expect.any(Object),
             price: expect.any(Object),
-            category: expect.any(Object),
+            categories: expect.any(Object),
           }),
         );
       });

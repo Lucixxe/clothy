@@ -23,6 +23,7 @@ describe('Category Form Service', () => {
             name: expect.any(Object),
             slug: expect.any(Object),
             isActive: expect.any(Object),
+            products: expect.any(Object),
           }),
         );
       });
@@ -36,6 +37,7 @@ describe('Category Form Service', () => {
             name: expect.any(Object),
             slug: expect.any(Object),
             isActive: expect.any(Object),
+            products: expect.any(Object),
           }),
         );
       });

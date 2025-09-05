@@ -27,7 +27,7 @@
       "otherEntityName": "category",
       "relationshipName": "category",
       "relationshipSide": "left",
-      "relationshipType": "many-to-one"
+      "relationshipType": "many-to-many"
     }
   ],
   "searchEngine": "no"

@@ -30,10 +30,11 @@ describe('Cart e2e test', () => {
       method: 'POST',
       url: '/api/customers',
       body: {
-        email: 'Jerome67@gmail.com',
-        fullName: 'police aussitôt',
-        createdAt: '2025-09-03T06:22:32.062Z',
-        passwordHash: 'en outre de lectorat',
+        email: 'Etienne5@hotmail.fr',
+        fullName: 'autrefois',
+        createdAt: '2025-09-03T01:48:19.479Z',
+        passwordHash: 'oups quelque',
+        address: 'ensuite',
       },
     }).then(({ body }) => {
       customer = body;

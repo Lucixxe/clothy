@@ -20,7 +20,8 @@
       "id": "ID",
       "name": "Name",
       "slug": "Slug",
-      "isActive": "Is Active"
+      "isActive": "Is Active",
+      "product": "Product"
     }
   }
 }
