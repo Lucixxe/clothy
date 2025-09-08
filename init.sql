@@ -15,21 +15,21 @@ INSERT INTO category (id, name, slug, is_active) VALUES
 
 
 -- Ajout des produits Chaussures
-INSERT INTO product (id, name, sku, price, category_id) VALUES
-(1, 'Nike Air', '20', 250, 6),
-(2, 'Nike P 3000', '30', 250, 6),
-(3, 'Nike P 6000', '40', 250, 6);
+INSERT INTO product (id, name, sku, price) VALUES
+(1, 'Nike Air', '20', 250),
+(2, 'Nike P 3000', '20', 250),
+(3, 'Nike P 6000', '40', 250);
 
 -- Ajout des produits Pantallons
-INSERT INTO product (id, name, sku, price, category_id) VALUES
-(4, 'Pantallon Slim', '25', 250, 1),
-(5, 'Pantallon Regular', '35', 250, 1),
-(6, 'Pantallon Cargo', '50', 250, 1);
+INSERT INTO product (id, name, sku, price) VALUES
+(4, 'Pantallon Slim', '25', 250),
+(5, 'Pantallon Regular', '35', 250),
+(6, 'Pantallon Cargo', '20', 250);
 
 -- Ajout des produits Chemises
-INSERT INTO product (id, name, sku, price, category_id) VALUES
-(7, 'Chemise Blanche', '100', 250, 2),
-(8, 'Chemise Bleue', '5', 250, 2),
-(9, 'Chemise à Carreaux', '12', 250, 2);
+INSERT INTO product (id, name, sku, price) VALUES
+(7, 'Chemise Blanche', '100', 250),
+(8, 'Chemise Bleue', '5', 250),
+(9, 'Chemise à Carreaux', '12', 250);
 
 

@@ -18,7 +18,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="sku" type="integer">
-                <constraints nullable="false" unique="true" uniqueConstraintName="ux_product__sku" />
+                <constraints nullable="false" />
             </column>
             <column name="price" type="decimal(21,2)">
                 <constraints nullable="false" />

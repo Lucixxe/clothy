@@ -12,7 +12,7 @@
     {
       "fieldName": "sku",
       "fieldType": "Integer",
-      "fieldValidateRules": ["required", "unique"]
+      "fieldValidateRules": ["required"]
     },
     {
       "fieldName": "price",
