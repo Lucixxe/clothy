@@ -8,7 +8,13 @@
       "entities": {
         "main": "Entités",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
-        "adminAuthority": "Authority"
+        "category": "Category",
+        "product": "Product",
+        "customer": "Customer",
+        "cart": "Cart",
+        "cartItem": "Cart Item",
+        "customerOrder": "Customer Order",
+        "orderItem": "Order Item"
       },
       "account": {
         "main": "Compte",

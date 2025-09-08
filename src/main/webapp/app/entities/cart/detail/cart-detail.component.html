@@ -1,0 +1,50 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (cart(); as cartRef) {
+      <div>
+        <h2 data-cy="cartDetailsHeading"><span jhiTranslate="clothyApp.cart.detail.title">Cart</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ cartRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.cart.cartKey">Cart Key</span></dt>
+          <dd>
+            <span>{{ cartRef.cartKey }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.cart.createdAt">Created At</span></dt>
+          <dd>
+            <span>{{ cartRef.createdAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.cart.isCheckedOut">Is Checked Out</span></dt>
+          <dd>
+            <span>{{ cartRef.isCheckedOut }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.cart.customer">Customer</span></dt>
+          <dd>
+            @if (cart()!.customer) {
+              <div>
+                <a [routerLink]="['/customer', cart()!.customer?.id, 'view']">{{ cartRef.customer?.email }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/cart', cartRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

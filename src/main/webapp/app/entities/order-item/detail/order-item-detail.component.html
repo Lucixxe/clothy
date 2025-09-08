@@ -1,0 +1,58 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (orderItem(); as orderItemRef) {
+      <div>
+        <h2 data-cy="orderItemDetailsHeading"><span jhiTranslate="clothyApp.orderItem.detail.title">Order Item</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ orderItemRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.orderItem.quantity">Quantity</span></dt>
+          <dd>
+            <span>{{ orderItemRef.quantity }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.orderItem.unitPrice">Unit Price</span></dt>
+          <dd>
+            <span>{{ orderItemRef.unitPrice }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.orderItem.lineTotal">Line Total</span></dt>
+          <dd>
+            <span>{{ orderItemRef.lineTotal }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.orderItem.order">Order</span></dt>
+          <dd>
+            @if (orderItem()!.order) {
+              <div>
+                <a [routerLink]="['/customer-order', orderItem()!.order?.id, 'view']">{{ orderItemRef.order?.orderNumber }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="clothyApp.orderItem.product">Product</span></dt>
+          <dd>
+            @if (orderItem()!.product) {
+              <div>
+                <a [routerLink]="['/product', orderItem()!.product?.id, 'view']">{{ orderItemRef.product?.sku }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/order-item', orderItemRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>
