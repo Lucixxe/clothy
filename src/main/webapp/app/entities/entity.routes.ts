@@ -6,6 +6,36 @@ const routes: Routes = [
     data: { pageTitle: 'clothyApp.adminAuthority.home.title' },
     loadChildren: () => import('./admin/authority/authority.routes'),
   },
+  {
+    path: 'category',
+    data: { pageTitle: 'clothyApp.category.home.title' },
+    loadChildren: () => import('./category/category.routes'),
+  },
+  {
+    path: 'product',
+    data: { pageTitle: 'clothyApp.product.home.title' },
+    loadChildren: () => import('./product/product.routes'),
+  },
+  {
+    path: 'customer',
+    data: { pageTitle: 'clothyApp.customer.home.title' },
+    loadChildren: () => import('./customer/customer.routes'),
+  },
+  {
+    path: 'cart',
+    data: { pageTitle: 'clothyApp.cart.home.title' },
+    loadChildren: () => import('./cart/cart.routes'),
+  },
+  {
+    path: 'cart-item',
+    data: { pageTitle: 'clothyApp.cartItem.home.title' },
+    loadChildren: () => import('./cart-item/cart-item.routes'),
+  },
+  {
+    path: 'customer-order',
+    data: { pageTitle: 'clothyApp.customerOrder.home.title' },
+    loadChildren: () => import('./customer-order/customer-order.routes'),
+  },
   /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
 ];
 
