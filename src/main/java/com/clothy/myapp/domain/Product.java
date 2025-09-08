@@ -32,7 +32,7 @@ public class Product implements Serializable {
     private String name;
 
     @NotNull
-    @Column(name = "sku", nullable = false, unique = true)
+    @Column(name = "sku", nullable = false)
     private Integer sku;
 
     @NotNull
