@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, Routes } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -9,6 +9,8 @@ import { Account } from 'app/core/auth/account.model';
 
 @Component({
   selector: 'jhi-home',
+  standalone: true,
+
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   imports: [SharedModule, RouterModule],

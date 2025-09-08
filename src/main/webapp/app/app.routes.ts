@@ -17,6 +17,14 @@ const routes: Routes = [
     outlet: 'navbar',
   },
   {
+    path: 'product/:id',
+    loadComponent: () => import('./product-detail/product-detail.component').then(m => m.ProductDetailComponent),
+    title: 'Product Detail',
+    data: {
+      authorities: [],
+    },
+  },
+  {
     path: 'admin',
     data: {
       authorities: [Authority.ADMIN],
@@ -36,6 +44,16 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () => import(`./entities/entity.routes`),
+  },
+  {
+    path: 'cart-page',
+    loadComponent: () => import('./cart-page/cart-page.component').then(m => m.CartPageComponent),
+    title: 'Cart-page',
+  },
+  {
+    path: 'articles-page',
+    loadComponent: () => import('./articles-page/articles-page.component').then(m => m.ArticlesPageComponent),
+    title: 'Articles-page',
   },
   ...errorRoute,
 ];

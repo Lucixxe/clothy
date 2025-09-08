@@ -1,0 +1,9 @@
+<div class="article-card" (click)="goToProduct()">
+  <img [src]="getProductImage()" [alt]="product.name" class="product-img" />
+  <div class="product-info">
+    <h3>{{ product.name || 'Produit' }}</h3>
+    <p class="category">{{ product.categories?.[0]?.name || 'Catégorie' }}</p>
+    <p class="sku">SKU: {{ product.sku || 'N/A' }}</p>
+    <p class="price">{{ product.price || 0 }} €</p>
+  </div>
+</div>
