@@ -2,6 +2,7 @@ package com.clothy.myapp.web.rest;
 
 import com.clothy.myapp.domain.CartItem;
 import com.clothy.myapp.repository.CartItemRepository;
+import com.clothy.myapp.service.CartItemService;
 import com.clothy.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -24,7 +24,6 @@ import tech.jhipster.web.util.ResponseUtil;
  */
 @RestController
 @RequestMapping("/api/cart-items")
-@Transactional
 public class CartItemResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(CartItemResource.class);
@@ -34,9 +33,12 @@ public class CartItemResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final CartItemService cartItemService;
+
     private final CartItemRepository cartItemRepository;
 
-    public CartItemResource(CartItemRepository cartItemRepository) {
+    public CartItemResource(CartItemService cartItemService, CartItemRepository cartItemRepository) {
+        this.cartItemService = cartItemService;
         this.cartItemRepository = cartItemRepository;
     }
 
@@ -53,7 +55,7 @@ public class CartItemResource {
         if (cartItem.getId() != null) {
             throw new BadRequestAlertException("A new cartItem cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        cartItem = cartItemRepository.save(cartItem);
+        cartItem = cartItemService.save(cartItem);
         return ResponseEntity.created(new URI("/api/cart-items/" + cartItem.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, cartItem.getId().toString()))
             .body(cartItem);
@@ -86,7 +88,7 @@ public class CartItemResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        cartItem = cartItemRepository.save(cartItem);
+        cartItem = cartItemService.update(cartItem);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, cartItem.getId().toString()))
             .body(cartItem);
@@ -120,25 +122,7 @@ public class CartItemResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<CartItem> result = cartItemRepository
-            .findById(cartItem.getId())
-            .map(existingCartItem -> {
-                if (cartItem.getQuantity() != null) {
-                    existingCartItem.setQuantity(cartItem.getQuantity());
-                }
-                if (cartItem.getUnitPrice() != null) {
-                    existingCartItem.setUnitPrice(cartItem.getUnitPrice());
-                }
-                if (cartItem.getLineTotal() != null) {
-                    existingCartItem.setLineTotal(cartItem.getLineTotal());
-                }
-                if (cartItem.getIsInOrder() != null) {
-                    existingCartItem.setIsInOrder(cartItem.getIsInOrder());
-                }
-
-                return existingCartItem;
-            })
-            .map(cartItemRepository::save);
+        Optional<CartItem> result = cartItemService.partialUpdate(cartItem);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -155,11 +139,7 @@ public class CartItemResource {
     @GetMapping("")
     public List<CartItem> getAllCartItems(@RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload) {
         LOG.debug("REST request to get all CartItems");
-        if (eagerload) {
-            return cartItemRepository.findAllWithEagerRelationships();
-        } else {
-            return cartItemRepository.findAll();
-        }
+        return cartItemService.findAll();
     }
 
     /**
@@ -171,7 +151,7 @@ public class CartItemResource {
     @GetMapping("/{id}")
     public ResponseEntity<CartItem> getCartItem(@PathVariable("id") Long id) {
         LOG.debug("REST request to get CartItem : {}", id);
-        Optional<CartItem> cartItem = cartItemRepository.findOneWithEagerRelationships(id);
+        Optional<CartItem> cartItem = cartItemService.findOne(id);
         return ResponseUtil.wrapOrNotFound(cartItem);
     }
 
@@ -184,7 +164,7 @@ public class CartItemResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCartItem(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete CartItem : {}", id);
-        cartItemRepository.deleteById(id);
+        cartItemService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();

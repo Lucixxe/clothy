@@ -31,5 +31,6 @@
       "relationshipValidateRules": "required"
     }
   ],
-  "searchEngine": "no"
+  "searchEngine": "no",
+  "service": "serviceImpl"
 }

@@ -2,6 +2,7 @@ package com.clothy.myapp.web.rest;
 
 import com.clothy.myapp.domain.CustomerOrder;
 import com.clothy.myapp.repository.CustomerOrderRepository;
+import com.clothy.myapp.service.CustomerOrderService;
 import com.clothy.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -24,7 +24,6 @@ import tech.jhipster.web.util.ResponseUtil;
  */
 @RestController
 @RequestMapping("/api/customer-orders")
-@Transactional
 public class CustomerOrderResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomerOrderResource.class);
@@ -34,9 +33,12 @@ public class CustomerOrderResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final CustomerOrderService customerOrderService;
+
     private final CustomerOrderRepository customerOrderRepository;
 
-    public CustomerOrderResource(CustomerOrderRepository customerOrderRepository) {
+    public CustomerOrderResource(CustomerOrderService customerOrderService, CustomerOrderRepository customerOrderRepository) {
+        this.customerOrderService = customerOrderService;
         this.customerOrderRepository = customerOrderRepository;
     }
 
@@ -53,7 +55,7 @@ public class CustomerOrderResource {
         if (customerOrder.getId() != null) {
             throw new BadRequestAlertException("A new customerOrder cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        customerOrder = customerOrderRepository.save(customerOrder);
+        customerOrder = customerOrderService.save(customerOrder);
         return ResponseEntity.created(new URI("/api/customer-orders/" + customerOrder.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, customerOrder.getId().toString()))
             .body(customerOrder);
@@ -86,7 +88,7 @@ public class CustomerOrderResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        customerOrder = customerOrderRepository.save(customerOrder);
+        customerOrder = customerOrderService.update(customerOrder);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, customerOrder.getId().toString()))
             .body(customerOrder);
@@ -120,22 +122,7 @@ public class CustomerOrderResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<CustomerOrder> result = customerOrderRepository
-            .findById(customerOrder.getId())
-            .map(existingCustomerOrder -> {
-                if (customerOrder.getOrderNumber() != null) {
-                    existingCustomerOrder.setOrderNumber(customerOrder.getOrderNumber());
-                }
-                if (customerOrder.getCreatedAt() != null) {
-                    existingCustomerOrder.setCreatedAt(customerOrder.getCreatedAt());
-                }
-                if (customerOrder.getTotal() != null) {
-                    existingCustomerOrder.setTotal(customerOrder.getTotal());
-                }
-
-                return existingCustomerOrder;
-            })
-            .map(customerOrderRepository::save);
+        Optional<CustomerOrder> result = customerOrderService.partialUpdate(customerOrder);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -154,11 +141,7 @@ public class CustomerOrderResource {
         @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
     ) {
         LOG.debug("REST request to get all CustomerOrders");
-        if (eagerload) {
-            return customerOrderRepository.findAllWithEagerRelationships();
-        } else {
-            return customerOrderRepository.findAll();
-        }
+        return customerOrderService.findAll();
     }
 
     /**
@@ -170,7 +153,7 @@ public class CustomerOrderResource {
     @GetMapping("/{id}")
     public ResponseEntity<CustomerOrder> getCustomerOrder(@PathVariable("id") Long id) {
         LOG.debug("REST request to get CustomerOrder : {}", id);
-        Optional<CustomerOrder> customerOrder = customerOrderRepository.findOneWithEagerRelationships(id);
+        Optional<CustomerOrder> customerOrder = customerOrderService.findOne(id);
         return ResponseUtil.wrapOrNotFound(customerOrder);
     }
 
@@ -183,7 +166,7 @@ public class CustomerOrderResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomerOrder(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete CustomerOrder : {}", id);
-        customerOrderRepository.deleteById(id);
+        customerOrderService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();

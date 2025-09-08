@@ -2,6 +2,7 @@ package com.clothy.myapp.web.rest;
 
 import com.clothy.myapp.domain.Cart;
 import com.clothy.myapp.repository.CartRepository;
+import com.clothy.myapp.service.CartService;
 import com.clothy.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -24,7 +24,6 @@ import tech.jhipster.web.util.ResponseUtil;
  */
 @RestController
 @RequestMapping("/api/carts")
-@Transactional
 public class CartResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(CartResource.class);
@@ -34,9 +33,12 @@ public class CartResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final CartService cartService;
+
     private final CartRepository cartRepository;
 
-    public CartResource(CartRepository cartRepository) {
+    public CartResource(CartService cartService, CartRepository cartRepository) {
+        this.cartService = cartService;
         this.cartRepository = cartRepository;
     }
 
@@ -53,7 +55,7 @@ public class CartResource {
         if (cart.getId() != null) {
             throw new BadRequestAlertException("A new cart cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        cart = cartRepository.save(cart);
+        cart = cartService.save(cart);
         return ResponseEntity.created(new URI("/api/carts/" + cart.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, cart.getId().toString()))
             .body(cart);
@@ -84,7 +86,7 @@ public class CartResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        cart = cartRepository.save(cart);
+        cart = cartService.update(cart);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, cart.getId().toString()))
             .body(cart);
@@ -118,22 +120,7 @@ public class CartResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Cart> result = cartRepository
-            .findById(cart.getId())
-            .map(existingCart -> {
-                if (cart.getCartKey() != null) {
-                    existingCart.setCartKey(cart.getCartKey());
-                }
-                if (cart.getCreatedAt() != null) {
-                    existingCart.setCreatedAt(cart.getCreatedAt());
-                }
-                if (cart.getIsCheckedOut() != null) {
-                    existingCart.setIsCheckedOut(cart.getIsCheckedOut());
-                }
-
-                return existingCart;
-            })
-            .map(cartRepository::save);
+        Optional<Cart> result = cartService.partialUpdate(cart);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -150,11 +137,7 @@ public class CartResource {
     @GetMapping("")
     public List<Cart> getAllCarts(@RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload) {
         LOG.debug("REST request to get all Carts");
-        if (eagerload) {
-            return cartRepository.findAllWithEagerRelationships();
-        } else {
-            return cartRepository.findAll();
-        }
+        return cartService.findAll();
     }
 
     /**
@@ -166,7 +149,7 @@ public class CartResource {
     @GetMapping("/{id}")
     public ResponseEntity<Cart> getCart(@PathVariable("id") Long id) {
         LOG.debug("REST request to get Cart : {}", id);
-        Optional<Cart> cart = cartRepository.findOneWithEagerRelationships(id);
+        Optional<Cart> cart = cartService.findOne(id);
         return ResponseUtil.wrapOrNotFound(cart);
     }
 
@@ -179,7 +162,7 @@ public class CartResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCart(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Cart : {}", id);
-        cartRepository.deleteById(id);
+        cartService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();

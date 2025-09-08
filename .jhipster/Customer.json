@@ -37,5 +37,6 @@
   ],
   "name": "Customer",
   "relationships": [],
-  "searchEngine": "no"
+  "searchEngine": "no",
+  "service": "serviceImpl"
 }

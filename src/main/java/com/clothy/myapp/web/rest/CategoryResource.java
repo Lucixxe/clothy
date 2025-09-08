@@ -2,6 +2,7 @@ package com.clothy.myapp.web.rest;
 
 import com.clothy.myapp.domain.Category;
 import com.clothy.myapp.repository.CategoryRepository;
+import com.clothy.myapp.service.CategoryService;
 import com.clothy.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -24,7 +24,6 @@ import tech.jhipster.web.util.ResponseUtil;
  */
 @RestController
 @RequestMapping("/api/categories")
-@Transactional
 public class CategoryResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(CategoryResource.class);
@@ -34,9 +33,12 @@ public class CategoryResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final CategoryService categoryService;
+
     private final CategoryRepository categoryRepository;
 
-    public CategoryResource(CategoryRepository categoryRepository) {
+    public CategoryResource(CategoryService categoryService, CategoryRepository categoryRepository) {
+        this.categoryService = categoryService;
         this.categoryRepository = categoryRepository;
     }
 
@@ -53,7 +55,7 @@ public class CategoryResource {
         if (category.getId() != null) {
             throw new BadRequestAlertException("A new category cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        category = categoryRepository.save(category);
+        category = categoryService.save(category);
         return ResponseEntity.created(new URI("/api/categories/" + category.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, category.getId().toString()))
             .body(category);
@@ -86,7 +88,7 @@ public class CategoryResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        category = categoryRepository.save(category);
+        category = categoryService.update(category);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, category.getId().toString()))
             .body(category);
@@ -120,22 +122,7 @@ public class CategoryResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Category> result = categoryRepository
-            .findById(category.getId())
-            .map(existingCategory -> {
-                if (category.getName() != null) {
-                    existingCategory.setName(category.getName());
-                }
-                if (category.getSlug() != null) {
-                    existingCategory.setSlug(category.getSlug());
-                }
-                if (category.getIsActive() != null) {
-                    existingCategory.setIsActive(category.getIsActive());
-                }
-
-                return existingCategory;
-            })
-            .map(categoryRepository::save);
+        Optional<Category> result = categoryService.partialUpdate(category);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -151,7 +138,7 @@ public class CategoryResource {
     @GetMapping("")
     public List<Category> getAllCategories() {
         LOG.debug("REST request to get all Categories");
-        return categoryRepository.findAll();
+        return categoryService.findAll();
     }
 
     /**
@@ -163,7 +150,7 @@ public class CategoryResource {
     @GetMapping("/{id}")
     public ResponseEntity<Category> getCategory(@PathVariable("id") Long id) {
         LOG.debug("REST request to get Category : {}", id);
-        Optional<Category> category = categoryRepository.findById(id);
+        Optional<Category> category = categoryService.findOne(id);
         return ResponseUtil.wrapOrNotFound(category);
     }
 
@@ -176,7 +163,7 @@ public class CategoryResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Category : {}", id);
-        categoryRepository.deleteById(id);
+        categoryService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();

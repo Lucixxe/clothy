@@ -22,5 +22,6 @@
   ],
   "name": "Category",
   "relationships": [],
-  "searchEngine": "no"
+  "searchEngine": "no",
+  "service": "serviceImpl"
 }

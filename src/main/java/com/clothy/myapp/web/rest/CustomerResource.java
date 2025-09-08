@@ -2,6 +2,7 @@ package com.clothy.myapp.web.rest;
 
 import com.clothy.myapp.domain.Customer;
 import com.clothy.myapp.repository.CustomerRepository;
+import com.clothy.myapp.service.CustomerService;
 import com.clothy.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -10,12 +11,10 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -25,7 +24,6 @@ import tech.jhipster.web.util.ResponseUtil;
  */
 @RestController
 @RequestMapping("/api/customers")
-@Transactional
 public class CustomerResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomerResource.class);
@@ -35,9 +33,12 @@ public class CustomerResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final CustomerService customerService;
+
     private final CustomerRepository customerRepository;
 
-    public CustomerResource(CustomerRepository customerRepository) {
+    public CustomerResource(CustomerService customerService, CustomerRepository customerRepository) {
+        this.customerService = customerService;
         this.customerRepository = customerRepository;
     }
 
@@ -54,7 +55,7 @@ public class CustomerResource {
         if (customer.getId() != null) {
             throw new BadRequestAlertException("A new customer cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        customer = customerRepository.save(customer);
+        customer = customerService.save(customer);
         return ResponseEntity.created(new URI("/api/customers/" + customer.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, customer.getId().toString()))
             .body(customer);
@@ -87,7 +88,7 @@ public class CustomerResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        customer = customerRepository.save(customer);
+        customer = customerService.update(customer);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, customer.getId().toString()))
             .body(customer);
@@ -121,31 +122,7 @@ public class CustomerResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Customer> result = customerRepository
-            .findById(customer.getId())
-            .map(existingCustomer -> {
-                if (customer.getEmail() != null) {
-                    existingCustomer.setEmail(customer.getEmail());
-                }
-                if (customer.getFirstName() != null) {
-                    existingCustomer.setFirstName(customer.getFirstName());
-                }
-                if (customer.getLastName() != null) {
-                    existingCustomer.setLastName(customer.getLastName());
-                }
-                if (customer.getCreatedAt() != null) {
-                    existingCustomer.setCreatedAt(customer.getCreatedAt());
-                }
-                if (customer.getPasswordHash() != null) {
-                    existingCustomer.setPasswordHash(customer.getPasswordHash());
-                }
-                if (customer.getAdress() != null) {
-                    existingCustomer.setAdress(customer.getAdress());
-                }
-
-                return existingCustomer;
-            })
-            .map(customerRepository::save);
+        Optional<Customer> result = customerService.partialUpdate(customer);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -163,12 +140,10 @@ public class CustomerResource {
     public List<Customer> getAllCustomers(@RequestParam(name = "filter", required = false) String filter) {
         if ("cart-is-null".equals(filter)) {
             LOG.debug("REST request to get all Customers where cart is null");
-            return StreamSupport.stream(customerRepository.findAll().spliterator(), false)
-                .filter(customer -> customer.getCart() == null)
-                .toList();
+            return customerService.findAllWhereCartIsNull();
         }
         LOG.debug("REST request to get all Customers");
-        return customerRepository.findAll();
+        return customerService.findAll();
     }
 
     /**
@@ -180,7 +155,7 @@ public class CustomerResource {
     @GetMapping("/{id}")
     public ResponseEntity<Customer> getCustomer(@PathVariable("id") Long id) {
         LOG.debug("REST request to get Customer : {}", id);
-        Optional<Customer> customer = customerRepository.findById(id);
+        Optional<Customer> customer = customerService.findOne(id);
         return ResponseUtil.wrapOrNotFound(customer);
     }
 
@@ -193,7 +168,7 @@ public class CustomerResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Customer : {}", id);
-        customerRepository.deleteById(id);
+        customerService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();

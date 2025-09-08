@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.clothy.myapp.IntegrationTest;
 import com.clothy.myapp.domain.Product;
 import com.clothy.myapp.repository.ProductRepository;
+import com.clothy.myapp.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
@@ -65,6 +66,9 @@ class ProductResourceIT {
 
     @Mock
     private ProductRepository productRepositoryMock;
+
+    @Mock
+    private ProductService productServiceMock;
 
     @Autowired
     private EntityManager em;
@@ -215,16 +219,16 @@ class ProductResourceIT {
 
     @SuppressWarnings({ "unchecked" })
     void getAllProductsWithEagerRelationshipsIsEnabled() throws Exception {
-        when(productRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+        when(productServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         restProductMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
 
-        verify(productRepositoryMock, times(1)).findAllWithEagerRelationships(any());
+        verify(productServiceMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @SuppressWarnings({ "unchecked" })
     void getAllProductsWithEagerRelationshipsIsNotEnabled() throws Exception {
-        when(productRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+        when(productServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         restProductMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
         verify(productRepositoryMock, times(1)).findAll(any(Pageable.class));
