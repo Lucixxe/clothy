@@ -1,0 +1,147 @@
+<div>
+  <h2 id="page-heading" data-cy="CartItemHeading">
+    <span jhiTranslate="clothyApp.cartItem.home.title">CartItems</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="clothyApp.cartItem.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-cart-item"
+        [routerLink]="['/cart-item/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="clothyApp.cartItem.home.createLabel">Créer un nouveau Cart Item</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error />
+
+  <jhi-alert />
+
+  @if (cartItems().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="clothyApp.cartItem.home.notFound">Aucun Cart Item trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="quantity">
+              <div class="d-flex">
+                <span jhiTranslate="clothyApp.cartItem.quantity">Quantity</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="unitPrice">
+              <div class="d-flex">
+                <span jhiTranslate="clothyApp.cartItem.unitPrice">Unit Price</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="lineTotal">
+              <div class="d-flex">
+                <span jhiTranslate="clothyApp.cartItem.lineTotal">Line Total</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="isInOrder">
+              <div class="d-flex">
+                <span jhiTranslate="clothyApp.cartItem.isInOrder">Is In Order</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="cart.id">
+              <div class="d-flex">
+                <span jhiTranslate="clothyApp.cartItem.cart">Cart</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="product.sku">
+              <div class="d-flex">
+                <span jhiTranslate="clothyApp.cartItem.product">Product</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="customerOrder.orderNumber">
+              <div class="d-flex">
+                <span jhiTranslate="clothyApp.cartItem.customerOrder">Customer Order</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (cartItem of cartItems(); track trackId(cartItem)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/cart-item', cartItem.id, 'view']">{{ cartItem.id }}</a>
+              </td>
+              <td>{{ cartItem.quantity }}</td>
+              <td>{{ cartItem.unitPrice }}</td>
+              <td>{{ cartItem.lineTotal }}</td>
+              <td>{{ cartItem.isInOrder }}</td>
+              <td>
+                @if (cartItem.cart) {
+                  <div>
+                    <a [routerLink]="['/cart', cartItem.cart.id, 'view']">{{ cartItem.cart.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (cartItem.product) {
+                  <div>
+                    <a [routerLink]="['/product', cartItem.product.id, 'view']">{{ cartItem.product.sku }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (cartItem.customerOrder) {
+                  <div>
+                    <a [routerLink]="['/customer-order', cartItem.customerOrder.id, 'view']">{{ cartItem.customerOrder.orderNumber }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/cart-item', cartItem.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/cart-item', cartItem.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(cartItem)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
