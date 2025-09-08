@@ -1,0 +1,72 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (cartItem(); as cartItemRef) {
+      <div>
+        <h2 data-cy="cartItemDetailsHeading"><span jhiTranslate="clothyApp.cartItem.detail.title">Cart Item</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ cartItemRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.cartItem.quantity">Quantity</span></dt>
+          <dd>
+            <span>{{ cartItemRef.quantity }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.cartItem.unitPrice">Unit Price</span></dt>
+          <dd>
+            <span>{{ cartItemRef.unitPrice }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.cartItem.lineTotal">Line Total</span></dt>
+          <dd>
+            <span>{{ cartItemRef.lineTotal }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.cartItem.isInOrder">Is In Order</span></dt>
+          <dd>
+            <span>{{ cartItemRef.isInOrder }}</span>
+          </dd>
+          <dt><span jhiTranslate="clothyApp.cartItem.cart">Cart</span></dt>
+          <dd>
+            @if (cartItem()!.cart) {
+              <div>
+                <a [routerLink]="['/cart', cartItem()!.cart?.id, 'view']">{{ cartItemRef.cart?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="clothyApp.cartItem.product">Product</span></dt>
+          <dd>
+            @if (cartItem()!.product) {
+              <div>
+                <a [routerLink]="['/product', cartItem()!.product?.id, 'view']">{{ cartItemRef.product?.sku }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="clothyApp.cartItem.customerOrder">Customer Order</span></dt>
+          <dd>
+            @if (cartItem()!.customerOrder) {
+              <div>
+                <a [routerLink]="['/customer-order', cartItem()!.customerOrder?.id, 'view']">{{
+                  cartItemRef.customerOrder?.orderNumber
+                }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/cart-item', cartItemRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>
