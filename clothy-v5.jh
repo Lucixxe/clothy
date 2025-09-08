@@ -1,0 +1,57 @@
+entity Category {
+  name String required unique,
+  slug String required unique,
+  isActive Boolean required
+}
+
+entity Product {
+  name String required,
+  sku Integer required unique,
+  price BigDecimal required
+}
+
+entity Customer {
+  email String required unique,
+  firstName String required,
+  lastName String required,
+  createdAt Instant required,
+  passwordHash String required,
+  adress String required
+}
+
+entity Cart {
+  cartKey UUID required unique,
+  createdAt Instant required,
+  isCheckedOut Boolean required
+}
+
+entity CartItem {
+  quantity Integer required min(1),
+  unitPrice BigDecimal required,
+  lineTotal BigDecimal required,
+  isInOrder Boolean required
+}
+
+entity CustomerOrder {
+  orderNumber String required unique,
+  createdAt Instant required,
+  total BigDecimal required
+}
+
+
+// -------- RELATIONSHIPS (ne comptent pas comme champs)
+relationship ManyToOne {
+
+  CartItem{cart} to Cart,
+  CartItem{product(sku)} to Product,
+  CustomerOrder{customer(email)} to Customer,
+  CartItem{customerOrder(orderNumber)} to CustomerOrder,
+}
+
+relationship OneToOne {
+  Cart{customer(email) required} to Customer
+}
+
+relationship ManyToMany {
+	Product{category(name)} to Category
+}
