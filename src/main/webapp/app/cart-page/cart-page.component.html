@@ -10,7 +10,11 @@
     <div class="cart-item-info">
       <span class="cart-item-name">{{ item.name }}</span>
       <span class="cart-item-price">{{ item.price }} €</span>
-      <span class="cart-item-qty">x {{ item.quantity }}</span>
+      <span class="cart-item-qty">
+        <button (click)="decreaseQty(item)">−</button>
+        x {{ item.quantity }}
+        <button (click)="increaseQty(item)">+</button>
+      </span>
     </div>
     <button class="cart-remove-btn" (click)="remove(item.id)"><i class="fa fa-trash"></i> Retirer</button>
   </div>
