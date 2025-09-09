@@ -1,6 +1,7 @@
 <div class="payement-container">
   <h2>Terminal de paiement</h2>
   <form [formGroup]="payementForm" (ngSubmit)="onSubmit()">
+    <!-- champ Nom sur la carte -->
     <div class="form-group">
       <label for="nom">Nom sur la carte</label>
       <input id="nom" type="text" formControlName="nom" />
@@ -10,6 +11,7 @@
       </div>
     </div>
 
+    <!-- champ Numéro de carte -->
     <div class="form-group">
       <label for="numeroCarte">Numéro de carte</label>
       <input id="numeroCarte" type="text" formControlName="numeroCarte" maxlength="16" />

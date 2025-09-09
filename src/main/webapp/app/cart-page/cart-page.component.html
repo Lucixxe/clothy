@@ -20,7 +20,9 @@
       Total : <strong>{{ total }} €</strong>
     </p>
     <button class="cart-clear-btn" (click)="clear()"><i class="fa fa-trash"></i> Vider le panier</button>
-    <button class="payement" routerLink="/payement"><i class="fa fa-trash"></i> passer au payement</button>
+
+    <!-- Bouton sécurisé pour le paiement -->
+    <button class="payement" (click)="goToPayment()"><i class="fa fa-credit-card"></i> Passer au paiement</button>
   </div>
 </div>
 
