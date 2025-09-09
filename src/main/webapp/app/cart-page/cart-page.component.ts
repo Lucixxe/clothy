@@ -49,4 +49,17 @@ export class CartPageComponent implements OnInit {
       this.router.navigate(['/login']); // non connecté → login
     }
   }
+  increaseQty(item: CartItem): void {
+    item.quantity++;
+    this.cartService.updateItems(this.items);
+    this.loadCart();
+  }
+
+  decreaseQty(item: CartItem): void {
+    if (item.quantity > 1) {
+      item.quantity--;
+      this.cartService.updateItems(this.items);
+      this.loadCart();
+    }
+  }
 }
