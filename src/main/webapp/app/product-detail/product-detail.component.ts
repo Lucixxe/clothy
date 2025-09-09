@@ -15,6 +15,7 @@ import { CartService } from '../core/cart/cart.service';
 export class ProductDetailComponent implements OnInit {
   product: IProduct | null = null;
   loading = true;
+  addedToCart = false;
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -51,5 +52,7 @@ export class ProductDetailComponent implements OnInit {
       price: product.price,
       quantity: 1,
     });
+    this.addedToCart = true;
+    setTimeout(() => (this.addedToCart = false), 1200); // Animation visible 1.2s
   }
 }
