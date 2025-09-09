@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CartService, CartItem } from '../core/cart/cart.service';
 import { CommonModule } from '@angular/common';
-
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-cart-page',
   templateUrl: './cart-page.component.html',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   standalone: true,
 })
 export class CartPageComponent implements OnInit {
