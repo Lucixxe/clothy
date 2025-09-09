@@ -24,6 +24,7 @@
       "createdAt": "Created At",
       "passwordHash": "Password Hash",
       "adress": "Adress",
+      "user": "User",
       "cart": "Cart"
     }
   }

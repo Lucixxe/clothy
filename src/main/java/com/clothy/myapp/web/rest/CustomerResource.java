@@ -55,6 +55,9 @@ public class CustomerResource {
         if (customer.getId() != null) {
             throw new BadRequestAlertException("A new customer cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        if (Objects.isNull(customer.getUser())) {
+            throw new BadRequestAlertException("Invalid association value provided", ENTITY_NAME, "null");
+        }
         customer = customerService.save(customer);
         return ResponseEntity.created(new URI("/api/customers/" + customer.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, customer.getId().toString()))
@@ -133,11 +136,15 @@ public class CustomerResource {
     /**
      * {@code GET  /customers} : get all the customers.
      *
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @param filter the filter of the request.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of customers in body.
      */
     @GetMapping("")
-    public List<Customer> getAllCustomers(@RequestParam(name = "filter", required = false) String filter) {
+    public List<Customer> getAllCustomers(
+        @RequestParam(name = "filter", required = false) String filter,
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+    ) {
         if ("cart-is-null".equals(filter)) {
             LOG.debug("REST request to get all Customers where cart is null");
             return customerService.findAllWhereCartIsNull();

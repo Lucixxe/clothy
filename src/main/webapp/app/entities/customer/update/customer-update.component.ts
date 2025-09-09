@@ -2,11 +2,13 @@ import { Component, OnInit, inject } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 import SharedModule from 'app/shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { IUser } from 'app/entities/user/user.model';
+import { UserService } from 'app/entities/user/service/user.service';
 import { ICustomer } from '../customer.model';
 import { CustomerService } from '../service/customer.service';
 import { CustomerFormGroup, CustomerFormService } from './customer-form.service';
@@ -20,12 +22,17 @@ export class CustomerUpdateComponent implements OnInit {
   isSaving = false;
   customer: ICustomer | null = null;
 
+  usersSharedCollection: IUser[] = [];
+
   protected customerService = inject(CustomerService);
   protected customerFormService = inject(CustomerFormService);
+  protected userService = inject(UserService);
   protected activatedRoute = inject(ActivatedRoute);
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   editForm: CustomerFormGroup = this.customerFormService.createCustomerFormGroup();
+
+  compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ customer }) => {
@@ -33,6 +40,8 @@ export class CustomerUpdateComponent implements OnInit {
       if (customer) {
         this.updateForm(customer);
       }
+
+      this.loadRelationshipsOptions();
     });
   }
 
@@ -72,5 +81,15 @@ export class CustomerUpdateComponent implements OnInit {
   protected updateForm(customer: ICustomer): void {
     this.customer = customer;
     this.customerFormService.resetForm(this.editForm, customer);
+
+    this.usersSharedCollection = this.userService.addUserToCollectionIfMissing<IUser>(this.usersSharedCollection, customer.user);
+  }
+
+  protected loadRelationshipsOptions(): void {
+    this.userService
+      .query()
+      .pipe(map((res: HttpResponse<IUser[]>) => res.body ?? []))
+      .pipe(map((users: IUser[]) => this.userService.addUserToCollectionIfMissing<IUser>(users, this.customer?.user)))
+      .subscribe((users: IUser[]) => (this.usersSharedCollection = users));
   }
 }

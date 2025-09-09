@@ -166,7 +166,7 @@ describe('Customer Service', () => {
       });
 
       it('should return false if one entity is null', () => {
-        const entity1 = { id: 26915 };
+        const entity1 = { id: 8289 };
         const entity2 = null;
 
         const compareResult1 = service.compareCustomer(entity1, entity2);
@@ -177,8 +177,8 @@ describe('Customer Service', () => {
       });
 
       it('should return false if primaryKey differs', () => {
-        const entity1 = { id: 26915 };
-        const entity2 = { id: 21032 };
+        const entity1 = { id: 8289 };
+        const entity2 = { id: 13667 };
 
         const compareResult1 = service.compareCustomer(entity1, entity2);
         const compareResult2 = service.compareCustomer(entity2, entity1);
@@ -188,8 +188,8 @@ describe('Customer Service', () => {
       });
 
       it('should return false if primaryKey matches', () => {
-        const entity1 = { id: 26915 };
-        const entity2 = { id: 26915 };
+        const entity1 = { id: 8289 };
+        const entity2 = { id: 8289 };
 
         const compareResult1 = service.compareCustomer(entity1, entity2);
         const compareResult2 = service.compareCustomer(entity2, entity1);

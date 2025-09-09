@@ -2,12 +2,15 @@ package com.clothy.myapp.service.impl;
 
 import com.clothy.myapp.domain.Customer;
 import com.clothy.myapp.repository.CustomerRepository;
+import com.clothy.myapp.repository.UserRepository;
 import com.clothy.myapp.service.CustomerService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +25,18 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
+    private final UserRepository userRepository;
+
+    public CustomerServiceImpl(CustomerRepository customerRepository, UserRepository userRepository) {
         this.customerRepository = customerRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public Customer save(Customer customer) {
         LOG.debug("Request to save Customer : {}", customer);
+        Long userId = customer.getUser().getId();
+        userRepository.findById(userId).ifPresent(customer::user);
         return customerRepository.save(customer);
     }
 
@@ -76,6 +84,10 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findAll();
     }
 
+    public Page<Customer> findAllWithEagerRelationships(Pageable pageable) {
+        return customerRepository.findAllWithEagerRelationships(pageable);
+    }
+
     /**
      *  Get all the customers where Cart is {@code null}.
      *  @return the list of entities.
@@ -92,7 +104,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional(readOnly = true)
     public Optional<Customer> findOne(Long id) {
         LOG.debug("Request to get Customer : {}", id);
-        return customerRepository.findById(id);
+        return customerRepository.findOneWithEagerRelationships(id);
     }
 
     @Override

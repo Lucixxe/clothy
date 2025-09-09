@@ -39,6 +39,10 @@
           <dd>
             <span>{{ customerRef.adress }}</span>
           </dd>
+          <dt><span jhiTranslate="clothyApp.customer.user">User</span></dt>
+          <dd>
+            <span>{{ customerRef.user?.login }}</span>
+          </dd>
         </dl>
 
         <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">

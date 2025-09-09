@@ -36,7 +36,18 @@
     }
   ],
   "name": "Customer",
-  "relationships": [],
+  "relationships": [
+    {
+      "id": true,
+      "otherEntityField": "login",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "customer",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-one",
+      "relationshipValidateRules": ["required"]
+    }
+  ],
   "searchEngine": "no",
   "service": "serviceImpl"
 }

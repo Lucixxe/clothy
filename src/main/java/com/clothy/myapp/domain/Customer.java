@@ -20,8 +20,6 @@ public class Customer implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
     @Column(name = "id")
     private Long id;
 
@@ -48,6 +46,12 @@ public class Customer implements Serializable {
     @NotNull
     @Column(name = "adress", nullable = false)
     private String adress;
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @NotNull
+    @MapsId
+    @JoinColumn(name = "id")
+    private User user;
 
     @JsonIgnoreProperties(value = { "customer" }, allowSetters = true)
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "customer")
@@ -144,6 +148,19 @@ public class Customer implements Serializable {
 
     public void setAdress(String adress) {
         this.adress = adress;
+    }
+
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Customer user(User user) {
+        this.setUser(user);
+        return this;
     }
 
     public Cart getCart() {

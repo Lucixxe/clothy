@@ -4,23 +4,33 @@ import static com.clothy.myapp.domain.CustomerAsserts.*;
 import static com.clothy.myapp.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.clothy.myapp.IntegrationTest;
 import com.clothy.myapp.domain.Customer;
+import com.clothy.myapp.domain.User;
 import com.clothy.myapp.repository.CustomerRepository;
+import com.clothy.myapp.repository.UserRepository;
+import com.clothy.myapp.service.CustomerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Integration tests for the {@link CustomerResource} REST controller.
  */
 @IntegrationTest
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
 class CustomerResourceIT {
@@ -65,6 +76,15 @@ class CustomerResourceIT {
     private CustomerRepository customerRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Mock
+    private CustomerRepository customerRepositoryMock;
+
+    @Mock
+    private CustomerService customerServiceMock;
+
+    @Autowired
     private EntityManager em;
 
     @Autowired
@@ -80,14 +100,20 @@ class CustomerResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Customer createEntity() {
-        return new Customer()
+    public static Customer createEntity(EntityManager em) {
+        Customer customer = new Customer()
             .email(DEFAULT_EMAIL)
             .firstName(DEFAULT_FIRST_NAME)
             .lastName(DEFAULT_LAST_NAME)
             .createdAt(DEFAULT_CREATED_AT)
             .passwordHash(DEFAULT_PASSWORD_HASH)
             .adress(DEFAULT_ADRESS);
+        // Add required entity
+        User user = UserResourceIT.createEntity();
+        em.persist(user);
+        em.flush();
+        customer.setUser(user);
+        return customer;
     }
 
     /**
@@ -96,19 +122,25 @@ class CustomerResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Customer createUpdatedEntity() {
-        return new Customer()
+    public static Customer createUpdatedEntity(EntityManager em) {
+        Customer updatedCustomer = new Customer()
             .email(UPDATED_EMAIL)
             .firstName(UPDATED_FIRST_NAME)
             .lastName(UPDATED_LAST_NAME)
             .createdAt(UPDATED_CREATED_AT)
             .passwordHash(UPDATED_PASSWORD_HASH)
             .adress(UPDATED_ADRESS);
+        // Add required entity
+        User user = UserResourceIT.createEntity();
+        em.persist(user);
+        em.flush();
+        updatedCustomer.setUser(user);
+        return updatedCustomer;
     }
 
     @BeforeEach
     void initTest() {
-        customer = createEntity();
+        customer = createEntity(em);
     }
 
     @AfterEach
@@ -138,6 +170,8 @@ class CustomerResourceIT {
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertCustomerUpdatableFieldsEquals(returnedCustomer, getPersistedCustomer(returnedCustomer));
 
+        assertCustomerMapsIdRelationshipPersistedValue(customer, returnedCustomer);
+
         insertedCustomer = returnedCustomer;
     }
 
@@ -156,6 +190,45 @@ class CustomerResourceIT {
 
         // Validate the Customer in the database
         assertSameRepositoryCount(databaseSizeBeforeCreate);
+    }
+
+    @Test
+    @Transactional
+    void updateCustomerMapsIdAssociationWithNewId() throws Exception {
+        // Initialize the database
+        insertedCustomer = customerRepository.saveAndFlush(customer);
+        long databaseSizeBeforeCreate = getRepositoryCount();
+        // Add a new parent entity
+        User user = UserResourceIT.createEntity();
+        em.persist(user);
+        em.flush();
+
+        // Load the customer
+        Customer updatedCustomer = customerRepository.findById(customer.getId()).orElseThrow();
+        assertThat(updatedCustomer).isNotNull();
+        // Disconnect from session so that the updates on updatedCustomer are not directly saved in db
+        em.detach(updatedCustomer);
+
+        // Update the User with new association value
+        updatedCustomer.setUser(user);
+
+        // Update the entity
+        restCustomerMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, updatedCustomer.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(om.writeValueAsBytes(updatedCustomer))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the Customer in the database
+        assertSameRepositoryCount(databaseSizeBeforeCreate);
+        /**
+         * Validate the id for MapsId, the ids must be same
+         * Uncomment the following line for assertion. However, please note that there is a known issue and uncommenting will fail the test.
+         * Please look at https://github.com/jhipster/generator-jhipster/issues/9100. You can modify this test as necessary.
+         * assertThat(testCustomer.getId()).isEqualTo(testCustomer.getUser().getId());
+         */
     }
 
     @Test
@@ -272,6 +345,23 @@ class CustomerResourceIT {
             .andExpect(jsonPath("$.[*].createdAt").value(hasItem(DEFAULT_CREATED_AT.toString())))
             .andExpect(jsonPath("$.[*].passwordHash").value(hasItem(DEFAULT_PASSWORD_HASH)))
             .andExpect(jsonPath("$.[*].adress").value(hasItem(DEFAULT_ADRESS)));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllCustomersWithEagerRelationshipsIsEnabled() throws Exception {
+        when(customerServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restCustomerMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(customerServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllCustomersWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(customerServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restCustomerMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
+        verify(customerRepositoryMock, times(1)).findAll(any(Pageable.class));
     }
 
     @Test

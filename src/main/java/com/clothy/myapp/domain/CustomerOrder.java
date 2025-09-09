@@ -39,7 +39,7 @@ public class CustomerOrder implements Serializable {
     private BigDecimal total;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "cart" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "user", "cart" }, allowSetters = true)
     private Customer customer;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
