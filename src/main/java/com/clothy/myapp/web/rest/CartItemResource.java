@@ -3,6 +3,7 @@ package com.clothy.myapp.web.rest;
 import com.clothy.myapp.domain.CartItem;
 import com.clothy.myapp.repository.CartItemRepository;
 import com.clothy.myapp.service.CartItemService;
+import com.clothy.myapp.service.dto.CartItemDTO;
 import com.clothy.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -59,6 +60,12 @@ public class CartItemResource {
         return ResponseEntity.created(new URI("/api/cart-items/" + cartItem.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, cartItem.getId().toString()))
             .body(cartItem);
+    }
+
+    @PostMapping("/creation-cartItem")
+    public ResponseEntity<CartItemDTO> ajoutPanier(@RequestBody CartItemDTO cartItemDTO) {
+        CartItemDTO resultat = cartItemService.ajoutPanier(cartItemDTO);
+        return ResponseEntity.ok().body(resultat);
     }
 
     /**

@@ -227,3 +227,7 @@ jhipster:
 # ===================================================================
 
 # application:
+
+logging:
+  level:
+    org.springframework.web: DEBUG
