@@ -17,7 +17,7 @@
         <p class="sku">SKU: {{ product.sku || 'N/A' }}</p>
         <div class="price">{{ product.price }} €</div>
         <p class="description">On a pas mis de description pour le moment.</p>
-        <button class="add-to-cart-btn"><i class="fas fa-shopping-cart"></i> Ajouter au panier</button>
+        <button class="add-to-cart-btn" (click)="addToCart(product)"><i class="fas fa-shopping-cart"></i> Ajouter au panier</button>
       </div>
     </div>
   </div>

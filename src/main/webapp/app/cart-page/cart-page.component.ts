@@ -1,37 +1,38 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CartService, CartItem } from '../core/cart/cart.service';
 import { CommonModule } from '@angular/common';
 
-interface CartItem {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-}
-
 @Component({
-  selector: 'jhi-cart-page',
-  imports: [CommonModule],
+  selector: 'app-cart-page',
   templateUrl: './cart-page.component.html',
-  styleUrls: ['./cart-page.component.scss'],
+  imports: [CommonModule],
+  standalone: true,
 })
-export class CartPageComponent {
-  cartItems: CartItem[] = [
-    // exemple d'articles, à remplacer par le service réel
-    { id: 1, name: 'T-shirt Homme', price: 19.99, quantity: 2, image: 'assets/images/tshirt.jpg' },
-    { id: 2, name: 'Chaussures', price: 49.99, quantity: 1, image: 'assets/images/shoes.jpg' },
-  ];
+export class CartPageComponent implements OnInit {
+  items: CartItem[] = [];
+  total = 0;
 
-  getTotal(): number {
-    return this.cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  constructor(private cartService: CartService) {}
+
+  ngOnInit(): void {
+    this.loadCart();
   }
 
-  removeItem(item: CartItem) {
-    this.cartItems = this.cartItems.filter(i => i.id !== item.id);
+  loadCart(): void {
+    this.items = this.cartService.getItems();
+    this.total = this.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   }
 
-  checkout() {
-    alert('Redirection vers la page de paiement...');
-    // ici tu peux naviguer vers une page de checkout
+  remove(id: number): void {
+    this.items = this.items.filter(item => item.id !== id);
+    this.cartService.updateItems(this.items);
+    this.loadCart();
+  }
+
+  clear(): void {
+    this.items = [];
+    this.cartService.updateItems(this.items);
+    this.loadCart();
   }
 }
+export class AppModule {}
