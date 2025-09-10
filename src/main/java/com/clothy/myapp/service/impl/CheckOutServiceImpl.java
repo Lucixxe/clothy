@@ -22,9 +22,8 @@ public class CheckOutServiceImpl implements CheckOutService {
         var cart = cartRepository.findById(cartId).orElseThrow(() -> new RuntimeException("Panier non trouvé"));
 
         // On suppose que cart.getItems() retourne la liste des CartItem
-        cart
-            .getItems()
-            .forEach(cartItem -> {
+        /* 
+        cart.getItems().forEach(cartItem -> {
                 var product = cartItem.getProduct();
                 int quantity = cartItem.getQuantity();
 
@@ -40,5 +39,7 @@ public class CheckOutServiceImpl implements CheckOutService {
         result.setSuccess(true);
         result.setMessage("Checkout effectué, stock mis à jour.");
         return result;
+        */
+        return null;
     }
 }

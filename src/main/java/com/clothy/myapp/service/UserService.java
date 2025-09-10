@@ -2,9 +2,11 @@ package com.clothy.myapp.service;
 
 import com.clothy.myapp.config.Constants;
 import com.clothy.myapp.domain.Authority;
+import com.clothy.myapp.domain.Cart;
 import com.clothy.myapp.domain.Customer;
 import com.clothy.myapp.domain.User;
 import com.clothy.myapp.repository.AuthorityRepository;
+import com.clothy.myapp.repository.CartRepository;
 import com.clothy.myapp.repository.CustomerRepository;
 import com.clothy.myapp.repository.UserRepository;
 import com.clothy.myapp.security.AuthoritiesConstants;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,18 +53,22 @@ public class UserService {
 
     private final CustomerRepository customerRepository;
 
+    private final CartRepository cartRepository;
+
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
         CacheManager cacheManager,
-        CustomerRepository customerRepository
+        CustomerRepository customerRepository,
+        CartRepository cartRepo
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
         this.customerRepository = customerRepository;
+        this.cartRepository = cartRepo;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -164,6 +171,15 @@ public class UserService {
             customer.setAdress(user.getImageUrl()); // Laisser vide temporairement pour tester
 
             customerRepository.save(customer);
+
+            Cart cart = new Cart();
+            UUID uuid = UUID.randomUUID();
+            cart.setCartKey(uuid);
+            cart.setCreatedAt(Instant.now());
+            cart.setIsCheckedOut(false);
+            cart.setCustomer(customer);
+            cartRepository.save(cart);
+
             LOG.debug("Created Customer for User: {}", customer);
         } catch (Exception e) {
             LOG.error("Error creating customer during registration: {}", e.getMessage());
