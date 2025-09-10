@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -37,6 +37,7 @@ export default class RegisterComponent implements AfterViewInit {
 
   private readonly translateService = inject(TranslateService);
   private readonly registerService = inject(RegisterService);
+  private readonly router = inject(Router);
 
   ngAfterViewInit(): void {
     this.firstNameInput().nativeElement.focus();
@@ -83,24 +84,25 @@ export default class RegisterComponent implements AfterViewInit {
         imageUrl: this.registerForm.getRawValue().address,
       })
       .subscribe({
-        next: () => this.success.set(true),
+        next: () => {
+          this.success.set(true);
+          this.router.navigate(['/']); // ✅ redirection vers la page d'accueil après succès
+        },
         error: response => this.processError(response),
       });
+
     console.log(this.firstNameInput, ' ', password, ' ', email);
   }
 
   // Méthode pour générer un login unique
   private generateLogin(firstName: string, lastName: string): string {
-    // Vous pouvez adapter cette logique selon vos besoins
     const baseLogin = `${firstName.toLowerCase()}.${lastName.toLowerCase()}`;
-    // Ajouter un timestamp pour garantir l'unicité
     const timestamp = new Date().getTime().toString().slice(-4);
     return `${baseLogin}${timestamp}`;
   }
 
-  // Alternative: utiliser l'email comme login
   private generateLoginFromEmail(email: string): string {
-    return email.split('@')[0]; // Prend la partie avant le @
+    return email.split('@')[0];
   }
 
   private processError(response: HttpErrorResponse): void {
@@ -113,7 +115,6 @@ export default class RegisterComponent implements AfterViewInit {
     }
   }
 
-  // Méthode utilitaire pour vérifier la correspondance des mots de passe
   checkPasswordMatch(): boolean {
     const password = this.registerForm.get('password')?.value;
     const confirmPassword = this.registerForm.get('confirmPassword')?.value;

@@ -1,0 +1,13 @@
+{
+  "annotations": {
+    "changelogDate": "20250910081344"
+  },
+  "entityTableName": "jhi_user",
+  "fields": [],
+  "name": "User",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "no"
+}
