@@ -2,6 +2,7 @@
   <div class="logo">
     <span class="brand">Clothy</span>
   </div>
+
   <a class="floating-cart" routerLink="/cart-page">
     <i class="fas fa-shopping-cart"></i>
     <span class="cart-count"></span>
@@ -16,7 +17,16 @@
   </nav>
 
   <div class="auth-buttons">
-    <a class="alert-link" routerLink="/login">Se Connecter</a>
-    <a class="alert-link" routerLink="/account/register">S'Inscrire</a>
+    <!-- Si pas connecté -->
+    <ng-container *ngIf="!account()">
+      <a class="alert-link" routerLink="/login">Se Connecter</a>
+      <a class="alert-link" routerLink="/account/register">S'Inscrire</a>
+    </ng-container>
+
+    <!-- Si connecté -->
+    <ng-container *ngIf="account() as user">
+      <span>Bonjour, {{ user.firstName || user.login }}</span>
+      <button class="btn-logout" (click)="logout()">Se Déconnecter</button>
+    </ng-container>
   </div>
 </header>

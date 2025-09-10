@@ -1,16 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CartService, CartItem } from '../core/cart/cart.service';
 import { CommonModule } from '@angular/common';
+import { RouterLink, Router } from '@angular/router';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'app-cart-page',
   templateUrl: './cart-page.component.html',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   standalone: true,
 })
 export class CartPageComponent implements OnInit {
   items: CartItem[] = [];
   total = 0;
+
+  private accountService = inject(AccountService);
+  private router = inject(Router);
 
   constructor(private cartService: CartService) {}
 
@@ -34,5 +39,27 @@ export class CartPageComponent implements OnInit {
     this.cartService.updateItems(this.items);
     this.loadCart();
   }
+
+  goToPayment(): void {
+    // Vérifie si l'utilisateur est connecté
+    if (this.accountService.isAuthenticated()) {
+      this.router.navigate(['/payement']); // connecté → paiement
+    } else {
+      alert('Vous devez être connecté pour passer au paiement.');
+      this.router.navigate(['/login']); // non connecté → login
+    }
+  }
+  increaseQty(item: CartItem): void {
+    item.quantity++;
+    this.cartService.updateItems(this.items);
+    this.loadCart();
+  }
+
+  decreaseQty(item: CartItem): void {
+    if (item.quantity > 1) {
+      item.quantity--;
+      this.cartService.updateItems(this.items);
+      this.loadCart();
+    }
+  }
 }
-export class AppModule {}
