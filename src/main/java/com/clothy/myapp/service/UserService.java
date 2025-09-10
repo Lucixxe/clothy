@@ -2,8 +2,10 @@ package com.clothy.myapp.service;
 
 import com.clothy.myapp.config.Constants;
 import com.clothy.myapp.domain.Authority;
+import com.clothy.myapp.domain.Customer;
 import com.clothy.myapp.domain.User;
 import com.clothy.myapp.repository.AuthorityRepository;
+import com.clothy.myapp.repository.CustomerRepository;
 import com.clothy.myapp.repository.UserRepository;
 import com.clothy.myapp.security.AuthoritiesConstants;
 import com.clothy.myapp.security.SecurityUtils;
@@ -11,7 +13,11 @@ import com.clothy.myapp.service.dto.AdminUserDTO;
 import com.clothy.myapp.service.dto.UserDTO;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tech.jhipster.security.RandomUtil;
 
@@ -41,16 +48,20 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
+    private final CustomerRepository customerRepository;
+
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
-        CacheManager cacheManager
+        CacheManager cacheManager,
+        CustomerRepository customerRepository
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+        this.customerRepository = customerRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -93,6 +104,7 @@ public class UserService {
             });
     }
 
+    @Transactional
     public User registerUser(AdminUserDTO userDTO, String password) {
         userRepository
             .findOneByLogin(userDTO.getLogin().toLowerCase())
@@ -120,19 +132,43 @@ public class UserService {
         if (userDTO.getEmail() != null) {
             newUser.setEmail(userDTO.getEmail().toLowerCase());
         }
-        newUser.setImageUrl(userDTO.getImageUrl());
         newUser.setLangKey(userDTO.getLangKey());
         // new user is not active
-        newUser.setActivated(false);
+        newUser.setActivated(true);
+        newUser.setImageUrl(userDTO.getImageUrl());
         // new user gets registration key
         newUser.setActivationKey(RandomUtil.generateActivationKey());
         Set<Authority> authorities = new HashSet<>();
         authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
         newUser.setAuthorities(authorities);
         userRepository.save(newUser);
+        userRepository.flush(); // Force l'écriture dans la base
         this.clearUserCaches(newUser);
         LOG.debug("Created Information for User: {}", newUser);
+        // Appelle une méthode séparée pour créer le customer
+        createCustomerForUser(newUser, encryptedPassword);
+
         return newUser;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW) // Nouvelle transaction indépendante
+    public void createCustomerForUser(User user, String encryptedPassword) {
+        try {
+            Customer customer = new Customer();
+            customer.setEmail(user.getEmail());
+            customer.setFirstName(user.getFirstName());
+            customer.setLastName(user.getLastName());
+            customer.setCreatedAt(Instant.now());
+            customer.setPasswordHash(encryptedPassword);
+            // Remplacer la valeur problématique
+            customer.setAdress(user.getImageUrl()); // Laisser vide temporairement pour tester
+
+            customerRepository.save(customer);
+            LOG.debug("Created Customer for User: {}", customer);
+        } catch (Exception e) {
+            LOG.error("Error creating customer during registration: {}", e.getMessage());
+            // On continue malgré l'erreur pour ne pas bloquer l'inscription
+        }
     }
 
     private boolean removeNonActivatedUser(User existingUser) {
