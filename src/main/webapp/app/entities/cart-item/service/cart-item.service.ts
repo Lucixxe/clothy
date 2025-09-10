@@ -52,6 +52,10 @@ export class CartItemService {
     return o1 && o2 ? this.getCartItemIdentifier(o1) === this.getCartItemIdentifier(o2) : o1 === o2;
   }
 
+  addToCart(productId: number, quantity: number): Observable<ICartItem> {
+    return this.http.post<ICartItem>(`${this.resourceUrl}/creation-cartItem`, { productId, quantity });
+  }
+
   addCartItemToCollectionIfMissing<Type extends Pick<ICartItem, 'id'>>(
     cartItemCollection: Type[],
     ...cartItemsToCheck: (Type | null | undefined)[]

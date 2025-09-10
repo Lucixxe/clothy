@@ -1,8 +1,15 @@
 package com.clothy.myapp.service.impl;
 
+import com.clothy.myapp.domain.Cart;
 import com.clothy.myapp.domain.CartItem;
+import com.clothy.myapp.domain.Product;
 import com.clothy.myapp.repository.CartItemRepository;
+import com.clothy.myapp.repository.CartRepository;
+import com.clothy.myapp.repository.ProductRepository;
 import com.clothy.myapp.service.CartItemService;
+import com.clothy.myapp.service.dto.CartItemDTO;
+import jakarta.persistence.EntityNotFoundException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -23,8 +30,14 @@ public class CartItemServiceImpl implements CartItemService {
 
     private final CartItemRepository cartItemRepository;
 
-    public CartItemServiceImpl(CartItemRepository cartItemRepository) {
+    private final CartRepository cartRepository;
+
+    private final ProductRepository productRepository;
+
+    public CartItemServiceImpl(CartItemRepository cartItemRepository, CartRepository crtRepo, ProductRepository prdRepo) {
         this.cartItemRepository = cartItemRepository;
+        this.cartRepository = crtRepo;
+        this.productRepository = prdRepo;
     }
 
     @Override
@@ -86,5 +99,34 @@ public class CartItemServiceImpl implements CartItemService {
     public void delete(Long id) {
         LOG.debug("Request to delete CartItem : {}", id);
         cartItemRepository.deleteById(id);
+    }
+
+    @Override
+    public CartItemDTO ajoutPanier(Cart cart, Long productId, Integer quantity) {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException("Produit non trouvé"));
+
+        Optional<CartItem> existingItem = cartItemRepository.findByCartAndProduct(cart, product);
+
+        CartItem cartItem;
+
+        if (existingItem.isPresent()) {
+            cartItem = existingItem.get();
+            int newQuantity = cartItem.getQuantity() + quantity;
+            cartItem.setQuantity(newQuantity);
+            cartItem.setLineTotal(product.getPrice().multiply(BigDecimal.valueOf(newQuantity)));
+        } else {
+            cartItem = new CartItem();
+            cartItem.setCart(cart);
+            cartItem.setProduct(product);
+            cartItem.setQuantity(quantity);
+            cartItem.setUnitPrice(product.getPrice());
+            cartItem.setLineTotal(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
+            cartItem.setIsInOrder(false);
+        }
+        cartItem = cartItemRepository.save(cartItem);
+        CartItemDTO res = new CartItemDTO();
+        res.setProductId(product.getId());
+        res.setQuantity(cartItem.getQuantity());
+        return res;
     }
 }

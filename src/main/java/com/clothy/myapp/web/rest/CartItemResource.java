@@ -1,8 +1,16 @@
 package com.clothy.myapp.web.rest;
 
+import com.clothy.myapp.domain.Cart;
 import com.clothy.myapp.domain.CartItem;
+import com.clothy.myapp.domain.Customer;
+import com.clothy.myapp.domain.User;
 import com.clothy.myapp.repository.CartItemRepository;
+import com.clothy.myapp.repository.CartRepository;
+import com.clothy.myapp.repository.CustomerRepository;
+import com.clothy.myapp.repository.UserRepository;
+import com.clothy.myapp.security.SecurityUtils;
 import com.clothy.myapp.service.CartItemService;
+import com.clothy.myapp.service.dto.CartItemDTO;
 import com.clothy.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -37,9 +45,24 @@ public class CartItemResource {
 
     private final CartItemRepository cartItemRepository;
 
-    public CartItemResource(CartItemService cartItemService, CartItemRepository cartItemRepository) {
+    private final UserRepository userRepository;
+
+    private final CustomerRepository customerRepository;
+
+    private final CartRepository cartRepository;
+
+    public CartItemResource(
+        CartItemService cartItemService,
+        CartItemRepository cartItemRepository,
+        UserRepository usrRepo,
+        CustomerRepository custRepo,
+        CartRepository crtRepo
+    ) {
         this.cartItemService = cartItemService;
         this.cartItemRepository = cartItemRepository;
+        this.userRepository = usrRepo;
+        this.customerRepository = custRepo;
+        this.cartRepository = crtRepo;
     }
 
     /**
@@ -59,6 +82,18 @@ public class CartItemResource {
         return ResponseEntity.created(new URI("/api/cart-items/" + cartItem.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, cartItem.getId().toString()))
             .body(cartItem);
+    }
+
+    @PostMapping("/creation-cartItem")
+    public ResponseEntity<CartItemDTO> ajoutPanier(@RequestBody CartItemDTO cartItemDTO) {
+        String login = SecurityUtils.getCurrentUserLogin().orElseThrow();
+        User user = userRepository.findOneByLogin(login).orElseThrow();
+        Customer customer = customerRepository.findOneByUser(user).orElseThrow();
+
+        Cart cart = cartRepository.findByCustomer(customer).orElseThrow();
+
+        CartItemDTO cartDTO = cartItemService.ajoutPanier(cart, cartItemDTO.getProductId(), cartItemDTO.getQuantity());
+        return ResponseEntity.ok(cartItemDTO);
     }
 
     /**

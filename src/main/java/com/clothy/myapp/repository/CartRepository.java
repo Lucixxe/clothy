@@ -1,6 +1,7 @@
 package com.clothy.myapp.repository;
 
 import com.clothy.myapp.domain.Cart;
+import com.clothy.myapp.domain.Customer;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -34,4 +35,7 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
 
     @Query("select cart from Cart cart left join fetch cart.customer where cart.id =:id")
     Optional<Cart> findOneWithToOneRelationships(@Param("id") Long id);
+
+    @Query("select c from Cart c where c.customer = :customer")
+    Optional<Cart> findByCustomer(@Param("customer") Customer customer);
 }

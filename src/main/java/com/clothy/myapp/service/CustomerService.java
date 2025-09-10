@@ -3,6 +3,8 @@ package com.clothy.myapp.service;
 import com.clothy.myapp.domain.Customer;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service Interface for managing {@link com.clothy.myapp.domain.Customer}.
@@ -45,6 +47,14 @@ public interface CustomerService {
      * @return the {@link List} of entities.
      */
     List<Customer> findAllWhereCartIsNull();
+
+    /**
+     * Get all the customers with eager load of many-to-many relationships.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    Page<Customer> findAllWithEagerRelationships(Pageable pageable);
 
     /**
      * Get the "id" customer.

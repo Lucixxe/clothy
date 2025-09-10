@@ -38,7 +38,7 @@ public class Cart implements Serializable {
     @Column(name = "is_checked_out", nullable = false)
     private Boolean isCheckedOut;
 
-    @JsonIgnoreProperties(value = { "cart" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "user", "cart" }, allowSetters = true)
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @NotNull
     @JoinColumn(unique = true)

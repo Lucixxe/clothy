@@ -4,7 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from 'app/entities/product/service/product.service';
 import { IProduct } from 'app/entities/product/product.model';
 import { CartService } from '../core/cart/cart.service';
-
+import { CartItemService } from 'app/entities/cart-item/service/cart-item.service';
+import { AccountService } from 'app/core/auth/account.service';
 @Component({
   selector: 'jhi-product-detail',
   standalone: true,
@@ -20,6 +21,9 @@ export class ProductDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly productService = inject(ProductService);
+
+  protected cartItemService = inject(CartItemService);
+  protected accountService = inject(AccountService);
 
   constructor(private cartService: CartService) {}
 
@@ -46,13 +50,20 @@ export class ProductDetailComponent implements OnInit {
   }
 
   addToCart(product: any): void {
-    this.cartService.addItem({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      quantity: 1,
-    });
-    this.addedToCart = true;
-    setTimeout(() => (this.addedToCart = false), 1200); // Animation visible 1.2s
+    if (!this.accountService.isAuthenticated()) {
+      this.cartService.addItem({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: 1,
+      });
+      this.addedToCart = true;
+      setTimeout(() => (this.addedToCart = false), 1200); // Animation visible 1.2s
+    } else {
+      this.cartItemService.addToCart(product.id, 1).subscribe({
+        next: () => alert('${product.name} added to cart!'),
+        error: err => console.error('Error adding to cart', err),
+      });
+    }
   }
 }

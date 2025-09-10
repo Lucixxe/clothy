@@ -1,6 +1,8 @@
 package com.clothy.myapp.service;
 
+import com.clothy.myapp.domain.Cart;
 import com.clothy.myapp.domain.CartItem;
+import com.clothy.myapp.service.dto.CartItemDTO;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -63,4 +65,6 @@ public interface CartItemService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    CartItemDTO ajoutPanier(Cart cart, Long productId, Integer quantity);
 }
