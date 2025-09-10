@@ -29,10 +29,11 @@
           </dd>
           <dt><span jhiTranslate="clothyApp.product.category">Category</span></dt>
           <dd>
-            @if (product()!.categories) {
-              <div>
-                <a [routerLink]="['/category', product()!.categories?.[0]?.id, 'view']">{{ productRef.categories?.[0]?.name }}</a>
-              </div>
+            @for (category of productRef.categories; track $index; let last = $last) {
+              <span>
+                <a [routerLink]="['/category', category.id, 'view']">{{ category?.name }}</a
+                >{{ last ? '' : ', ' }}
+              </span>
             }
           </dd>
         </dl>

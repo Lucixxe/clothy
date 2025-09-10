@@ -1,5 +1,6 @@
 package com.clothy.myapp.service;
 
+import com.clothy.myapp.domain.Cart;
 import com.clothy.myapp.domain.CartItem;
 import com.clothy.myapp.service.dto.CartItemDTO;
 import java.util.List;
@@ -65,5 +66,5 @@ public interface CartItemService {
      */
     void delete(Long id);
 
-    CartItemDTO ajoutPanier(CartItemDTO cartItemDTO);
+    CartItemDTO ajoutPanier(Cart cart, Long productId, Integer quantity);
 }

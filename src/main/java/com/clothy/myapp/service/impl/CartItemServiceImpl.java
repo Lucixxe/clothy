@@ -102,11 +102,8 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public CartItemDTO ajoutPanier(CartItemDTO cartItemDTO) {
-        Cart cart = cartRepository.findById(cartItemDTO.getCartId()).orElseThrow(() -> new EntityNotFoundException("Panier non trouvé"));
-        Product product = productRepository
-            .findById(cartItemDTO.getProductId())
-            .orElseThrow(() -> new EntityNotFoundException("Produit non trouvé"));
+    public CartItemDTO ajoutPanier(Cart cart, Long productId, Integer quantity) {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException("Produit non trouvé"));
 
         Optional<CartItem> existingItem = cartItemRepository.findByCartAndProduct(cart, product);
 
@@ -114,21 +111,20 @@ public class CartItemServiceImpl implements CartItemService {
 
         if (existingItem.isPresent()) {
             cartItem = existingItem.get();
-            int newQuantity = cartItem.getQuantity() + cartItemDTO.getQuantity();
+            int newQuantity = cartItem.getQuantity() + quantity;
             cartItem.setQuantity(newQuantity);
             cartItem.setLineTotal(product.getPrice().multiply(BigDecimal.valueOf(newQuantity)));
         } else {
             cartItem = new CartItem();
             cartItem.setCart(cart);
             cartItem.setProduct(product);
-            cartItem.setQuantity(cartItemDTO.getQuantity());
+            cartItem.setQuantity(quantity);
             cartItem.setUnitPrice(product.getPrice());
-            cartItem.setLineTotal(product.getPrice().multiply(BigDecimal.valueOf(cartItemDTO.getQuantity())));
+            cartItem.setLineTotal(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
             cartItem.setIsInOrder(false);
         }
         cartItem = cartItemRepository.save(cartItem);
         CartItemDTO res = new CartItemDTO();
-        res.setCartId(cart.getId());
         res.setProductId(product.getId());
         res.setQuantity(cartItem.getQuantity());
         return res;
