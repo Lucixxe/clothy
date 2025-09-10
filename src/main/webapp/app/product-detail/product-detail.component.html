@@ -18,6 +18,7 @@
         <div class="price">{{ product.price }} €</div>
         <p class="description">On a pas mis de description pour le moment.</p>
         <button class="add-to-cart-btn" (click)="addToCart(product)"><i class="fas fa-shopping-cart"></i> Ajouter au panier</button>
+        <div *ngIf="addedToCart" class="cart-animation"><i class="fas fa-check"></i> Ajouté au panier !</div>
       </div>
     </div>
   </div>
