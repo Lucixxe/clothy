@@ -74,10 +74,13 @@ export default class RegisterComponent implements AfterViewInit {
     // Envoi au backend JHipster
     this.registerService
       .save({
-        login: login, // Utilisez le login généré
+        login: email,
         email,
         password,
         langKey: this.translateService.currentLang,
+        firstName: firstName,
+        lastName: lastName,
+        imageUrl: this.registerForm.getRawValue().address,
       })
       .subscribe({
         next: () => this.success.set(true),
