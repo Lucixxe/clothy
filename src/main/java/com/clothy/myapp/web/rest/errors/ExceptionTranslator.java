@@ -2,6 +2,9 @@ package com.clothy.myapp.web.rest.errors;
 
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
+import io.micrometer.common.lang.NonNull;
+import io.micrometer.core.ipc.http.HttpSender.Response;
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.Arrays;
@@ -19,6 +22,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.lang.Nullable;
@@ -252,5 +256,43 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
     private boolean containsPackageName(String message) {
         // This list is for sure not complete
         return StringUtils.containsAny(message, "org.", "java.", "net.", "jakarta.", "javax.", "com.", "io.", "de.", "com.clothy.myapp");
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleProductNotFound(@Nonnull ProductNotFoundException ex) {
+        ErrorResponse error = new ErrorResponse() {
+            @Override
+            public HttpStatusCode getStatusCode() {
+                return HttpStatus.NOT_FOUND;
+            }
+
+            @Override
+            public ProblemDetail getBody() {
+                ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+                problemDetail.setTitle("Produit non trouve");
+                problemDetail.setDetail("Produit a ete recheche dans la Base de donnees main il n'a pas ete retrouve");
+                return problemDetail;
+            }
+        };
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(CartNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCartNotFound(@Nonnull CartNotFoundException ex) {
+        ErrorResponse error = new ErrorResponse() {
+            @Override
+            public HttpStatusCode getStatusCode() {
+                return HttpStatus.NOT_FOUND;
+            }
+
+            @Override
+            public ProblemDetail getBody() {
+                ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+                problemDetail.setTitle("Panier non trouve");
+                problemDetail.setDetail("Panier a ete recheche dans la Base de donnees main il n'a pas ete retrouve");
+                return problemDetail;
+            }
+        };
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 }

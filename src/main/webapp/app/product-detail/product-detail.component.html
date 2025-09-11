@@ -8,7 +8,7 @@
 
     <div *ngIf="!loading && product" class="product-content">
       <div class="product-image">
-        <img [src]="'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=600&q=80'" [alt]="product.name" />
+        <img *ngIf="product.image" [src]="'data:' + product.imageContentType + ';base64,' + product.image" alt="{{ product.name }}" />
       </div>
 
       <div class="product-info">

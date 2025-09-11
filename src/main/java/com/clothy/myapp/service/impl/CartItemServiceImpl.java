@@ -8,6 +8,7 @@ import com.clothy.myapp.repository.CartRepository;
 import com.clothy.myapp.repository.ProductRepository;
 import com.clothy.myapp.service.CartItemService;
 import com.clothy.myapp.service.dto.CartItemDTO;
+import com.clothy.myapp.web.rest.errors.ProductNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -84,6 +85,10 @@ public class CartItemServiceImpl implements CartItemService {
         return cartItemRepository.findAll();
     }
 
+    public List<CartItem> findAllForCartItem(Long cartId) {
+        return cartItemRepository.getAllCartItemsForCart(cartId);
+    }
+
     public Page<CartItem> findAllWithEagerRelationships(Pageable pageable) {
         return cartItemRepository.findAllWithEagerRelationships(pageable);
     }
@@ -102,11 +107,11 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public CartItemDTO ajoutPanier(CartItemDTO cartItemDTO) {
-        Cart cart = cartRepository.findById(cartItemDTO.getCartId()).orElseThrow(() -> new EntityNotFoundException("Panier non trouvé"));
+    @Transactional
+    public CartItemDTO ajoutPanier(Cart cart, Long productId, Integer quantity) {
         Product product = productRepository
-            .findById(cartItemDTO.getProductId())
-            .orElseThrow(() -> new EntityNotFoundException("Produit non trouvé"));
+            .findById(productId)
+            .orElseThrow(() -> new ProductNotFoundException(Long.toString(productId), "Produit non trouvé"));
 
         Optional<CartItem> existingItem = cartItemRepository.findByCartAndProduct(cart, product);
 
@@ -114,21 +119,20 @@ public class CartItemServiceImpl implements CartItemService {
 
         if (existingItem.isPresent()) {
             cartItem = existingItem.get();
-            int newQuantity = cartItem.getQuantity() + cartItemDTO.getQuantity();
+            int newQuantity = cartItem.getQuantity() + quantity;
             cartItem.setQuantity(newQuantity);
             cartItem.setLineTotal(product.getPrice().multiply(BigDecimal.valueOf(newQuantity)));
         } else {
             cartItem = new CartItem();
             cartItem.setCart(cart);
             cartItem.setProduct(product);
-            cartItem.setQuantity(cartItemDTO.getQuantity());
+            cartItem.setQuantity(quantity);
             cartItem.setUnitPrice(product.getPrice());
-            cartItem.setLineTotal(product.getPrice().multiply(BigDecimal.valueOf(cartItemDTO.getQuantity())));
+            cartItem.setLineTotal(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
             cartItem.setIsInOrder(false);
         }
         cartItem = cartItemRepository.save(cartItem);
         CartItemDTO res = new CartItemDTO();
-        res.setCartId(cart.getId());
         res.setProductId(product.getId());
         res.setQuantity(cartItem.getQuantity());
         return res;

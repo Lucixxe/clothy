@@ -169,6 +169,7 @@ public class UserService {
             customer.setPasswordHash(encryptedPassword);
             // Remplacer la valeur problématique
             customer.setAdress(user.getImageUrl()); // Laisser vide temporairement pour tester
+            customer.setUser(user);
 
             customerRepository.save(customer);
 

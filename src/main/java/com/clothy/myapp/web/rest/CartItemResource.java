@@ -1,7 +1,14 @@
 package com.clothy.myapp.web.rest;
 
+import com.clothy.myapp.domain.Cart;
 import com.clothy.myapp.domain.CartItem;
+import com.clothy.myapp.domain.Customer;
+import com.clothy.myapp.domain.User;
 import com.clothy.myapp.repository.CartItemRepository;
+import com.clothy.myapp.repository.CartRepository;
+import com.clothy.myapp.repository.CustomerRepository;
+import com.clothy.myapp.repository.UserRepository;
+import com.clothy.myapp.security.SecurityUtils;
 import com.clothy.myapp.service.CartItemService;
 import com.clothy.myapp.service.dto.CartItemDTO;
 import com.clothy.myapp.web.rest.errors.BadRequestAlertException;
@@ -38,9 +45,24 @@ public class CartItemResource {
 
     private final CartItemRepository cartItemRepository;
 
-    public CartItemResource(CartItemService cartItemService, CartItemRepository cartItemRepository) {
+    private final UserRepository userRepository;
+
+    private final CustomerRepository customerRepository;
+
+    private final CartRepository cartRepository;
+
+    public CartItemResource(
+        CartItemService cartItemService,
+        CartItemRepository cartItemRepository,
+        UserRepository usrRepo,
+        CustomerRepository custRepo,
+        CartRepository crtRepo
+    ) {
         this.cartItemService = cartItemService;
         this.cartItemRepository = cartItemRepository;
+        this.userRepository = usrRepo;
+        this.customerRepository = custRepo;
+        this.cartRepository = crtRepo;
     }
 
     /**
@@ -64,8 +86,14 @@ public class CartItemResource {
 
     @PostMapping("/creation-cartItem")
     public ResponseEntity<CartItemDTO> ajoutPanier(@RequestBody CartItemDTO cartItemDTO) {
-        CartItemDTO resultat = cartItemService.ajoutPanier(cartItemDTO);
-        return ResponseEntity.ok().body(resultat);
+        String login = SecurityUtils.getCurrentUserLogin().orElseThrow();
+        User user = userRepository.findOneByLogin(login).orElseThrow();
+        Customer customer = customerRepository.findOneByUser(user).orElseThrow();
+
+        Cart cart = cartRepository.findByCustomer(customer).orElseThrow();
+
+        CartItemDTO cartDTO = cartItemService.ajoutPanier(cart, cartItemDTO.getProductId(), cartItemDTO.getQuantity());
+        return ResponseEntity.ok(cartDTO);
     }
 
     /**
@@ -147,6 +175,12 @@ public class CartItemResource {
     public List<CartItem> getAllCartItems(@RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload) {
         LOG.debug("REST request to get all CartItems");
         return cartItemService.findAll();
+    }
+
+    @GetMapping("/by-cart/{id}")
+    public List<CartItem> getAllCartItemsForCartId(@PathVariable("id") Long cartId) {
+        LOG.debug("REST request to get all CartItems for a cart ID");
+        return cartItemService.findAllForCartItem(cartId);
     }
 
     /**
