@@ -20,6 +20,6 @@ export class ArticleComponent {
 
   getProductImage(): string {
     // Image par défaut pour tous les produits
-    return 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=600&q=80';
+    return this.product.image ? `data:${this.product.imageContentType};base64,${this.product.image}` : 'assets/images/default-product.png';
   }
 }
