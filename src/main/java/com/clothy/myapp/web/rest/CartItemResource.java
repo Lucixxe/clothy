@@ -93,7 +93,7 @@ public class CartItemResource {
         Cart cart = cartRepository.findByCustomer(customer).orElseThrow();
 
         CartItemDTO cartDTO = cartItemService.ajoutPanier(cart, cartItemDTO.getProductId(), cartItemDTO.getQuantity());
-        return ResponseEntity.ok(cartItemDTO);
+        return ResponseEntity.ok(cartDTO);
     }
 
     /**
@@ -175,6 +175,12 @@ public class CartItemResource {
     public List<CartItem> getAllCartItems(@RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload) {
         LOG.debug("REST request to get all CartItems");
         return cartItemService.findAll();
+    }
+
+    @GetMapping("/by-cart/{id}")
+    public List<CartItem> getAllCartItemsForCartId(@PathVariable("id") Long cartId) {
+        LOG.debug("REST request to get all CartItems for a cart ID");
+        return cartItemService.findAllForCartItem(cartId);
     }
 
     /**

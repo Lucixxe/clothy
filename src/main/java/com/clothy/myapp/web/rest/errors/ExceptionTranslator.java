@@ -3,6 +3,7 @@ package com.clothy.myapp.web.rest.errors;
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
 import io.micrometer.common.lang.NonNull;
+import io.micrometer.core.ipc.http.HttpSender.Response;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -262,16 +263,36 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
         ErrorResponse error = new ErrorResponse() {
             @Override
             public HttpStatusCode getStatusCode() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'getStatusCode'");
+                return HttpStatus.NOT_FOUND;
             }
 
             @Override
             public ProblemDetail getBody() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'getBody'");
+                ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+                problemDetail.setTitle("Produit non trouve");
+                problemDetail.setDetail("Produit a ete recheche dans la Base de donnees main il n'a pas ete retrouve");
+                return problemDetail;
             }
         };
-        return null;
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(CartNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCartNotFound(@Nonnull CartNotFoundException ex) {
+        ErrorResponse error = new ErrorResponse() {
+            @Override
+            public HttpStatusCode getStatusCode() {
+                return HttpStatus.NOT_FOUND;
+            }
+
+            @Override
+            public ProblemDetail getBody() {
+                ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+                problemDetail.setTitle("Panier non trouve");
+                problemDetail.setDetail("Panier a ete recheche dans la Base de donnees main il n'a pas ete retrouve");
+                return problemDetail;
+            }
+        };
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 }

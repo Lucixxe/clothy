@@ -4,6 +4,7 @@ import com.clothy.myapp.repository.CartRepository;
 import com.clothy.myapp.repository.ProductRepository;
 import com.clothy.myapp.service.CheckOutService;
 import com.clothy.myapp.service.dto.CheckOutResultDTO;
+import com.clothy.myapp.web.rest.errors.CartNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,7 +20,7 @@ public class CheckOutServiceImpl implements CheckOutService {
 
     @Override
     public CheckOutResultDTO checkOut(Long cartId) {
-        var cart = cartRepository.findById(cartId).orElseThrow(() -> new RuntimeException("Panier non trouvé"));
+        //var cart = cartRepository.findById(cartId).orElseThrow(() -> new CartNotFoundException(Long.toString(cartId),"Panier non trouvé"));
 
         // On suppose que cart.getItems() retourne la liste des CartItem
         /* 
