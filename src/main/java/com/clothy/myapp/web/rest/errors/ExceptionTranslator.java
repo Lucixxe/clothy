@@ -2,6 +2,8 @@ package com.clothy.myapp.web.rest.errors;
 
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
+import io.micrometer.common.lang.NonNull;
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.Arrays;
@@ -19,6 +21,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.lang.Nullable;
@@ -252,5 +255,23 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
     private boolean containsPackageName(String message) {
         // This list is for sure not complete
         return StringUtils.containsAny(message, "org.", "java.", "net.", "jakarta.", "javax.", "com.", "io.", "de.", "com.clothy.myapp");
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleProductNotFound(@Nonnull ProductNotFoundException ex) {
+        ErrorResponse error = new ErrorResponse() {
+            @Override
+            public HttpStatusCode getStatusCode() {
+                // TODO Auto-generated method stub
+                throw new UnsupportedOperationException("Unimplemented method 'getStatusCode'");
+            }
+
+            @Override
+            public ProblemDetail getBody() {
+                // TODO Auto-generated method stub
+                throw new UnsupportedOperationException("Unimplemented method 'getBody'");
+            }
+        };
+        return null;
     }
 }

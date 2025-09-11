@@ -102,6 +102,7 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
+    @Transactional
     public CartItemDTO ajoutPanier(Cart cart, Long productId, Integer quantity) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException("Produit non trouvé"));
 
