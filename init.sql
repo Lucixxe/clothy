@@ -16,21 +16,21 @@ INSERT INTO category (id, name, slug, is_active) VALUES
 (5, 'Enfants', 'enfants', true),
 (6, 'Chaussures', 'chaussures', true);
 
+-- Option 1: Insérer les produits sans images pour le moment
+INSERT INTO product (id, name, sku, price, image_content_type) VALUES
+(1, 'Nike Air',         '20', 250, 'image/jpg'),
+(2, 'Nike P 3000',      '30', 250, 'image/jpg'),
+(3, 'Nike P 6000',      '40', 250, 'image/jpg');
 
-INSERT INTO product (id, name, sku, price, image, image_content_type) VALUES
-(1, 'Nike Air',         '20', 250, lo_import('/seed_images/chaussures-1.jpg'),     'image/jpg'),
-(2, 'Nike P 3000',      '30', 250, lo_import('/seed_images/chaussures-1.jpg'),     'image/jpg'),
-(3, 'Nike P 6000',      '40', 250, lo_import('/seed_images/chaussures-1.jpg'),     'image/jpg');
+INSERT INTO product (id, name, sku, price, image_content_type) VALUES
+(4, 'Pantallon Slim',   '25', 250, 'image/jpg'),
+(5, 'Pantallon Regular','35', 250, 'image/jpg'),
+(6, 'Pantallon Cargo',  '50', 250, 'image/jpg');
 
-INSERT INTO product (id, name, sku, price, image, image_content_type) VALUES
-(4, 'Pantallon Slim',   '25', 250, lo_import('/seed_images/chaussures-1.jpg'),     'image/jpg'),
-(5, 'Pantallon Regular','35', 250, lo_import('/seed_images/chaussures-1.jpg'),     'image/jpg'),
-(6, 'Pantallon Cargo',  '50', 250, lo_import('/seed_images/chaussures-1.jpg'),     'image/jpg');
-
-INSERT INTO product (id, name, sku, price, image, image_content_type) VALUES
-(7, 'Chemise Blanche',  '100',250, lo_import('/seed_images/chaussures-1.jpg'),     'image/jpg'),
-(8, 'Chemise Bleue',    '5',  250, lo_import('/seed_images/chaussures-1.jpg'),     'image/jpg'),
-(9, 'Chemise à Carreaux','12',250, lo_import('/seed_images/chaussures-1.jpg'),     'image/jpg');
+INSERT INTO product (id, name, sku, price, image_content_type) VALUES
+(7, 'Chemise Blanche',  '100',250, 'image/jpg'),
+(8, 'Chemise Bleue',    '5',  250, 'image/jpg'),
+(9, 'Chemise à Carreaux','12',250, 'image/jpg');
 
 -- Relations produit/catégorie
 INSERT INTO rel_product__category (category_id, product_id) VALUES
