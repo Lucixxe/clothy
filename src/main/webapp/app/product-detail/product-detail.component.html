@@ -8,8 +8,7 @@
 
     <div *ngIf="!loading && product" class="product-content">
       <div class="product-image">
-        <img [src]="product.image" alt="{{ product.name }}" />
-        <!--FIXME: l'image ne s'affiche pas-->
+        <img *ngIf="product.image" [src]="'data:' + product.imageContentType + ';base64,' + product.image" alt="{{ product.name }}" />
       </div>
 
       <div class="product-info">
