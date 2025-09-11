@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CartService, CartItem } from '../core/cart/cart.service';
+import { CartService, CartItem } from '../entities/cart/service/cart.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { AccountService } from 'app/core/auth/account.service';
@@ -24,8 +24,36 @@ export class CartPageComponent implements OnInit {
   }
 
   loadCart(): void {
-    this.items = this.cartService.getItems();
-    this.total = this.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    if (!this.accountService.isAuthenticated()) {
+      this.items = this.cartService.getItems();
+      this.total = this.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    } else {
+      // 1. Récupère le cartId du user connecté
+      this.cartService.getCurrentUserCartId().subscribe({
+        next: cartId => {
+          if (cartId) {
+            // 2. Récupère les CartItems liés à ce cartId
+            this.cartService.getCartItemsByCartId(cartId).subscribe({
+              next: cartItems => {
+                this.items = cartItems ?? [];
+                this.total = this.items.reduce((sum, item) => sum + (item.price ?? 0) * (item.quantity ?? 1), 0);
+              },
+              error: () => {
+                this.items = [];
+                this.total = 0;
+              },
+            });
+          } else {
+            this.items = [];
+            this.total = 0;
+          }
+        },
+        error: () => {
+          this.items = [];
+          this.total = 0;
+        },
+      });
+    }
   }
 
   remove(id: number): void {

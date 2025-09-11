@@ -204,4 +204,9 @@ public class CartItemResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    @GetMapping("/cart-items/by-cart/{cartId}")
+    public List<CartItem> getCartItemsByCartId(@PathVariable Long cartId) {
+        return cartItemService.findAllByCartId(cartId);
+    }
 }

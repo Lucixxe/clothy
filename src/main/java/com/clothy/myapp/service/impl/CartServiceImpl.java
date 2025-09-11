@@ -80,6 +80,13 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Long findByCustomerId(Long customerId) {
+        LOG.debug("Request to get Cart by customerId : {}", customerId);
+        return cartRepository.findCartIdByCustomerId(customerId);
+    }
+
+    @Override
     public void delete(Long id) {
         LOG.debug("Request to delete Cart : {}", id);
         cartRepository.deleteById(id);

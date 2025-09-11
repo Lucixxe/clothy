@@ -42,5 +42,10 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     )
     Optional<CartItem> findOneWithToOneRelationships(@Param("id") Long id);
 
+    //List<CartItem> findByCart_Id(Long cartId);
+
+    @Query("select ci from CartItem ci where ci.cart.id = :cartId")
+    List<CartItem> findAllByCartId(@Param("cartId") Long cartId);
+
     Optional<CartItem> findByCartAndProduct(Cart cart, Product product);
 }

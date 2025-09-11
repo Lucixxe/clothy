@@ -2,6 +2,7 @@ package com.clothy.myapp.web.rest;
 
 import com.clothy.myapp.domain.Cart;
 import com.clothy.myapp.repository.CartRepository;
+import com.clothy.myapp.security.SecurityUtils;
 import com.clothy.myapp.service.CartService;
 import com.clothy.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
@@ -151,6 +152,19 @@ public class CartResource {
         LOG.debug("REST request to get Cart : {}", id);
         Optional<Cart> cart = cartService.findOne(id);
         return ResponseUtil.wrapOrNotFound(cart);
+    }
+
+    /**
+     * {@code GET  /carts/current} : get the current user's cart.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the cart, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/current/id")
+    public ResponseEntity<Long> getCurrentUserCartId() {
+        Long customerId = SecurityUtils.getCurrentUserId()
+            .orElseThrow(() -> new BadRequestAlertException("Current user not found", ENTITY_NAME, "usernotfound"));
+        Long cart = cartService.findByCustomerId(customerId);
+        return cart != null ? ResponseEntity.ok(cart) : ResponseEntity.notFound().build();
     }
 
     /**
