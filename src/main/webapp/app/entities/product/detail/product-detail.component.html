@@ -27,6 +27,21 @@
           <dd>
             <span>{{ productRef.price }}</span>
           </dd>
+          <dt><span jhiTranslate="clothyApp.product.image">Image</span></dt>
+          <dd>
+            @if (productRef.image) {
+              <div>
+                <a (click)="openFile(productRef.image ?? '', productRef.imageContentType)">
+                  <img
+                    [src]="'data:' + productRef.imageContentType + ';base64,' + productRef.image"
+                    style="max-width: 100%"
+                    alt="product"
+                  />
+                </a>
+                {{ productRef.imageContentType }}, {{ byteSize(productRef.image ?? '') }}
+              </div>
+            }
+          </dd>
           <dt><span jhiTranslate="clothyApp.product.category">Category</span></dt>
           <dd>
             @for (category of productRef.categories; track $index; let last = $last) {

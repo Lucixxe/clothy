@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/check_out_order")
+@RequestMapping("/api/check-out-order")
 public class CheckOutResource {
 
     private final CheckOutService checkOutService;

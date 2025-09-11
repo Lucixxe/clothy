@@ -5,6 +5,8 @@ export interface IProduct {
   name?: string | null;
   sku?: number | null;
   price?: number | null;
+  image?: string | null;
+  imageContentType?: string | null;
   categories?: ICategory[] | null;
 }
 
