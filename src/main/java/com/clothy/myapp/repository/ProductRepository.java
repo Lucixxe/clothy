@@ -5,9 +5,12 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Spring Data JPA repository for the Product entity.
@@ -30,10 +33,12 @@ public interface ProductRepository extends ProductRepositoryWithBagRelationships
     }
 
     @Modifying
-    @Query("UPDATE Product p SET p.sku= p.sku - :quantity WHERE p.id = :productId AND p.sku >= :quantity")
+    @Transactional
+    @Query("UPDATE Product p SET p.sku = p.sku - :quantity WHERE p.id = :productId AND p.sku >= :quantity")
     int decrementStockAtomic(@Param("productId") Long productId, @Param("quantity") Integer quantity);
 
     @Modifying
+    @Transactional
     @Query("UPDATE Product p SET p.sku = p.sku + :quantity WHERE p.id = :productId")
     int incrementStockAtomic(@Param("productId") Long productId, @Param("quantity") Integer quantity);
 }
