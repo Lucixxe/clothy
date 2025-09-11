@@ -9,6 +9,7 @@ public class CartItemDTO implements Serializable {
     private Long productId;
     private Integer quantity;
     private CartItem cartItem;
+    private Long customerOrderId;
 
     public CartItemDTO() {}
 
@@ -43,5 +44,13 @@ public class CartItemDTO implements Serializable {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public Long getCustomerId() {
+        return customerOrderId;
+    }
+
+    public void setCustomerOrderId(Long customerOrderId) {
+        this.customerOrderId = customerOrderId;
     }
 }

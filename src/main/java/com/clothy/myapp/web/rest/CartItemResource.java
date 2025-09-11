@@ -11,6 +11,7 @@ import com.clothy.myapp.repository.UserRepository;
 import com.clothy.myapp.security.SecurityUtils;
 import com.clothy.myapp.service.CartItemService;
 import com.clothy.myapp.service.dto.CartItemDTO;
+import com.clothy.myapp.service.mapper.CartItemMapper;
 import com.clothy.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -51,18 +52,22 @@ public class CartItemResource {
 
     private final CartRepository cartRepository;
 
+    private final CartItemMapper cartItemMapper;
+
     public CartItemResource(
         CartItemService cartItemService,
         CartItemRepository cartItemRepository,
         UserRepository usrRepo,
         CustomerRepository custRepo,
-        CartRepository crtRepo
+        CartRepository crtRepo,
+        CartItemMapper crtMapper
     ) {
         this.cartItemService = cartItemService;
         this.cartItemRepository = cartItemRepository;
         this.userRepository = usrRepo;
         this.customerRepository = custRepo;
         this.cartRepository = crtRepo;
+        this.cartItemMapper = crtMapper;
     }
 
     /**
@@ -178,9 +183,9 @@ public class CartItemResource {
     }
 
     @GetMapping("/by-cart/{id}")
-    public List<CartItem> getAllCartItemsForCartId(@PathVariable("id") Long cartId) {
+    public List<CartItemDTO> getAllCartItemsForCartId(@PathVariable("id") Long cartId) {
         LOG.debug("REST request to get all CartItems for a cart ID");
-        return cartItemService.findAllForCartItem(cartId);
+        return cartItemService.findAllForCartItem(cartId).stream().map(cartItemMapper::toDto).toList();
     }
 
     /**
