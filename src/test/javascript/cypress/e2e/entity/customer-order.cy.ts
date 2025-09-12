@@ -15,7 +15,7 @@ describe('CustomerOrder e2e test', () => {
   const customerOrderPageUrlPattern = new RegExp('/customer-order(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const customerOrderSample = { orderNumber: 'équipe', createdAt: '2025-09-08T12:54:23.874Z', total: 12959.95 };
+  const customerOrderSample = { orderNumber: 'ainsi', createdAt: '2025-09-08T10:03:41.820Z', total: 28559.79 };
 
   let customerOrder;
 
@@ -157,15 +157,15 @@ describe('CustomerOrder e2e test', () => {
     });
 
     it('should create an instance of CustomerOrder', () => {
-      cy.get(`[data-cy="orderNumber"]`).type('chef de cuisine raccrocher');
-      cy.get(`[data-cy="orderNumber"]`).should('have.value', 'chef de cuisine raccrocher');
+      cy.get(`[data-cy="orderNumber"]`).type('ouin');
+      cy.get(`[data-cy="orderNumber"]`).should('have.value', 'ouin');
 
-      cy.get(`[data-cy="createdAt"]`).type('2025-09-07T13:57');
+      cy.get(`[data-cy="createdAt"]`).type('2025-09-08T12:56');
       cy.get(`[data-cy="createdAt"]`).blur();
-      cy.get(`[data-cy="createdAt"]`).should('have.value', '2025-09-07T13:57');
+      cy.get(`[data-cy="createdAt"]`).should('have.value', '2025-09-08T12:56');
 
-      cy.get(`[data-cy="total"]`).type('2704.73');
-      cy.get(`[data-cy="total"]`).should('have.value', '2704.73');
+      cy.get(`[data-cy="total"]`).type('8292.14');
+      cy.get(`[data-cy="total"]`).should('have.value', '8292.14');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

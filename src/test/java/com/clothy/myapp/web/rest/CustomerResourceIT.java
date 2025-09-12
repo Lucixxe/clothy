@@ -433,7 +433,7 @@ class CustomerResourceIT {
         Customer partialUpdatedCustomer = new Customer();
         partialUpdatedCustomer.setId(customer.getId());
 
-        partialUpdatedCustomer.email(UPDATED_EMAIL).adress(UPDATED_ADRESS);
+        partialUpdatedCustomer.lastName(UPDATED_LAST_NAME).passwordHash(UPDATED_PASSWORD_HASH);
 
         restCustomerMockMvc
             .perform(

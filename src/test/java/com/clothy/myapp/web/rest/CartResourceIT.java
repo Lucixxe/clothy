@@ -370,7 +370,7 @@ class CartResourceIT {
         Cart partialUpdatedCart = new Cart();
         partialUpdatedCart.setId(cart.getId());
 
-        partialUpdatedCart.cartKey(UPDATED_CART_KEY).createdAt(UPDATED_CREATED_AT);
+        partialUpdatedCart.cartKey(UPDATED_CART_KEY).createdAt(UPDATED_CREATED_AT).isCheckedOut(UPDATED_IS_CHECKED_OUT);
 
         restCartMockMvc
             .perform(

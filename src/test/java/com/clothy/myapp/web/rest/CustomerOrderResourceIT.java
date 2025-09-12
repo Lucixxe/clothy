@@ -352,7 +352,7 @@ class CustomerOrderResourceIT {
         CustomerOrder partialUpdatedCustomerOrder = new CustomerOrder();
         partialUpdatedCustomerOrder.setId(customerOrder.getId());
 
-        partialUpdatedCustomerOrder.total(UPDATED_TOTAL);
+        partialUpdatedCustomerOrder.createdAt(UPDATED_CREATED_AT).total(UPDATED_TOTAL);
 
         restCustomerOrderMockMvc
             .perform(

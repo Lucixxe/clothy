@@ -15,7 +15,7 @@ describe('Category e2e test', () => {
   const categoryPageUrlPattern = new RegExp('/category(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const categorySample = { name: 'sombrer en dépit de', slug: 'débrouiller rédaction', isActive: true };
+  const categorySample = { name: 'remédier sauf à', slug: 'sauf à', isActive: true };
 
   let category;
 
@@ -157,11 +157,11 @@ describe('Category e2e test', () => {
     });
 
     it('should create an instance of Category', () => {
-      cy.get(`[data-cy="name"]`).type('soit sédentaire');
-      cy.get(`[data-cy="name"]`).should('have.value', 'soit sédentaire');
+      cy.get(`[data-cy="name"]`).type('administration');
+      cy.get(`[data-cy="name"]`).should('have.value', 'administration');
 
-      cy.get(`[data-cy="slug"]`).type('avoir également');
-      cy.get(`[data-cy="slug"]`).should('have.value', 'avoir également');
+      cy.get(`[data-cy="slug"]`).type('environ à condition que ressentir');
+      cy.get(`[data-cy="slug"]`).should('have.value', 'environ à condition que ressentir');
 
       cy.get(`[data-cy="isActive"]`).should('not.be.checked');
       cy.get(`[data-cy="isActive"]`).click();

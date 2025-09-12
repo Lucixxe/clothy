@@ -16,12 +16,12 @@ describe('Customer e2e test', () => {
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
   const customerSample = {
-    email: 'Hardouin.Robert@yahoo.fr',
-    firstName: 'Alaine',
-    lastName: 'Guyot',
-    createdAt: '2025-09-08T05:36:30.301Z',
-    passwordHash: 'tendre vorace',
-    adress: 'pendant que frapper',
+    email: 'Mathilde.Martin@hotmail.fr',
+    firstName: 'Adolphe',
+    lastName: 'Vidal',
+    createdAt: '2025-09-07T19:51:08.895Z',
+    passwordHash: 'parce que quelquefois membre titulaire',
+    adress: 'timide apte',
   };
 
   let customer;
@@ -164,24 +164,24 @@ describe('Customer e2e test', () => {
     });
 
     it('should create an instance of Customer', () => {
-      cy.get(`[data-cy="email"]`).type('Jeremie1@gmail.com');
-      cy.get(`[data-cy="email"]`).should('have.value', 'Jeremie1@gmail.com');
+      cy.get(`[data-cy="email"]`).type('Michael.Fabre37@hotmail.fr');
+      cy.get(`[data-cy="email"]`).should('have.value', 'Michael.Fabre37@hotmail.fr');
 
-      cy.get(`[data-cy="firstName"]`).type('Fortunée');
-      cy.get(`[data-cy="firstName"]`).should('have.value', 'Fortunée');
+      cy.get(`[data-cy="firstName"]`).type('Pécine');
+      cy.get(`[data-cy="firstName"]`).should('have.value', 'Pécine');
 
-      cy.get(`[data-cy="lastName"]`).type('Schmitt');
-      cy.get(`[data-cy="lastName"]`).should('have.value', 'Schmitt');
+      cy.get(`[data-cy="lastName"]`).type('Lefevre');
+      cy.get(`[data-cy="lastName"]`).should('have.value', 'Lefevre');
 
-      cy.get(`[data-cy="createdAt"]`).type('2025-09-08T01:44');
+      cy.get(`[data-cy="createdAt"]`).type('2025-09-07T15:01');
       cy.get(`[data-cy="createdAt"]`).blur();
-      cy.get(`[data-cy="createdAt"]`).should('have.value', '2025-09-08T01:44');
+      cy.get(`[data-cy="createdAt"]`).should('have.value', '2025-09-07T15:01');
 
-      cy.get(`[data-cy="passwordHash"]`).type('parce que');
-      cy.get(`[data-cy="passwordHash"]`).should('have.value', 'parce que');
+      cy.get(`[data-cy="passwordHash"]`).type('chef à côté de');
+      cy.get(`[data-cy="passwordHash"]`).should('have.value', 'chef à côté de');
 
-      cy.get(`[data-cy="adress"]`).type('quoique prouver');
-      cy.get(`[data-cy="adress"]`).should('have.value', 'quoique prouver');
+      cy.get(`[data-cy="adress"]`).type('turquoise');
+      cy.get(`[data-cy="adress"]`).should('have.value', 'turquoise');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

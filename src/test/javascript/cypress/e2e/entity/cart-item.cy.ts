@@ -15,7 +15,7 @@ describe('CartItem e2e test', () => {
   const cartItemPageUrlPattern = new RegExp('/cart-item(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const cartItemSample = { quantity: 21813, unitPrice: 8956.52, lineTotal: 23699.24, isInOrder: true };
+  const cartItemSample = { quantity: 16860, unitPrice: 19783.39, lineTotal: 22856.77, isInOrder: false };
 
   let cartItem;
 
@@ -157,14 +157,14 @@ describe('CartItem e2e test', () => {
     });
 
     it('should create an instance of CartItem', () => {
-      cy.get(`[data-cy="quantity"]`).type('13699');
-      cy.get(`[data-cy="quantity"]`).should('have.value', '13699');
+      cy.get(`[data-cy="quantity"]`).type('29391');
+      cy.get(`[data-cy="quantity"]`).should('have.value', '29391');
 
-      cy.get(`[data-cy="unitPrice"]`).type('17980.49');
-      cy.get(`[data-cy="unitPrice"]`).should('have.value', '17980.49');
+      cy.get(`[data-cy="unitPrice"]`).type('11658.81');
+      cy.get(`[data-cy="unitPrice"]`).should('have.value', '11658.81');
 
-      cy.get(`[data-cy="lineTotal"]`).type('15577.6');
-      cy.get(`[data-cy="lineTotal"]`).should('have.value', '15577.6');
+      cy.get(`[data-cy="lineTotal"]`).type('4361.06');
+      cy.get(`[data-cy="lineTotal"]`).should('have.value', '4361.06');
 
       cy.get(`[data-cy="isInOrder"]`).should('not.be.checked');
       cy.get(`[data-cy="isInOrder"]`).click();
