@@ -185,7 +185,6 @@ public class CheckOutServiceImpl implements CheckOutService {
             result.setMessage("Checkout effectué, stock mis à jour, commande créée et cart items associés.");
             return result;
         } catch (OutOfStockException | ProductNotFoundException e) {
-            // Re-throw business logic exceptions
             throw e;
         } catch (Exception e) {
             errorMessage = "Erreur lors de la mise à jour du stock: " + e.getMessage();
