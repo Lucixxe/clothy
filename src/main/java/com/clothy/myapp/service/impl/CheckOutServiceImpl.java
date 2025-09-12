@@ -116,8 +116,8 @@ public class CheckOutServiceImpl implements CheckOutService {
             throw new CustomerNotFoundException("Aucun customer associé au cart ID: " + cartId);
         }
 
-        //Obtenir tous les produits TRIÈS du panier
-        List<Long> productIds = cartItems.stream().map(CartItemDTO::getProductId).distinct().sorted().collect(Collectors.toList());
+        //Obtenir tous les produits du panier
+        List<Long> productIds = cartItems.stream().map(CartItemDTO::getProductId).collect(Collectors.toList());
 
         Map<Long, Integer> productQuantityMap = cartItems
             .stream()
