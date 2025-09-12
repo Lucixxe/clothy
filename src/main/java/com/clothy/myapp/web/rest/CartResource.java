@@ -1,7 +1,11 @@
 package com.clothy.myapp.web.rest;
 
 import com.clothy.myapp.domain.Cart;
+import com.clothy.myapp.domain.Customer;
+import com.clothy.myapp.domain.User;
 import com.clothy.myapp.repository.CartRepository;
+import com.clothy.myapp.repository.CustomerRepository;
+import com.clothy.myapp.repository.UserRepository;
 import com.clothy.myapp.security.SecurityUtils;
 import com.clothy.myapp.service.CartService;
 import com.clothy.myapp.web.rest.errors.BadRequestAlertException;
@@ -31,6 +35,8 @@ public class CartResource {
 
     private static final String ENTITY_NAME = "cart";
 
+    private final UserRepository userRepository;
+
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
@@ -38,9 +44,18 @@ public class CartResource {
 
     private final CartRepository cartRepository;
 
-    public CartResource(CartService cartService, CartRepository cartRepository) {
+    private final CustomerRepository customerRepository;
+
+    public CartResource(
+        CartService cartService,
+        CartRepository cartRepository,
+        UserRepository userRepository,
+        CustomerRepository customerRepository
+    ) {
         this.cartService = cartService;
         this.cartRepository = cartRepository;
+        this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
     }
 
     /**
@@ -161,9 +176,10 @@ public class CartResource {
      */
     @GetMapping("/current/id")
     public ResponseEntity<Long> getCurrentUserCartId() {
-        Long customerId = SecurityUtils.getCurrentUserId()
-            .orElseThrow(() -> new BadRequestAlertException("Current user not found", ENTITY_NAME, "usernotfound"));
-        Long cart = cartService.findByCustomerId(customerId);
+        String login = SecurityUtils.getCurrentUserLogin().orElseThrow();
+        User user = userRepository.findOneByLogin(login).orElseThrow();
+        Customer customer = customerRepository.findOneByUser(user).orElseThrow();
+        Long cart = cartService.findByCustomerId(customer.getId());
         return cart != null ? ResponseEntity.ok(cart) : ResponseEntity.notFound().build();
     }
 

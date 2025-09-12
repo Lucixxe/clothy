@@ -46,8 +46,8 @@ public class CartItem implements Serializable {
     @JsonIgnoreProperties(value = { "customer" }, allowSetters = true)
     private Cart cart;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "categories" }, allowSetters = true)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnoreProperties(value = { "cartItems", "categories" }, allowSetters = true)
     private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -181,13 +181,19 @@ public class CartItem implements Serializable {
 
     // prettier-ignore
     @Override
-    public String toString() {
-        return "CartItem{" +
-            "id=" + getId() +
-            ", quantity=" + getQuantity() +
-            ", unitPrice=" + getUnitPrice() +
-            ", lineTotal=" + getLineTotal() +
-            ", isInOrder='" + getIsInOrder() + "'" +
-            "}";
-    }
+public String toString() {
+    return "CartItem{" +
+        "id=" + getId() +
+        ", quantity=" + getQuantity() +
+        ", unitPrice=" + getUnitPrice() +
+        ", lineTotal=" + getLineTotal() +
+        ", isInOrder=" + getIsInOrder() +
+        ", product={" +
+            "id=" + (product != null ? product.getId() : null) +
+            ", name='" + (product != null ? product.getName() : null) + '\'' +
+            ", sku=" + (product != null ? product.getSku() : null) +
+            ", price=" + (product != null ? product.getPrice() : null) +
+        "}" +
+        "}";
+}
 }

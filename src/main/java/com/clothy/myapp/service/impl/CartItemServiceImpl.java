@@ -53,6 +53,11 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
+    public List<CartItem> findAllForCartItem(Long cartId) {
+        return cartItemRepository.getAllCartItemsForCart(cartId);
+    }
+
+    @Override
     public Optional<CartItem> partialUpdate(CartItem cartItem) {
         LOG.debug("Request to partially update CartItem : {}", cartItem);
 

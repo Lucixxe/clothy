@@ -1,15 +1,15 @@
 <h2 class="cart-title">Votre panier</h2>
 
 <div class="cart-container">
-  <div *ngIf="items.length === 0" class="cart-empty">
+  <div *ngIf="itemsICart.length === 0" class="cart-empty">
     <i class="fa fa-shopping-cart fa-2x"></i>
     <p>Votre panier est vide.</p>
   </div>
 
-  <div *ngFor="let item of items" class="cart-item-card">
+  <div *ngFor="let item of itemsICart" class="cart-item-card">
     <div class="cart-item-info">
-      <span class="cart-item-name">{{ item.name }}</span>
-      <span class="cart-item-price">{{ item.price }} €</span>
+      <span class="cart-item-name">{{ item.product?.name }}</span>
+      <span class="cart-item-price">{{ item.product?.price }} €</span>
       <span class="cart-item-qty">
         <button (click)="decreaseQty(item)">−</button>
         x {{ item.quantity }}
@@ -19,7 +19,7 @@
     <button class="cart-remove-btn" (click)="remove(item.id)"><i class="fa fa-trash"></i> Retirer</button>
   </div>
 
-  <div *ngIf="items.length > 0" class="cart-total">
+  <div *ngIf="itemsICart.length > 0" class="cart-total">
     <p>
       Total : <strong>{{ total }} €</strong>
     </p>
