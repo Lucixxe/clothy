@@ -2,6 +2,7 @@ package com.clothy.myapp.service.impl;
 
 import com.clothy.myapp.domain.Customer;
 import com.clothy.myapp.repository.CustomerRepository;
+import com.clothy.myapp.repository.UserRepository;
 import com.clothy.myapp.service.CustomerService;
 import java.util.List;
 import java.util.Optional;
@@ -24,13 +25,18 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
+    private final UserRepository userRepository;
+
+    public CustomerServiceImpl(CustomerRepository customerRepository, UserRepository userRepository) {
         this.customerRepository = customerRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public Customer save(Customer customer) {
         LOG.debug("Request to save Customer : {}", customer);
+        Long userId = customer.getUser().getId();
+        userRepository.findById(userId).ifPresent(customer::user);
         return customerRepository.save(customer);
     }
 

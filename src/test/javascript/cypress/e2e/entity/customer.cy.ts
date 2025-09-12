@@ -15,26 +15,49 @@ describe('Customer e2e test', () => {
   const customerPageUrlPattern = new RegExp('/customer(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const customerSample = {
-    email: 'Hardouin.Robert@yahoo.fr',
-    firstName: 'Alaine',
-    lastName: 'Guyot',
-    createdAt: '2025-09-08T05:36:30.301Z',
-    passwordHash: 'tendre vorace',
-    adress: 'pendant que frapper',
-  };
+  // const customerSample = {"email":"Hardouin.Robert@yahoo.fr","firstName":"Alaine","lastName":"Guyot","createdAt":"2025-09-08T05:36:30.301Z","passwordHash":"tendre vorace","adress":"pendant que frapper"};
 
   let customer;
+  // let user;
 
   beforeEach(() => {
     cy.login(username, password);
   });
+
+  /* Disabled due to incompatibility
+  beforeEach(() => {
+    // create an instance at the required relationship entity:
+    cy.authenticatedRequest({
+      method: 'POST',
+      url: '/api/users',
+      body: {"login":"ae-@Sbpzm6","firstName":"Nadège","lastName":"Muller","email":"Azalee_Prevost84@gmail.com","imageUrl":"loufoque de peur que","langKey":"de crainte"},
+    }).then(({ body }) => {
+      user = body;
+    });
+  });
+   */
 
   beforeEach(() => {
     cy.intercept('GET', '/api/customers+(?*|)').as('entitiesRequest');
     cy.intercept('POST', '/api/customers').as('postEntityRequest');
     cy.intercept('DELETE', '/api/customers/*').as('deleteEntityRequest');
   });
+
+  /* Disabled due to incompatibility
+  beforeEach(() => {
+    // Simulate relationships api for better performance and reproducibility.
+    cy.intercept('GET', '/api/users', {
+      statusCode: 200,
+      body: [user],
+    });
+
+    cy.intercept('GET', '/api/carts', {
+      statusCode: 200,
+      body: [],
+    });
+
+  });
+   */
 
   afterEach(() => {
     if (customer) {
@@ -46,6 +69,19 @@ describe('Customer e2e test', () => {
       });
     }
   });
+
+  /* Disabled due to incompatibility
+  afterEach(() => {
+    if (user) {
+      cy.authenticatedRequest({
+        method: 'DELETE',
+        url: `/api/users/${user.id}`,
+      }).then(() => {
+        user = undefined;
+      });
+    }
+  });
+   */
 
   it('Customers menu should load Customers page', () => {
     cy.visit('/');
@@ -82,11 +118,15 @@ describe('Customer e2e test', () => {
     });
 
     describe('with existing value', () => {
+      /* Disabled due to incompatibility
       beforeEach(() => {
         cy.authenticatedRequest({
           method: 'POST',
           url: '/api/customers',
-          body: customerSample,
+          body: {
+            ...customerSample,
+            user: user,
+          },
         }).then(({ body }) => {
           customer = body;
 
@@ -99,13 +139,24 @@ describe('Customer e2e test', () => {
             {
               statusCode: 200,
               body: [customer],
-            },
+            }
           ).as('entitiesRequestInternal');
         });
 
         cy.visit(customerPageUrl);
 
         cy.wait('@entitiesRequestInternal');
+      });
+       */
+
+      beforeEach(function () {
+        cy.visit(customerPageUrl);
+
+        cy.wait('@entitiesRequest').then(({ response }) => {
+          if (response?.body.length === 0) {
+            this.skip();
+          }
+        });
       });
 
       it('detail button click should load details Customer page', () => {
@@ -139,7 +190,8 @@ describe('Customer e2e test', () => {
         cy.url().should('match', customerPageUrlPattern);
       });
 
-      it('last delete button click should delete instance of Customer', () => {
+      // Reason: cannot create a required entity with relationship with required relationships.
+      it.skip('last delete button click should delete instance of Customer', () => {
         cy.get(entityDeleteButtonSelector).last().click();
         cy.getEntityDeleteDialogHeading('customer').should('exist');
         cy.get(entityConfirmDeleteButtonSelector).click();
@@ -163,7 +215,8 @@ describe('Customer e2e test', () => {
       cy.getEntityCreateUpdateHeading('Customer');
     });
 
-    it('should create an instance of Customer', () => {
+    // Reason: cannot create a required entity with relationship with required relationships.
+    it.skip('should create an instance of Customer', () => {
       cy.get(`[data-cy="email"]`).type('Jeremie1@gmail.com');
       cy.get(`[data-cy="email"]`).should('have.value', 'Jeremie1@gmail.com');
 
@@ -182,6 +235,8 @@ describe('Customer e2e test', () => {
 
       cy.get(`[data-cy="adress"]`).type('quoique prouver');
       cy.get(`[data-cy="adress"]`).should('have.value', 'quoique prouver');
+
+      cy.get(`[data-cy="user"]`).select(1);
 
       cy.get(entityCreateSaveButtonSelector).click();
 

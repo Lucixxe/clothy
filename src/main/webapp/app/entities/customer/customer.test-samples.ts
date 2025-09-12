@@ -3,33 +3,33 @@ import dayjs from 'dayjs/esm';
 import { ICustomer, NewCustomer } from './customer.model';
 
 export const sampleWithRequiredData: ICustomer = {
-  id: 3366,
-  email: 'Nadine22@yahoo.fr',
-  firstName: 'Raoul',
-  lastName: 'Legrand',
-  createdAt: dayjs('2025-09-08T08:11'),
-  passwordHash: 'quoique zzzz',
-  adress: 'suivant ah',
+  id: 9734,
+  email: 'Josse.Legrand50@gmail.com',
+  firstName: 'Thibert',
+  lastName: 'Marchal',
+  createdAt: dayjs('2025-09-08T02:12'),
+  passwordHash: 'd’autant que coupable coac coac',
+  adress: 'dense gestionnaire hors',
 };
 
 export const sampleWithPartialData: ICustomer = {
-  id: 29162,
-  email: 'Lorraine96@hotmail.fr',
-  firstName: 'Loup',
-  lastName: 'Laine',
-  createdAt: dayjs('2025-09-07T16:11'),
-  passwordHash: 'souvent solitaire',
-  adress: 'adorable multiple tandis que',
+  id: 9060,
+  email: 'Thais29@hotmail.fr',
+  firstName: 'Timoléon',
+  lastName: 'Marchal',
+  createdAt: dayjs('2025-09-08T00:35'),
+  passwordHash: 'groin groin',
+  adress: 'solitaire pauvre résulter',
 };
 
 export const sampleWithFullData: ICustomer = {
-  id: 4149,
-  email: 'Angele6@yahoo.fr',
-  firstName: 'Pierre',
-  lastName: 'Durand',
-  createdAt: dayjs('2025-09-07T20:35'),
-  passwordHash: 'vouh chut conseil d’administration',
-  adress: 'clac parce que',
+  id: 4632,
+  email: 'Lorraine_Leclerc20@gmail.com',
+  firstName: 'Marie',
+  lastName: 'Carre',
+  createdAt: dayjs('2025-09-07T19:49'),
+  passwordHash: 'aussitôt que',
+  adress: 'chut conseil d’administration amorphe',
 };
 
 export const sampleWithNewData: NewCustomer = {
