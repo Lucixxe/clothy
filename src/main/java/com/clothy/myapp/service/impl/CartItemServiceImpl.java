@@ -142,4 +142,13 @@ public class CartItemServiceImpl implements CartItemService {
         res.setQuantity(cartItem.getQuantity());
         return res;
     }
+
+    @Override
+    @Transactional
+    public void deleteAllByCartId(Long cartId) {
+        List<CartItem> listOfCustomerItems = cartItemRepository.getAllCartItemsForCart(cartId);
+        for (CartItem c : listOfCustomerItems) {
+            delete(c.getId());
+        }
+    }
 }

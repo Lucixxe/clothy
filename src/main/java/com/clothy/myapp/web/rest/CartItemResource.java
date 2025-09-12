@@ -219,4 +219,13 @@ public class CartItemResource {
     public List<CartItem> getCartItemsByCartId(@PathVariable Long cartId) {
         return cartItemService.findAllByCartId(cartId);
     }
+
+    @DeleteMapping("/cart-items/empty-cart/{id}")
+    public ResponseEntity<Void> emptyCart(@PathVariable Long cartId) {
+        LOG.debug("REST request to delete cartItem : {" + cartId + "}");
+        cartItemService.deleteAllByCartId(cartId);
+        return ResponseEntity.noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, cartId.toString()))
+            .build();
+    }
 }
