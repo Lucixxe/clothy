@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
 
 import dayjs from 'dayjs/esm';
 
@@ -8,6 +8,15 @@ import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { ICart, NewCart } from '../cart.model';
+import { AccountService } from 'app/core/auth/account.service';
+
+export interface CartItem {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  productId?: number;
+}
 
 export type PartialUpdateCart = Partial<ICart> & Pick<ICart, 'id'>;
 
@@ -16,11 +25,8 @@ type RestOf<T extends ICart | NewCart> = Omit<T, 'createdAt'> & {
 };
 
 export type RestCart = RestOf<ICart>;
-
 export type NewRestCart = RestOf<NewCart>;
-
 export type PartialUpdateRestCart = RestOf<PartialUpdateCart>;
-
 export type EntityResponseType = HttpResponse<ICart>;
 export type EntityArrayResponseType = HttpResponse<ICart[]>;
 
@@ -28,9 +34,87 @@ export type EntityArrayResponseType = HttpResponse<ICart[]>;
 export class CartService {
   protected readonly http = inject(HttpClient);
   protected readonly applicationConfigService = inject(ApplicationConfigService);
+  protected readonly accountService = inject(AccountService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/carts');
+  private storageKey = 'cartItems';
 
+  // --- Cookies (utilisateur non connecté) ---
+  private getCookie(name: string): string | null {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? decodeURIComponent(match[2]) : null;
+  }
+
+  private setCookie(name: string, value: string, days = 7): void {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+  }
+
+  private removeCookie(name: string): void {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  }
+
+  getItems(): CartItem[] {
+    if (this.accountService.isAuthenticated()) {
+      // Utilisateur connecté : le panier est en base, cette méthode ne doit pas être utilisée
+      return [];
+    }
+    const stored = this.getCookie(this.storageKey);
+    return stored ? JSON.parse(stored) : [];
+  }
+
+  addItem(item: CartItem): void {
+    if (this.accountService.isAuthenticated()) {
+      // Utilisateur connecté : ajoute via l'API (à adapter selon ton API)
+      this.http.post('/api/cart-items', item).subscribe();
+    } else {
+      const items = this.getItems();
+      const existing = items.find(i => i.id === item.id);
+      if (existing) {
+        existing.quantity += item.quantity;
+      } else {
+        items.push(item);
+      }
+      this.save(items);
+    }
+  }
+
+  updateItems(items: CartItem[]): void {
+    if (this.accountService.isAuthenticated()) {
+      // Utilisateur connecté : met à jour via l'API (à adapter selon ton API)
+      this.http.put('/api/cart-items', items).subscribe();
+    } else {
+      this.save(items);
+    }
+  }
+
+  removeItem(id: number): void {
+    if (this.accountService.isAuthenticated()) {
+      this.http.delete(`/api/cart-items/${id}`).subscribe();
+    } else {
+      const items = this.getItems().filter(p => p.id !== id);
+      this.save(items);
+    }
+  }
+
+  clear(): void {
+    if (this.accountService.isAuthenticated()) {
+      this.http.delete('/api/cart-items').subscribe();
+    } else {
+      this.removeCookie(this.storageKey);
+    }
+  }
+
+  getCount(): number {
+    const items = this.getItems();
+    return items.reduce((sum, item) => sum + item.quantity, 0);
+  }
+
+  private save(items: CartItem[]): void {
+    this.setCookie(this.storageKey, JSON.stringify(items));
+  }
+
+  // --- API (utilisateur connecté) ---
   create(cart: NewCart): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(cart);
     return this.http.post<RestCart>(this.resourceUrl, copy, { observe: 'response' }).pipe(map(res => this.convertResponseFromServer(res)));
@@ -95,6 +179,7 @@ export class CartService {
     return cartCollection;
   }
 
+  // --- Utilitaires conversion date ---
   protected convertDateFromClient<T extends ICart | NewCart | PartialUpdateCart>(cart: T): RestOf<T> {
     return {
       ...cart,
@@ -119,5 +204,14 @@ export class CartService {
     return res.clone({
       body: res.body ? res.body.map(item => this.convertDateFromServer(item)) : null,
     });
+  }
+
+  // --- API pour récupérer le cartId et les CartItems ---
+  getCurrentUserCartId(): Observable<number> {
+    return this.http.get<number>('/api/carts/current/id');
+  }
+
+  getCartItemsByCartId(cartId: number): Observable<CartItem[]> {
+    return this.http.get<CartItem[]>(`/api/cart-items/by-cart/${cartId}`);
   }
 }

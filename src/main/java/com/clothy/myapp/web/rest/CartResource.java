@@ -1,7 +1,12 @@
 package com.clothy.myapp.web.rest;
 
 import com.clothy.myapp.domain.Cart;
+import com.clothy.myapp.domain.Customer;
+import com.clothy.myapp.domain.User;
 import com.clothy.myapp.repository.CartRepository;
+import com.clothy.myapp.repository.CustomerRepository;
+import com.clothy.myapp.repository.UserRepository;
+import com.clothy.myapp.security.SecurityUtils;
 import com.clothy.myapp.service.CartService;
 import com.clothy.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
@@ -30,6 +35,8 @@ public class CartResource {
 
     private static final String ENTITY_NAME = "cart";
 
+    private final UserRepository userRepository;
+
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
@@ -37,9 +44,18 @@ public class CartResource {
 
     private final CartRepository cartRepository;
 
-    public CartResource(CartService cartService, CartRepository cartRepository) {
+    private final CustomerRepository customerRepository;
+
+    public CartResource(
+        CartService cartService,
+        CartRepository cartRepository,
+        UserRepository userRepository,
+        CustomerRepository customerRepository
+    ) {
         this.cartService = cartService;
         this.cartRepository = cartRepository;
+        this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
     }
 
     /**
@@ -151,6 +167,20 @@ public class CartResource {
         LOG.debug("REST request to get Cart : {}", id);
         Optional<Cart> cart = cartService.findOne(id);
         return ResponseUtil.wrapOrNotFound(cart);
+    }
+
+    /**
+     * {@code GET  /carts/current} : get the current user's cart.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the cart, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/current/id")
+    public ResponseEntity<Long> getCurrentUserCartId() {
+        String login = SecurityUtils.getCurrentUserLogin().orElseThrow();
+        User user = userRepository.findOneByLogin(login).orElseThrow();
+        Customer customer = customerRepository.findOneByUser(user).orElseThrow();
+        Long cart = cartService.findByCustomerId(customer.getId());
+        return cart != null ? ResponseEntity.ok(cart) : ResponseEntity.notFound().build();
     }
 
     /**

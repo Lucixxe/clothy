@@ -66,6 +66,8 @@ public interface CartItemService {
      */
     void delete(Long id);
 
+    List<CartItem> findAllByCartId(Long cartId);
+
     CartItemDTO ajoutPanier(Cart cart, Long productId, Integer quantity);
 
     public List<CartItem> findAllForCartItem(Long cartId);

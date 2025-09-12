@@ -89,6 +89,11 @@ public class CartItemResource {
             .body(cartItem);
     }
 
+    @GetMapping("/by-cart/{id}")
+    public List<CartItem> getAllCartItemsForCartId(@PathVariable("id") Long cartId) {
+        return cartItemService.findAllForCartItem(cartId);
+    }
+
     @PostMapping("/creation-cartItem")
     public ResponseEntity<CartItemDTO> ajoutPanier(@RequestBody CartItemDTO cartItemDTO) {
         String login = SecurityUtils.getCurrentUserLogin().orElseThrow();
@@ -214,5 +219,10 @@ public class CartItemResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @GetMapping("/cart-items/by-cart/{cartId}")
+    public List<CartItem> getCartItemsByCartId(@PathVariable Long cartId) {
+        return cartItemService.findAllByCartId(cartId);
     }
 }
