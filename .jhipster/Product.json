@@ -18,6 +18,10 @@
       "fieldName": "price",
       "fieldType": "BigDecimal",
       "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "image",
+      "fieldType": "ImageBlob"
     }
   ],
   "name": "Product",

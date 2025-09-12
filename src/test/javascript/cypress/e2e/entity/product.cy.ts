@@ -15,7 +15,7 @@ describe('Product e2e test', () => {
   const productPageUrlPattern = new RegExp('/product(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const productSample = { name: 'adversaire plutôt', sku: 23516, price: 25140.07 };
+  const productSample = { name: 'gigantesque', sku: 6733, price: 13270.14 };
 
   let product;
 
@@ -157,15 +157,19 @@ describe('Product e2e test', () => {
     });
 
     it('should create an instance of Product', () => {
-      cy.get(`[data-cy="name"]`).type('charitable soigner');
-      cy.get(`[data-cy="name"]`).should('have.value', 'charitable soigner');
+      cy.get(`[data-cy="name"]`).type('de peur de');
+      cy.get(`[data-cy="name"]`).should('have.value', 'de peur de');
 
-      cy.get(`[data-cy="sku"]`).type('23968');
-      cy.get(`[data-cy="sku"]`).should('have.value', '23968');
+      cy.get(`[data-cy="sku"]`).type('22770');
+      cy.get(`[data-cy="sku"]`).should('have.value', '22770');
 
-      cy.get(`[data-cy="price"]`).type('32761.64');
-      cy.get(`[data-cy="price"]`).should('have.value', '32761.64');
+      cy.get(`[data-cy="price"]`).type('17168');
+      cy.get(`[data-cy="price"]`).should('have.value', '17168');
 
+      cy.setFieldImageAsBytesOfEntity('image', 'integration-test.png', 'image/png');
+
+      // since cypress clicks submit too fast before the blob fields are validated
+      cy.wait(200); // eslint-disable-line cypress/no-unnecessary-waiting
       cy.get(entityCreateSaveButtonSelector).click();
 
       cy.wait('@postEntityRequest').then(({ response }) => {

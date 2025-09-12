@@ -10,7 +10,7 @@
     -->
     <changeSet id="20250908130818-2" author="jhipster">
 
-        <addForeignKeyConstraint baseColumnNames="id"
+        <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="customer"
                                  constraintName="fk_customer__user_id"
                                  referencedColumnNames="id"

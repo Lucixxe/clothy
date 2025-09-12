@@ -21,6 +21,7 @@
       "name": "Name",
       "sku": "Sku",
       "price": "Price",
+      "image": "Image",
       "category": "Category"
     }
   }

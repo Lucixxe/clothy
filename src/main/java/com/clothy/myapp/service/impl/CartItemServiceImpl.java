@@ -8,6 +8,7 @@ import com.clothy.myapp.repository.CartRepository;
 import com.clothy.myapp.repository.ProductRepository;
 import com.clothy.myapp.service.CartItemService;
 import com.clothy.myapp.service.dto.CartItemDTO;
+import com.clothy.myapp.web.rest.errors.ProductNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -113,7 +114,9 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public CartItemDTO ajoutPanier(Cart cart, Long productId, Integer quantity) {
-        Product product = productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException("Produit non trouvé"));
+        Product product = productRepository
+            .findById(productId)
+            .orElseThrow(() -> new ProductNotFoundException(Long.toString(productId), "Produit non trouvé"));
 
         Optional<CartItem> existingItem = cartItemRepository.findByCartAndProduct(cart, product);
 

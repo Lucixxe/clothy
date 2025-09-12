@@ -61,6 +61,13 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
+            <th scope="col" jhiSortBy="image">
+              <div class="d-flex">
+                <span jhiTranslate="clothyApp.product.image">Image</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
             <th scope="col" jhiSortBy="category.name">
               <div class="d-flex">
                 <span jhiTranslate="clothyApp.product.category">Category</span>
@@ -79,6 +86,14 @@
               <td>{{ product.name }}</td>
               <td>{{ product.sku }}</td>
               <td>{{ product.price }}</td>
+              <td>
+                @if (product.image) {
+                  <a (click)="openFile(product.image, product.imageContentType)">
+                    <img [src]="'data:' + product.imageContentType + ';base64,' + product.image" style="max-height: 30px" alt="product" />
+                  </a>
+                  <span>{{ product.imageContentType }}, {{ byteSize(product.image) }}</span>
+                }
+              </td>
               <td>
                 @for (category of product.categories; track $index; let last = $last) {
                   <span>

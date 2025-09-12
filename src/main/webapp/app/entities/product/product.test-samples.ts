@@ -8,10 +8,10 @@ export const sampleWithRequiredData: IProduct = {
 };
 
 export const sampleWithPartialData: IProduct = {
-  id: 23028,
-  name: 'pourvu que à condition que',
-  sku: 15873,
-  price: 25953.08,
+  id: 14859,
+  name: 'turquoise influencer sage',
+  sku: 29615,
+  price: 6707.04,
 };
 
 export const sampleWithFullData: IProduct = {
@@ -19,6 +19,8 @@ export const sampleWithFullData: IProduct = {
   name: 'actionnaire',
   sku: 21233,
   price: 2026.75,
+  image: '../fake-data/blob/hipster.png',
+  imageContentType: 'unknown',
 };
 
 export const sampleWithNewData: NewProduct = {
