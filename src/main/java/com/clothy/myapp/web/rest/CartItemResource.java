@@ -106,6 +106,7 @@ public class CartItemResource {
         return ResponseEntity.ok(cartDTO);
     }
 
+    @PostMapping("/")
     /**
      * {@code PUT  /cart-items/:id} : Updates an existing cartItem.
      *
