@@ -28,19 +28,19 @@ INSERT INTO category (id, name, slug, is_active) VALUES
 
 -- Option 1: Insérer les produits sans images pour le moment
 INSERT INTO product (id, name, sku, price, image,image_content_type) VALUES
-(1, 'Nike Air',         '20', 250, lo_import('/seed_images/chaussures-1.jpg') ,'image/jpg'),
-(2, 'Nike P 3000',      '30', 250,lo_import('/seed_images/chaussures-1.jpg') ,'image/jpg'),
-(3, 'Nike P 6000',      '40', 250,lo_import('/seed_images/chaussures-1.jpg') ,'image/jpg');
+(1, 'Nike Air',         '20', 100, lo_import('/seed_images/chaussures-1.jpg') ,'image/jpg'),
+(2, 'Nike P 3000',      '30', 150,lo_import('/seed_images/chaussures-2.jpg') ,'image/jpg'),
+(3, 'Nike P 6000',      '40', 250,lo_import('/seed_images/chaussures-3.jpg') ,'image/jpg');
 
 INSERT INTO product (id, name, sku, price, image ,image_content_type) VALUES
-(4, 'Pantallon Slim',   '25', 250,lo_import('/seed_images/chaussures-1.jpg') ,'image/jpg'),
-(5, 'Pantallon Regular','35', 250,lo_import('/seed_images/chaussures-1.jpg') ,'image/jpg'),
-(6, 'Pantallon Cargo',  '50', 250,lo_import('/seed_images/chaussures-1.jpg') ,'image/jpg');
+(4, 'Pantallon Slim',   '25', 30,lo_import('/seed_images/pantalon-1.jpg') ,'image/jpg'),
+(5, 'Pantallon Regular','35', 45,lo_import('/seed_images/pantalon-2.jpg') ,'image/jpg'),
+(6, 'Pantallon Cargo',  '50', 39,lo_import('/seed_images/pantalon-3.jpg') ,'image/jpg');
 
 INSERT INTO product (id, name, sku, price, image,image_content_type) VALUES
-(7, 'Chemise Blanche',  '100',250,lo_import('/seed_images/chaussures-1.jpg') ,'image/jpg'),
-(8, 'Chemise Bleue',    '5',  250,lo_import('/seed_images/chaussures-1.jpg') ,'image/jpg'),
-(9, 'Chemise à Carreaux','12',250,lo_import('/seed_images/chaussures-1.jpg') ,'image/jpg');
+(7, 'Chemise Blanche',  '100',98,lo_import('/seed_images/chemise-1.jpg') ,'image/jpg'),
+(8, 'Chemise Bleue',    '5',  36,lo_import('/seed_images/chemise-2.jpg') ,'image/jpg'),
+(9, 'Chemise à Carreaux','12',59,lo_import('/seed_images/chemise-3.jpg') ,'image/jpg');
 
 -- Relations produit/catégorie
 INSERT INTO rel_product__category (category_id, product_id) VALUES
