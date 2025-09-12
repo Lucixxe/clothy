@@ -90,10 +90,6 @@ public class CartItemServiceImpl implements CartItemService {
         return cartItemRepository.findAll();
     }
 
-    public List<CartItem> findAllForCartItem(Long cartId) {
-        return cartItemRepository.getAllCartItemsForCart(cartId);
-    }
-
     public Page<CartItem> findAllWithEagerRelationships(Pageable pageable) {
         return cartItemRepository.findAllWithEagerRelationships(pageable);
     }

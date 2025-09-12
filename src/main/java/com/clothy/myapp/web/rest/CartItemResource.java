@@ -187,12 +187,6 @@ public class CartItemResource {
         return cartItemService.findAll();
     }
 
-    @GetMapping("/by-cart/{id}")
-    public List<CartItemDTO> getAllCartItemsForCartId(@PathVariable("id") Long cartId) {
-        LOG.debug("REST request to get all CartItems for a cart ID");
-        return cartItemService.findAllForCartItem(cartId).stream().map(cartItemMapper::toDto).toList();
-    }
-
     /**
      * {@code GET  /cart-items/:id} : get the "id" cartItem.
      *
