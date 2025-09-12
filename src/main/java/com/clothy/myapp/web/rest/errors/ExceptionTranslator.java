@@ -271,10 +271,11 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
                 ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
                 problemDetail.setTitle("Produit non trouve");
                 problemDetail.setDetail("Produit a ete recheche dans la Base de donnees main il n'a pas ete retrouve");
+                problemDetail.setProperty("ProductId", ex.getProductId());
                 return problemDetail;
             }
         };
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error.getBody());
+        return ResponseEntity.status(error.getStatusCode()).body(error.getBody());
     }
 
     @ExceptionHandler(CartNotFoundException.class)
@@ -290,10 +291,11 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
                 ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
                 problemDetail.setTitle("Panier non trouve");
                 problemDetail.setDetail("Panier a ete recheche dans la Base de donnees main il n'a pas ete retrouve");
+                problemDetail.setProperty("PanierId", ex.getCartId());
                 return problemDetail;
             }
         };
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error.getBody());
+        return ResponseEntity.status(error.getStatusCode()).body(error.getBody());
     }
 
     @ExceptionHandler(CustomerNotFoundException.class)
@@ -315,5 +317,87 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
             }
         };
         return ResponseEntity.status(error.getStatusCode()).body(error.getBody());
+    }
+
+    @ExceptionHandler(OutOfStockException.class)
+    public ResponseEntity<ProblemDetail> handleOutOfStockException(@Nonnull OutOfStockException ex) {
+        ErrorResponse err = new ErrorResponse() {
+            @Override
+            public HttpStatusCode getStatusCode() {
+                // TODO Auto-generated method stub
+                return HttpStatus.CONFLICT;
+            }
+
+            @Override
+            public ProblemDetail getBody() {
+                ProblemDetail pbDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+                pbDetail.setTitle("Produit n'a plus de Stock");
+                pbDetail.setDetail("Le produit n'est plus en stock");
+                pbDetail.setProperty("ProductId", ex.getproductId());
+                pbDetail.setProperty("Quantite", ex.getQuantity());
+                return pbDetail;
+            }
+        };
+        return ResponseEntity.status(err.getStatusCode()).body(err.getBody());
+    }
+
+    @ExceptionHandler(UpdateStockException.class)
+    public ResponseEntity<ProblemDetail> handleUpdateStockException(@Nonnull UpdateStockException ex) {
+        ErrorResponse err = new ErrorResponse() {
+            @Override
+            public HttpStatusCode getStatusCode() {
+                // TODO Auto-generated method stub
+                return HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+
+            @Override
+            public ProblemDetail getBody() {
+                ProblemDetail pbDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+                pbDetail.setTitle("Actualisation de stock a echoue");
+                pbDetail.setDetail("Erreur est survenue lors de la mise à jour du stock");
+                return pbDetail;
+            }
+        };
+        return ResponseEntity.status(err.getStatusCode()).body(err.getBody());
+    }
+
+    @ExceptionHandler(CommandeCreationException.class)
+    public ResponseEntity<ProblemDetail> handleCommandeCreationException(@Nonnull CommandeCreationException ex) {
+        ErrorResponse err = new ErrorResponse() {
+            @Override
+            public HttpStatusCode getStatusCode() {
+                // TODO Auto-generated method stub
+                return HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+
+            @Override
+            public ProblemDetail getBody() {
+                ProblemDetail pbDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+                pbDetail.setTitle("Echec de creation de commande");
+                pbDetail.setDetail("Erreur est survenue lors de la creation d'une commande");
+                return pbDetail;
+            }
+        };
+        return ResponseEntity.status(err.getStatusCode()).body(err.getBody());
+    }
+
+    @ExceptionHandler(AssociateCartItemsException.class)
+    public ResponseEntity<ProblemDetail> handleAssociateCartItemsException(@Nonnull AssociateCartItemsException ex) {
+        ErrorResponse err = new ErrorResponse() {
+            @Override
+            public HttpStatusCode getStatusCode() {
+                // TODO Auto-generated method stub
+                return HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+
+            @Override
+            public ProblemDetail getBody() {
+                ProblemDetail pbDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+                pbDetail.setTitle("Echec d'ajout des carte items");
+                pbDetail.setDetail("Erreur est survenue lors de l'ajout de carte items");
+                return pbDetail;
+            }
+        };
+        return ResponseEntity.status(err.getStatusCode()).body(err.getBody());
     }
 }

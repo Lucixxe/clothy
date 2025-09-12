@@ -11,6 +11,7 @@ public interface CartItemMapper {
     @Mapping(source = "product.id", target = "productId")
     @Mapping(source = "cart.id", target = "cartId")
     @Mapping(source = "customerOrder.id", target = "customerOrderId")
+    @Mapping(source = "quantity", target = "quantity")
     CartItemDTO toDto(CartItem cartItem);
 
     // convenience method

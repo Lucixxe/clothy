@@ -33,12 +33,10 @@ public interface ProductRepository extends ProductRepositoryWithBagRelationships
     }
 
     @Modifying
-    @Transactional
     @Query("UPDATE Product p SET p.sku = p.sku - :quantity WHERE p.id = :productId AND p.sku >= :quantity")
     int decrementStockAtomic(@Param("productId") Long productId, @Param("quantity") Integer quantity);
 
     @Modifying
-    @Transactional
     @Query("UPDATE Product p SET p.sku = p.sku + :quantity WHERE p.id = :productId")
     int incrementStockAtomic(@Param("productId") Long productId, @Param("quantity") Integer quantity);
 }

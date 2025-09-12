@@ -46,7 +46,7 @@ public class CartItem implements Serializable {
     @JsonIgnoreProperties(value = { "customer" }, allowSetters = true)
     private Cart cart;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = { "categories" }, allowSetters = true)
     private Product product;
 

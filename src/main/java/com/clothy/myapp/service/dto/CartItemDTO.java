@@ -2,6 +2,7 @@ package com.clothy.myapp.service.dto;
 
 import com.clothy.myapp.domain.CartItem;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class CartItemDTO implements Serializable {
 
@@ -10,6 +11,8 @@ public class CartItemDTO implements Serializable {
     private Integer quantity;
     private CartItem cartItem;
     private Long customerOrderId;
+    private BigDecimal unitPrice;
+    private BigDecimal lineTotal;
 
     public CartItemDTO() {}
 
@@ -52,5 +55,21 @@ public class CartItemDTO implements Serializable {
 
     public void setCustomerOrderId(Long customerOrderId) {
         this.customerOrderId = customerOrderId;
+    }
+
+    public BigDecimal getUnitPirice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(BigDecimal uprice) {
+        this.unitPrice = uprice;
+    }
+
+    public BigDecimal getLineTotal() {
+        return lineTotal;
+    }
+
+    public void setLineTotal(BigDecimal lineTot) {
+        this.lineTotal = lineTot;
     }
 }

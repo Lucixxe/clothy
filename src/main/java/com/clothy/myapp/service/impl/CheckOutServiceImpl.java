@@ -12,7 +12,11 @@ import com.clothy.myapp.service.CheckOutService;
 import com.clothy.myapp.service.CustomerOrderService;
 import com.clothy.myapp.service.dto.CartItemDTO;
 import com.clothy.myapp.service.dto.CheckOutResultDTO;
+import com.clothy.myapp.web.rest.errors.AssociateCartItemsException;
 import com.clothy.myapp.web.rest.errors.CartNotFoundException;
+import com.clothy.myapp.web.rest.errors.CustomerNotFoundException;
+import com.clothy.myapp.web.rest.errors.OutOfStockException;
+import com.clothy.myapp.web.rest.errors.UpdateStockException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -105,7 +109,7 @@ public class CheckOutServiceImpl implements CheckOutService {
         Customer customer = cart.getCustomer();
 
         if (customer == null) {
-            throw new RuntimeException("Aucun customer associé au cart ID: " + cartId);
+            throw new CustomerNotFoundException("Aucun customer associé au cart ID: " + cartId);
         }
 
         // Mise à jour du stock
@@ -120,9 +124,9 @@ public class CheckOutServiceImpl implements CheckOutService {
                 if (updated == 0) {
                     System.out.println("Stock insuffisant pour le produit " + productId + " (demande=" + quantity + ")");
                     success = false;
-                    errorMessage = "Stock insuffisant pour le produit " + productId;
+                    errorMessage = "Stock insuffisant pour le produit " + productId + "et avec quantite " + quantity;
                     detailsBuilder.append("Échec - Produit ").append(productId).append(" : stock insuffisant; ");
-                    throw new RuntimeException(errorMessage);
+                    throw new OutOfStockException(errorMessage, Long.toString(productId), Integer.toString(quantity));
                 } else {
                     System.out.println("Stock mis à jour pour le produit " + productId + " (quantité retirée=" + quantity + ")");
                     detailsBuilder.append("Produit ").append(productId).append(" : -").append(quantity).append(" unités; ");
@@ -131,7 +135,7 @@ public class CheckOutServiceImpl implements CheckOutService {
                 success = false;
                 errorMessage = "Erreur lors de la mise à jour du stock: " + e.getMessage();
                 System.err.println(errorMessage);
-                throw new RuntimeException(errorMessage, e);
+                throw new UpdateStockException(errorMessage);
             }
         }
 
@@ -148,7 +152,7 @@ public class CheckOutServiceImpl implements CheckOutService {
                 .append("; ");
         } catch (Exception e) {
             System.err.println("Erreur lors de la création de la commande: " + e.getMessage());
-            throw new RuntimeException("Erreur lors de la création de la commande: " + e.getMessage(), e);
+            throw new UpdateStockException("Erreur lors de la création de la commande: " + e.getMessage());
         }
 
         // Associer tous les cart_items à la commande créée
@@ -158,7 +162,7 @@ public class CheckOutServiceImpl implements CheckOutService {
             detailsBuilder.append("Cart items associés à la commande; ");
         } catch (Exception e) {
             System.err.println("Erreur lors de l'association des cart items: " + e.getMessage());
-            throw new RuntimeException("Erreur lors de l'association des cart items: " + e.getMessage(), e);
+            throw new AssociateCartItemsException("Erreur lors de l'association des cart items: " + e.getMessage());
         }
 
         CheckOutResultDTO result = new CheckOutResultDTO();
