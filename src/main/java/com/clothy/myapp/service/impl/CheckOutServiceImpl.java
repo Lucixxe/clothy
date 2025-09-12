@@ -12,6 +12,7 @@ import com.clothy.myapp.service.CheckOutService;
 import com.clothy.myapp.service.CustomerOrderService;
 import com.clothy.myapp.service.dto.CartItemDTO;
 import com.clothy.myapp.service.dto.CheckOutResultDTO;
+import com.clothy.myapp.web.rest.errors.CartNotFoundException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -98,7 +99,9 @@ public class CheckOutServiceImpl implements CheckOutService {
         String errorMessage = "";
 
         // Récupérer le cart et son customer associé
-        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new RuntimeException("Cart non trouvé avec l'ID: " + cartId));
+        Cart cart = cartRepository
+            .findById(cartId)
+            .orElseThrow(() -> new CartNotFoundException("Cart non trouvé avec l'ID: " + cartId, Long.toString(cartId)));
         Customer customer = cart.getCustomer();
 
         if (customer == null) {

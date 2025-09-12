@@ -259,7 +259,7 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleProductNotFound(@Nonnull ProductNotFoundException ex) {
+    public ResponseEntity<ProblemDetail> handleProductNotFound(@Nonnull ProductNotFoundException ex) {
         ErrorResponse error = new ErrorResponse() {
             @Override
             public HttpStatusCode getStatusCode() {
@@ -274,11 +274,11 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
                 return problemDetail;
             }
         };
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error.getBody());
     }
 
     @ExceptionHandler(CartNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleCartNotFound(@Nonnull CartNotFoundException ex) {
+    public ResponseEntity<ProblemDetail> handleCartNotFound(@Nonnull CartNotFoundException ex) {
         ErrorResponse error = new ErrorResponse() {
             @Override
             public HttpStatusCode getStatusCode() {
@@ -293,6 +293,27 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
                 return problemDetail;
             }
         };
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error.getBody());
+    }
+
+    @ExceptionHandler(CustomerNotFoundException.class)
+    public ResponseEntity<ProblemDetail> handleCustomerNotFound(@Nonnull CustomerNotFoundException ex) {
+        ErrorResponse error = new ErrorResponse() {
+            @Override
+            public HttpStatusCode getStatusCode() {
+                // TODO Auto-generated method stub
+                return HttpStatus.NOT_FOUND;
+            }
+
+            @Override
+            public ProblemDetail getBody() {
+                // TODO Auto-generated method stub
+                ProblemDetail pbDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+                pbDetail.setTitle("Customer non trouve");
+                pbDetail.setDetail("Customer a ete recherche dans la Base de donnees mais il n'a pas ete retrouve");
+                return pbDetail;
+            }
+        };
+        return ResponseEntity.status(error.getStatusCode()).body(error.getBody());
     }
 }
