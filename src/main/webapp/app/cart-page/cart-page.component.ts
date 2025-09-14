@@ -7,6 +7,7 @@ import { AccountService } from 'app/core/auth/account.service';
 import { ProductService } from 'app/entities/product/service/product.service';
 import { ICartItem } from '../entities/cart-item/cart-item.model';
 import { IProduct } from 'app/entities/product/product.model';
+import { CartItemService } from 'app/entities/cart-item/service/cart-item.service';
 
 @Component({
   selector: 'app-cart-page',
@@ -20,14 +21,15 @@ export class CartPageComponent implements OnInit {
 
   // Pour les utilisateurs connectés
   itemsICart: ICartItem[] = [];
-
+  IdCart: number = 0;
   total = 0;
 
   private accountService = inject(AccountService);
   private router = inject(Router);
   private productService = inject(ProductService);
-
-  constructor(private cartService: CartService) {}
+  private cartService = inject(CartService);
+  // Pour les mises à jour de qty
+  private cartItemService = inject(CartItemService);
 
   ngOnInit(): void {
     this.loadCart();
@@ -45,7 +47,7 @@ export class CartPageComponent implements OnInit {
             this.total = 0;
             return;
           }
-
+          this.IdCart = cartId;
           this.cartService.getCartItemsByCartId(cartId).subscribe({
             next: cartItems => {
               if (!cartItems || cartItems.length === 0) {
@@ -57,8 +59,8 @@ export class CartPageComponent implements OnInit {
               // On utilise directement product de cartItem
               this.itemsICart = cartItems.map(item => ({
                 ...item,
-                unitPrice: item.price ?? 0,
-                lineTotal: (item.price ?? 0) * (item.quantity ?? 1),
+                unitPrice: item.unitPrice ?? 0,
+                lineTotal: (item.unitPrice ?? 0) * (item.quantity ?? 1),
               }));
               this.updateTotalICart();
             },
@@ -83,12 +85,21 @@ export class CartPageComponent implements OnInit {
   // Actions sur le panier
   remove(id: number): void {
     if (!this.accountService.isAuthenticated()) {
+      // Utilisateur non connecté → panier local
       this.items = this.items.filter(item => item.id !== id);
       this.cartService.updateItems(this.items);
+      this.updateTotalICart();
     } else {
-      this.itemsICart = this.itemsICart.filter(item => item.id !== id);
+      // Utilisateur connecté → suppression via API
+      this.cartItemService.delete(id).subscribe({
+        next: () => {
+          // Mise à jour du tableau local après suppression
+          this.itemsICart = this.itemsICart.filter(item => item.id !== id);
+          this.updateTotalICart();
+        },
+        error: err => console.error('Erreur suppression du cartItem', err),
+      });
     }
-    this.updateTotalICart();
   }
 
   clear(): void {
@@ -97,6 +108,7 @@ export class CartPageComponent implements OnInit {
       this.cartService.updateItems([]);
     } else {
       this.itemsICart = [];
+      this.cartService.clearCart(this.IdCart).subscribe();
     }
     this.total = 0;
   }
@@ -111,24 +123,64 @@ export class CartPageComponent implements OnInit {
   }
 
   increaseQty(item: CartItem | ICartItem): void {
-    if ('quantity' in item && item.quantity) item.quantity++;
-    if ('lineTotal' in item && 'unitPrice' in item) {
-      item.lineTotal = (item.unitPrice ?? 0) * (item.quantity ?? 1);
-    }
     if (!this.accountService.isAuthenticated()) {
+      // Cas utilisateur non connecté → panier local
+      if ('quantity' in item && item.quantity) item.quantity++;
+      if ('lineTotal' in item && 'unitPrice' in item) {
+        item.lineTotal = (item.unitPrice ?? 0) * (item.quantity ?? 1);
+      }
       this.cartService.updateItems(this.items);
+      this.updateTotalICart();
+    } else {
+      // Cas utilisateur connecté → mise à jour en base
+      const updatedItem = {
+        id: (item as ICartItem).id,
+        quantity: ((item as ICartItem).quantity ?? 0) + 1,
+      };
+
+      this.cartItemService.partialUpdate(updatedItem).subscribe({
+        next: res => {
+          if (res.body) {
+            (item as ICartItem).quantity = res.body.quantity;
+            (item as ICartItem).lineTotal = (item as ICartItem).unitPrice! * res.body.quantity!;
+            this.updateTotalICart();
+          }
+        },
+        error: err => console.error('Erreur update quantité', err),
+      });
     }
-    this.updateTotalICart();
   }
 
   decreaseQty(item: CartItem | ICartItem): void {
-    if ('quantity' in item && item.quantity && item.quantity > 1) item.quantity--;
-    if ('lineTotal' in item && 'unitPrice' in item) {
-      item.lineTotal = (item.unitPrice ?? 0) * (item.quantity ?? 1);
-    }
     if (!this.accountService.isAuthenticated()) {
-      this.cartService.updateItems(this.items);
+      // Cas utilisateur non connecté → panier local
+      if ('quantity' in item && item.quantity && item.quantity > 1) {
+        item.quantity--;
+        if ('lineTotal' in item && 'unitPrice' in item) {
+          item.lineTotal = (item.unitPrice ?? 0) * (item.quantity ?? 1);
+        }
+        this.cartService.updateItems(this.items);
+        this.updateTotalICart();
+      }
+    } else {
+      // Cas utilisateur connecté → mise à jour en base
+      if ((item as ICartItem).quantity && (item as ICartItem).quantity! > 1) {
+        const updatedItem = {
+          id: (item as ICartItem).id,
+          quantity: (item as ICartItem).quantity! - 1,
+        };
+
+        this.cartItemService.partialUpdate(updatedItem).subscribe({
+          next: res => {
+            if (res.body) {
+              (item as ICartItem).quantity = res.body.quantity;
+              (item as ICartItem).lineTotal = (item as ICartItem).unitPrice! * res.body.quantity!;
+              this.updateTotalICart();
+            }
+          },
+          error: err => console.error('Erreur update quantité', err),
+        });
+      }
     }
-    this.updateTotalICart();
   }
 }

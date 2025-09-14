@@ -61,7 +61,7 @@ export class ProductDetailComponent implements OnInit {
       setTimeout(() => (this.addedToCart = false), 1200); // Animation visible 1.2s
     } else {
       this.cartItemService.addToCart(product.id, 1).subscribe({
-        next: () => alert('${product.name} added to cart!'),
+        next: () => alert(`${product.name} added to cart!`),
         error: err => console.error('Error adding to cart', err),
       });
     }

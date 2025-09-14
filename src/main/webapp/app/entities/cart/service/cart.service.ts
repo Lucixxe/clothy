@@ -9,6 +9,7 @@ import { ApplicationConfigService } from 'app/core/config/application-config.ser
 import { createRequestOption } from 'app/core/request/request-util';
 import { ICart, NewCart } from '../cart.model';
 import { AccountService } from 'app/core/auth/account.service';
+import { ICartItem } from '../../cart-item/cart-item.model';
 
 export interface CartItem {
   id: number;
@@ -211,7 +212,11 @@ export class CartService {
     return this.http.get<number>('/api/carts/current/id');
   }
 
-  getCartItemsByCartId(cartId: number): Observable<CartItem[]> {
-    return this.http.get<CartItem[]>(`/api/cart-items/by-cart/${cartId}`);
+  getCartItemsByCartId(cartId: number): Observable<ICartItem[]> {
+    return this.http.get<ICartItem[]>(`/api/cart-items/by-cart/${cartId}`);
+  }
+
+  clearCart(cartId: number): Observable<CartItem[]> {
+    return this.http.delete<CartItem[]>(`/api/cart-items/empty-cart/${cartId}`);
   }
 }

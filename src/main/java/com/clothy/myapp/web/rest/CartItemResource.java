@@ -220,8 +220,8 @@ public class CartItemResource {
         return cartItemService.findAllByCartId(cartId);
     }
 
-    @DeleteMapping("/cart-items/empty-cart/{id}")
-    public ResponseEntity<Void> emptyCart(@PathVariable Long cartId) {
+    @DeleteMapping("/empty-cart/{id}")
+    public ResponseEntity<Void> emptyCart(@PathVariable("id") Long cartId) {
         LOG.debug("REST request to delete cartItem : {" + cartId + "}");
         cartItemService.deleteAllByCartId(cartId);
         return ResponseEntity.noContent()
