@@ -13,12 +13,7 @@ import com.clothy.myapp.service.CheckOutService;
 import com.clothy.myapp.service.CustomerOrderService;
 import com.clothy.myapp.service.dto.CartItemDTO;
 import com.clothy.myapp.service.dto.CheckOutResultDTO;
-import com.clothy.myapp.web.rest.errors.AssociateCartItemsException;
-import com.clothy.myapp.web.rest.errors.CartNotFoundException;
-import com.clothy.myapp.web.rest.errors.CustomerNotFoundException;
-import com.clothy.myapp.web.rest.errors.OutOfStockException;
-import com.clothy.myapp.web.rest.errors.ProductNotFoundException;
-import com.clothy.myapp.web.rest.errors.UpdateStockException;
+import com.clothy.myapp.web.rest.errors.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -101,7 +96,10 @@ public class CheckOutServiceImpl implements CheckOutService {
     public CheckOutResultDTO checkOut(Long cartId) {
         List<CartItemDTO> allItems = cartItemService.findAll().stream().map(CartItemDTO::new).collect(Collectors.toList());
         List<CartItemDTO> cartItems = getCartItemDTOsForCart(cartId, allItems);
-
+        //CART EMPTY EXCEPTION
+        if (cartItems.isEmpty()) {
+            throw new CartEmptyException("Le panier est vide", Long.toString(cartId));
+        }
         StringBuilder detailsBuilder = new StringBuilder("Détails du checkout : ");
         boolean success = true;
         String errorMessage = "";
@@ -116,7 +114,7 @@ public class CheckOutServiceImpl implements CheckOutService {
             throw new CustomerNotFoundException("Aucun customer associé au cart ID: " + cartId);
         }
 
-        //Obtenir tous les produits du panier
+        //Obtenir tous les produits du panier d'un customer
         List<Long> productIds = cartItems.stream().map(CartItemDTO::getProductId).collect(Collectors.toList());
 
         Map<Long, Integer> productQuantityMap = cartItems
@@ -183,6 +181,7 @@ public class CheckOutServiceImpl implements CheckOutService {
             CheckOutResultDTO result = new CheckOutResultDTO();
             result.setSuccess(true);
             result.setMessage("Checkout effectué, stock mis à jour, commande créée et cart items associés.");
+            cart.setIsCheckedOut(true);
             return result;
         } catch (OutOfStockException | ProductNotFoundException e) {
             throw e;
@@ -191,7 +190,7 @@ public class CheckOutServiceImpl implements CheckOutService {
             System.err.println(errorMessage);
             throw new UpdateStockException(errorMessage);
         }
-        /* 
+        /*
         // Mise à jour du stock
         for (CartItemDTO item : cartItems) {
             Long productId = item.getProductId();

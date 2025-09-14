@@ -400,4 +400,24 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
         };
         return ResponseEntity.status(err.getStatusCode()).body(err.getBody());
     }
+
+    @ExceptionHandler(CartEmptyException.class)
+    public ResponseEntity<ProblemDetail> handleCartEmptyException(@Nonnull CartEmptyException ex) {
+        ErrorResponse err = new ErrorResponse() {
+            @Override
+            public HttpStatusCode getStatusCode() {
+                return HttpStatus.BAD_REQUEST;
+            }
+
+            @Override
+            public ProblemDetail getBody() {
+                ProblemDetail pbDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+                pbDetail.setTitle("Le panier est vide");
+                pbDetail.setDetail("Le panier est vide, veuillez ajouter des produits afin de les acheter");
+                pbDetail.setProperty("cartId", ex.getCartId());
+                return pbDetail;
+            }
+        };
+        return ResponseEntity.status(err.getStatusCode()).body(err.getBody());
+    }
 }
