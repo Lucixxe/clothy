@@ -39,12 +39,8 @@ public class Product implements Serializable {
     @Column(name = "price", precision = 21, scale = 2, nullable = false)
     private BigDecimal price;
 
-    @Lob
     @Column(name = "image")
-    private byte[] image;
-
-    @Column(name = "image_content_type")
-    private String imageContentType;
+    private String image;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -110,30 +106,17 @@ public class Product implements Serializable {
         this.price = price;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return this.image;
     }
 
-    public Product image(byte[] image) {
+    public Product image(String image) {
         this.setImage(image);
         return this;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
-    }
-
-    public String getImageContentType() {
-        return this.imageContentType;
-    }
-
-    public Product imageContentType(String imageContentType) {
-        this.imageContentType = imageContentType;
-        return this;
-    }
-
-    public void setImageContentType(String imageContentType) {
-        this.imageContentType = imageContentType;
     }
 
     public Set<Category> getCategories() {
@@ -187,7 +170,6 @@ public class Product implements Serializable {
             ", sku=" + getSku() +
             ", price=" + getPrice() +
             ", image='" + getImage() + "'" +
-            ", imageContentType='" + getImageContentType() + "'" +
             "}";
     }
 }

@@ -19,8 +19,7 @@ export const sampleWithFullData: IProduct = {
   name: 'actionnaire',
   sku: 21233,
   price: 2026.75,
-  image: '../fake-data/blob/hipster.png',
-  imageContentType: 'unknown',
+  image: 'comme ah',
 };
 
 export const sampleWithNewData: NewProduct = {

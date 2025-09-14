@@ -22,7 +22,6 @@ type ProductFormGroupContent = {
   sku: FormControl<IProduct['sku']>;
   price: FormControl<IProduct['price']>;
   image: FormControl<IProduct['image']>;
-  imageContentType: FormControl<IProduct['imageContentType']>;
   categories: FormControl<IProduct['categories']>;
 };
 
@@ -53,7 +52,6 @@ export class ProductFormService {
         validators: [Validators.required],
       }),
       image: new FormControl(productRawValue.image),
-      imageContentType: new FormControl(productRawValue.imageContentType),
       categories: new FormControl(productRawValue.categories ?? []),
     });
   }

@@ -17,7 +17,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterEach;
@@ -53,10 +52,8 @@ class ProductResourceIT {
     private static final BigDecimal DEFAULT_PRICE = new BigDecimal(1);
     private static final BigDecimal UPDATED_PRICE = new BigDecimal(2);
 
-    private static final byte[] DEFAULT_IMAGE = TestUtil.createByteArray(1, "0");
-    private static final byte[] UPDATED_IMAGE = TestUtil.createByteArray(1, "1");
-    private static final String DEFAULT_IMAGE_CONTENT_TYPE = "image/jpg";
-    private static final String UPDATED_IMAGE_CONTENT_TYPE = "image/png";
+    private static final String DEFAULT_IMAGE = "AAAAAAAAAA";
+    private static final String UPDATED_IMAGE = "BBBBBBBBBB";
 
     private static final String ENTITY_API_URL = "/api/products";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -93,12 +90,7 @@ class ProductResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Product createEntity() {
-        return new Product()
-            .name(DEFAULT_NAME)
-            .sku(DEFAULT_SKU)
-            .price(DEFAULT_PRICE)
-            .image(DEFAULT_IMAGE)
-            .imageContentType(DEFAULT_IMAGE_CONTENT_TYPE);
+        return new Product().name(DEFAULT_NAME).sku(DEFAULT_SKU).price(DEFAULT_PRICE).image(DEFAULT_IMAGE);
     }
 
     /**
@@ -108,12 +100,7 @@ class ProductResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Product createUpdatedEntity() {
-        return new Product()
-            .name(UPDATED_NAME)
-            .sku(UPDATED_SKU)
-            .price(UPDATED_PRICE)
-            .image(UPDATED_IMAGE)
-            .imageContentType(UPDATED_IMAGE_CONTENT_TYPE);
+        return new Product().name(UPDATED_NAME).sku(UPDATED_SKU).price(UPDATED_PRICE).image(UPDATED_IMAGE);
     }
 
     @BeforeEach
@@ -231,8 +218,7 @@ class ProductResourceIT {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].sku").value(hasItem(DEFAULT_SKU)))
             .andExpect(jsonPath("$.[*].price").value(hasItem(sameNumber(DEFAULT_PRICE))))
-            .andExpect(jsonPath("$.[*].imageContentType").value(hasItem(DEFAULT_IMAGE_CONTENT_TYPE)))
-            .andExpect(jsonPath("$.[*].image").value(hasItem(Base64.getEncoder().encodeToString(DEFAULT_IMAGE))));
+            .andExpect(jsonPath("$.[*].image").value(hasItem(DEFAULT_IMAGE)));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -267,8 +253,7 @@ class ProductResourceIT {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.sku").value(DEFAULT_SKU))
             .andExpect(jsonPath("$.price").value(sameNumber(DEFAULT_PRICE)))
-            .andExpect(jsonPath("$.imageContentType").value(DEFAULT_IMAGE_CONTENT_TYPE))
-            .andExpect(jsonPath("$.image").value(Base64.getEncoder().encodeToString(DEFAULT_IMAGE)));
+            .andExpect(jsonPath("$.image").value(DEFAULT_IMAGE));
     }
 
     @Test
@@ -290,12 +275,7 @@ class ProductResourceIT {
         Product updatedProduct = productRepository.findById(product.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedProduct are not directly saved in db
         em.detach(updatedProduct);
-        updatedProduct
-            .name(UPDATED_NAME)
-            .sku(UPDATED_SKU)
-            .price(UPDATED_PRICE)
-            .image(UPDATED_IMAGE)
-            .imageContentType(UPDATED_IMAGE_CONTENT_TYPE);
+        updatedProduct.name(UPDATED_NAME).sku(UPDATED_SKU).price(UPDATED_PRICE).image(UPDATED_IMAGE);
 
         restProductMockMvc
             .perform(
@@ -371,7 +351,7 @@ class ProductResourceIT {
         Product partialUpdatedProduct = new Product();
         partialUpdatedProduct.setId(product.getId());
 
-        partialUpdatedProduct.sku(UPDATED_SKU).price(UPDATED_PRICE).image(UPDATED_IMAGE).imageContentType(UPDATED_IMAGE_CONTENT_TYPE);
+        partialUpdatedProduct.name(UPDATED_NAME).sku(UPDATED_SKU).image(UPDATED_IMAGE);
 
         restProductMockMvc
             .perform(
@@ -399,12 +379,7 @@ class ProductResourceIT {
         Product partialUpdatedProduct = new Product();
         partialUpdatedProduct.setId(product.getId());
 
-        partialUpdatedProduct
-            .name(UPDATED_NAME)
-            .sku(UPDATED_SKU)
-            .price(UPDATED_PRICE)
-            .image(UPDATED_IMAGE)
-            .imageContentType(UPDATED_IMAGE_CONTENT_TYPE);
+        partialUpdatedProduct.name(UPDATED_NAME).sku(UPDATED_SKU).price(UPDATED_PRICE).image(UPDATED_IMAGE);
 
         restProductMockMvc
             .perform(

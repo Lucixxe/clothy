@@ -8,6 +8,7 @@ TRUNCATE TABLE category CASCADE;
 TRUNCATE TABLE customer CASCADE;
 TRUNCATE TABLE customer_order CASCADE;
 TRUNCATE TABLE product CASCADE;
+ALTER TABLE product ALTER COLUMN image TYPE TEXT;
 
 
 INSERT INTO Customer (id,email, first_name,last_name, created_at, password_hash, adress, user_id) VALUES
@@ -27,20 +28,20 @@ INSERT INTO category (id, name, slug, is_active) VALUES
 (6, 'Chaussures', 'chaussures', true);
 
 -- Option 1: Insérer les produits sans images pour le moment
-INSERT INTO product (id, name, sku, price, image,image_content_type) VALUES
-(1, 'Nike Air',         '20', 100, lo_import('/seed_images/chaussures-1.jpg') ,'image/jpg'),
-(2, 'Nike P 3000',      '30', 150,lo_import('/seed_images/chaussures-2.jpg') ,'image/jpg'),
-(3, 'Nike P 6000',      '40', 250,lo_import('/seed_images/chaussures-3.jpg') ,'image/jpg');
+INSERT INTO product (id, name, sku, price, image) VALUES
+(1, 'Nike Air',         '20', 100, 'https://s3.eu-central-2.wasabisys.com/clothy-images/chaussures-1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=7SDL644KD9F8IWQBOEKB%2F20250912%2Feu-central-2%2Fs3%2Faws4_request&X-Amz-Date=20250912T143452Z&X-Amz-Expires=39600&X-Amz-Signature=9868bc5c0318c5610d322cb366121cf9ab870ce2b8a5afba9de64c32a88430b1&X-Amz-SignedHeaders=host&x-id=GetObject'),
+(2, 'Nike P 3000',      '30', 150,'https://s3.eu-central-2.wasabisys.com/clothy-images/chaussures-1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=PBKYNLBAGF04H3AXNHVK%2F20250912%2Feu-central-2%2Fs3%2Faws4_request&X-Amz-Date=20250912T142759Z&X-Amz-Expires=43200&X-Amz-Signature=898214b434cab5a9ca4c723260451d42d4ef9ce6d11a24bb08603676d8cf3d73&X-Amz-SignedHeaders=host&x-id=GetObject'),
+(3, 'Nike P 6000',      '40', 250,'https://s3.eu-central-2.wasabisys.com/clothy-images/chaussures-1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=PBKYNLBAGF04H3AXNHVK%2F20250912%2Feu-central-2%2Fs3%2Faws4_request&X-Amz-Date=20250912T142759Z&X-Amz-Expires=43200&X-Amz-Signature=898214b434cab5a9ca4c723260451d42d4ef9ce6d11a24bb08603676d8cf3d73&X-Amz-SignedHeaders=host&x-id=GetObject');
 
-INSERT INTO product (id, name, sku, price, image ,image_content_type) VALUES
-(4, 'Pantallon Slim',   '25', 30,lo_import('/seed_images/pantalon-1.jpg') ,'image/jpg'),
-(5, 'Pantallon Regular','35', 45,lo_import('/seed_images/pantalon-2.jpg') ,'image/jpg'),
-(6, 'Pantallon Cargo',  '50', 39,lo_import('/seed_images/pantalon-3.jpg') ,'image/jpg');
+INSERT INTO product (id, name, sku, price, image) VALUES
+(4, 'Pantallon Slim',   '25', 30,'https://s3.eu-central-2.wasabisys.com/clothy-images/chaussures-1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=PBKYNLBAGF04H3AXNHVK%2F20250912%2Feu-central-2%2Fs3%2Faws4_request&X-Amz-Date=20250912T142759Z&X-Amz-Expires=43200&X-Amz-Signature=898214b434cab5a9ca4c723260451d42d4ef9ce6d11a24bb08603676d8cf3d73&X-Amz-SignedHeaders=host&x-id=GetObject'),
+(5, 'Pantallon Regular','35', 45,'https://s3.eu-central-2.wasabisys.com/clothy-images/chaussures-1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=PBKYNLBAGF04H3AXNHVK%2F20250912%2Feu-central-2%2Fs3%2Faws4_request&X-Amz-Date=20250912T142759Z&X-Amz-Expires=43200&X-Amz-Signature=898214b434cab5a9ca4c723260451d42d4ef9ce6d11a24bb08603676d8cf3d73&X-Amz-SignedHeaders=host&x-id=GetObject'),
+(6, 'Pantallon Cargo',  '50', 39,'https://s3.eu-central-2.wasabisys.com/clothy-images/chaussures-1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=PBKYNLBAGF04H3AXNHVK%2F20250912%2Feu-central-2%2Fs3%2Faws4_request&X-Amz-Date=20250912T142759Z&X-Amz-Expires=43200&X-Amz-Signature=898214b434cab5a9ca4c723260451d42d4ef9ce6d11a24bb08603676d8cf3d73&X-Amz-SignedHeaders=host&x-id=GetObject');
 
-INSERT INTO product (id, name, sku, price, image,image_content_type) VALUES
-(7, 'Chemise Blanche',  '100',98,lo_import('/seed_images/chemise-1.jpg') ,'image/jpg'),
-(8, 'Chemise Bleue',    '5',  36,lo_import('/seed_images/chemise-2.jpg') ,'image/jpg'),
-(9, 'Chemise à Carreaux','12',59,lo_import('/seed_images/chemise-3.jpg') ,'image/jpg');
+INSERT INTO product (id, name, sku, price, image) VALUES
+(7, 'Chemise Blanche',  '100',98,'https://s3.eu-central-2.wasabisys.com/clothy-images/chaussures-1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=PBKYNLBAGF04H3AXNHVK%2F20250912%2Feu-central-2%2Fs3%2Faws4_request&X-Amz-Date=20250912T142759Z&X-Amz-Expires=43200&X-Amz-Signature=898214b434cab5a9ca4c723260451d42d4ef9ce6d11a24bb08603676d8cf3d73&X-Amz-SignedHeaders=host&x-id=GetObject'),
+(8, 'Chemise Bleue',    '5',  36,'https://s3.eu-central-2.wasabisys.com/clothy-images/chaussures-1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=PBKYNLBAGF04H3AXNHVK%2F20250912%2Feu-central-2%2Fs3%2Faws4_request&X-Amz-Date=20250912T142759Z&X-Amz-Expires=43200&X-Amz-Signature=898214b434cab5a9ca4c723260451d42d4ef9ce6d11a24bb08603676d8cf3d73&X-Amz-SignedHeaders=host&x-id=GetObject'),
+(9, 'Chemise à Carreaux','12',59,'https://s3.eu-central-2.wasabisys.com/clothy-images/chaussures-1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=PBKYNLBAGF04H3AXNHVK%2F20250912%2Feu-central-2%2Fs3%2Faws4_request&X-Amz-Date=20250912T142759Z&X-Amz-Expires=43200&X-Amz-Signature=898214b434cab5a9ca4c723260451d42d4ef9ce6d11a24bb08603676d8cf3d73&X-Amz-SignedHeaders=host&x-id=GetObject');
 
 -- Relations produit/catégorie
 INSERT INTO rel_product__category (category_id, product_id) VALUES

@@ -12,14 +12,18 @@ public class ProductTestSamples {
     private static final AtomicInteger intCount = new AtomicInteger(random.nextInt() + (2 * Short.MAX_VALUE));
 
     public static Product getProductSample1() {
-        return new Product().id(1L).name("name1").sku(1);
+        return new Product().id(1L).name("name1").sku(1).image("image1");
     }
 
     public static Product getProductSample2() {
-        return new Product().id(2L).name("name2").sku(2);
+        return new Product().id(2L).name("name2").sku(2).image("image2");
     }
 
     public static Product getProductRandomSampleGenerator() {
-        return new Product().id(longCount.incrementAndGet()).name(UUID.randomUUID().toString()).sku(intCount.incrementAndGet());
+        return new Product()
+            .id(longCount.incrementAndGet())
+            .name(UUID.randomUUID().toString())
+            .sku(intCount.incrementAndGet())
+            .image(UUID.randomUUID().toString());
     }
 }

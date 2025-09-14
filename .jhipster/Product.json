@@ -21,7 +21,7 @@
     },
     {
       "fieldName": "image",
-      "fieldType": "ImageBlob"
+      "fieldType": "String"
     }
   ],
   "name": "Product",

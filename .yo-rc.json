@@ -14,7 +14,7 @@
     "enableHibernateCache": true,
     "enableSwaggerCodegen": false,
     "enableTranslation": true,
-    "entities": ["Category", "Product", "Customer", "Cart", "CartItem", "CustomerOrder"],
+    "entities": ["Category", "Product", "Customer", "Cart", "CartItem", "CustomerOrder", "User"],
     "gitCompany": "",
     "iaCTools": ["bicep", "terraform"],
     "jhiPrefix": "jhi",

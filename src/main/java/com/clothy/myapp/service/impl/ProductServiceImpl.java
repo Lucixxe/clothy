@@ -58,9 +58,6 @@ public class ProductServiceImpl implements ProductService {
                 if (product.getImage() != null) {
                     existingProduct.setImage(product.getImage());
                 }
-                if (product.getImageContentType() != null) {
-                    existingProduct.setImageContentType(product.getImageContentType());
-                }
 
                 return existingProduct;
             })
