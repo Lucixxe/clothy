@@ -1210,4 +1210,19 @@
             </build>
         </profile>
     </profiles>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.3.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>1.12.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
