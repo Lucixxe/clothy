@@ -79,7 +79,7 @@ public class CheckOutServiceIT {
         customer.setId(3L);
 
         Cart cart = new Cart();
-        cart.setId(100L);
+        cart.setId(160L);
         cart.setIsCheckedOut(false);
         cart.setCustomer(customer);
 
@@ -94,7 +94,7 @@ public class CheckOutServiceIT {
         mockOrder.setId(4L);
         mockOrder.setCustomer(customer);
 
-        when(cartRepository.findById(100L)).thenReturn(Optional.of(cart));
+        when(cartRepository.findById(160L)).thenReturn(Optional.of(cart));
         when(cartItemService.findAll()).thenReturn(Arrays.asList(cartItem));
         when(cartItemRepository.findAll()).thenReturn(Arrays.asList(cartItem));
         when(productRepository.findAndLockProductsByIdsOrderedById(Arrays.asList(product.getId()))).thenReturn(
@@ -103,6 +103,7 @@ public class CheckOutServiceIT {
         when(customerOrderService.save(any(CustomerOrder.class))).thenReturn(mockOrder);
         when(customerOrderService.findOne(4L)).thenReturn(Optional.of(mockOrder));
         when(cartItemRepository.save(any(CartItem.class))).thenReturn(cartItem);
+        when(cartItemRepository.getAllCartItemsForCartNotInOrder(160L)).thenReturn(Arrays.asList(cartItem));
 
         CheckOutResultDTO checkOutResultDTO = checkOutService.checkOut(cart.getId());
 
@@ -138,6 +139,8 @@ public class CheckOutServiceIT {
         when(productRepository.findAndLockProductsByIdsOrderedById(Arrays.asList(product.getId()))).thenReturn(
             Optional.of(Arrays.asList(product)).orElse(Collections.emptyList())
         );
+
+        when(cartItemRepository.getAllCartItemsForCartNotInOrder(101L)).thenReturn(Arrays.asList(cartItem));
         assertThrows(OutOfStockException.class, () -> checkOutService.checkOut(cart.getId()));
     }
 
@@ -249,8 +252,8 @@ public class CheckOutServiceIT {
         // Mock cart repository - return appropriate cart for each ID
         when(cartRepository.findById(cartId1)).thenReturn(Optional.of(cart1));
         when(cartRepository.findById(cartId2)).thenReturn(Optional.of(cart2));
-        when(cartItemRepository.getAllCartItemsForCart(100L)).thenReturn(Arrays.asList(cartItem1));
-        when(cartItemRepository.getAllCartItemsForCart(200L)).thenReturn(Arrays.asList(cartItem2));
+        when(cartItemRepository.getAllCartItemsForCartNotInOrder(100L)).thenReturn(Arrays.asList(cartItem1));
+        when(cartItemRepository.getAllCartItemsForCartNotInOrder(200L)).thenReturn(Arrays.asList(cartItem2));
         when(cartItemRepository.save(any(CartItem.class))).thenAnswer(inv -> {
             CartItem item = inv.getArgument(0);
 
