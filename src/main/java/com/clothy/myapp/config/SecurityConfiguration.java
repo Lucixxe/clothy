@@ -72,7 +72,11 @@ public class SecurityConfiguration {
                     // Public product catalog endpoints
                     .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/products")).permitAll()
                     .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/products/**")).permitAll()
+                    // Payment endpoints - allow without authentication
+                    .requestMatchers(mvc.pattern("/api/payment/**")).permitAll()
+                    // Admin endpoints
                     .requestMatchers(mvc.pattern("/api/admin/**")).hasAuthority(AuthoritiesConstants.ADMIN)
+                    // All other API endpoints require authentication
                     .requestMatchers(mvc.pattern("/api/**")).authenticated()
                     .requestMatchers(mvc.pattern("/v3/api-docs/**")).hasAuthority(AuthoritiesConstants.ADMIN)
                     .requestMatchers(mvc.pattern("/management/health")).permitAll()
