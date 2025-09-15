@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from 'app/entities/product/service/product.service';
 import { IProduct } from 'app/entities/product/product.model';
-import { CartService } from '../core/cart/cart.service';
+import { CartService } from '../entities/cart/service/cart.service';
 import { CartItemService } from 'app/entities/cart-item/service/cart-item.service';
 import { AccountService } from 'app/core/auth/account.service';
 @Component({

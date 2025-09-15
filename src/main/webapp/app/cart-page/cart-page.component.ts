@@ -24,7 +24,7 @@ export class CartPageComponent implements OnInit {
   IdCart: number = 0;
   total = 0;
 
-  private accountService = inject(AccountService);
+  public accountService = inject(AccountService);
   private router = inject(Router);
   private productService = inject(ProductService);
   private cartService = inject(CartService);
