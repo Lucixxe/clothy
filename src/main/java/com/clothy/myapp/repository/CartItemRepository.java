@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -44,7 +45,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
     //List<CartItem> findByCart_Id(Long cartId);
 
-    @Query("select ci from CartItem ci where ci.cart.id = :cartId")
+    @Query("select ci from CartItem ci where ci.cart.id = :cartId and ci.isInOrder = false")
     List<CartItem> findAllByCartId(@Param("cartId") Long cartId);
 
     Optional<CartItem> findByCartAndProduct(Cart cart, Product product);
