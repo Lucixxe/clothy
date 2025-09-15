@@ -1,3 +1,3 @@
-id;email;first_name;last_name;created_at;password_hash;adress;id
-1;Mylene_Lopez38@gmail.com;Joanny;Chevalier;2025-09-07T20:52:12;endormir commis;prestataire de services;1
-2;Pauline13@gmail.com;Taurin;Cousin;2025-09-08T06:16:38;de peur que de manière à ce que;magenta drelin;2
+id;email;first_name;last_name;created_at;password_hash;adress
+1;Mylene_Lopez38@gmail.com;Joanny;Chevalier;2025-09-07T20:52:12;endormir commis;prestataire de services
+2;Pauline13@gmail.com;Taurin;Cousin;2025-09-08T06:16:38;de peur que de manière à ce que;magenta drelin
