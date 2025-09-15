@@ -420,4 +420,24 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
         };
         return ResponseEntity.status(err.getStatusCode()).body(err.getBody());
     }
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<ProblemDetail> handleDuplicateEmail(@Nonnull DuplicateEmailException ex) {
+        ErrorResponse err = new ErrorResponse() {
+            @Override
+            public HttpStatusCode getStatusCode() {
+                return HttpStatus.CONFLICT;
+            }
+
+            @Override
+            public ProblemDetail getBody() {
+                ProblemDetail pbDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+                pbDetail.setTitle("L'email existe deja dans note base");
+                pbDetail.setDetail("L'email est dupliqué, veuillez changer d'email s'il vous plait");
+                pbDetail.setProperty("email", ex.getEmail());
+                return pbDetail;
+            }
+        };
+        return ResponseEntity.status(err.getStatusCode()).body(err.getBody());
+    }
 }

@@ -119,8 +119,17 @@ public class CartItemServiceImpl implements CartItemService {
             .orElseThrow(() -> new ProductNotFoundException(Long.toString(productId), "Produit non trouvé : " + productId));
 
         Optional<CartItem> existingItem = cartItemRepository.findByCartAndProduct(cart, product);
+        CartItem cartItem = existingItem.orElse(createNewCartItem(cart, product, quantity));
 
-        CartItem cartItem;
+        if (existingItem.isPresent()) {
+            // Only update if it was an existing item
+            int newQuantity = cartItem.getQuantity() + quantity;
+            cartItem.setQuantity(newQuantity);
+            cartItem.setLineTotal(product.getPrice().multiply(BigDecimal.valueOf(newQuantity)));
+        }
+        /*
+
+        
 
         if (existingItem.isPresent()) {
             cartItem = existingItem.get();
@@ -136,11 +145,23 @@ public class CartItemServiceImpl implements CartItemService {
             cartItem.setLineTotal(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
             cartItem.setIsInOrder(false);
         }
+            */
         cartItem = cartItemRepository.save(cartItem);
         CartItemDTO res = new CartItemDTO();
         res.setProductId(product.getId());
         res.setQuantity(cartItem.getQuantity());
         return res;
+    }
+
+    private CartItem createNewCartItem(Cart cart, Product product, int quantity) {
+        CartItem newItem = new CartItem();
+        newItem.setCart(cart);
+        newItem.setProduct(product);
+        newItem.setQuantity(quantity);
+        newItem.setUnitPrice(product.getPrice());
+        newItem.setLineTotal(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
+        newItem.setIsInOrder(false);
+        return newItem;
     }
 
     @Override
