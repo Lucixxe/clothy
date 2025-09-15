@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class PayementService {
 
     public Session createCheckoutSession(Long amount) throws Exception {
-        Stripe.apiKey = "api stripe test";
+        Stripe.apiKey = "clé stripe";
 
         SessionCreateParams params = SessionCreateParams.builder()
             .setMode(SessionCreateParams.Mode.PAYMENT)

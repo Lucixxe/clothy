@@ -13,17 +13,17 @@
     <link rel="manifest" href="manifest.webapp" />
     <link rel="stylesheet" href="content/css/loading.css" />
 
-    <!-- Content Security Policy corrigée pour Stripe -->
+    <!-- ✅ Content Security Policy unifiée -->
     <meta
       http-equiv="Content-Security-Policy"
       content="
-      default-src 'self';
-      style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
-      style-src-elem 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
-      font-src 'self' https://cdnjs.cloudflare.com;
-      script-src 'self' 'unsafe-inline' 'unsafe-eval';
-      img-src 'self' data: https://s3.eu-central-2.wasabisys.com;
-    "
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com https://js.stripe.com;
+        style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+        style-src-elem 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+        font-src 'self' data: https://cdnjs.cloudflare.com;
+        img-src 'self' data: https://s3.eu-central-2.wasabisys.com;
+      "
     />
     <!-- jhipster-needle-add-resources-to-root - JHipster will add new resources here -->
   </head>
@@ -52,7 +52,7 @@
       <div class="app-loading">
         <div id="jhipster-error" style="display: none">
           <!-- This content is for troubleshooting purpose and will be removed when app renders -->
-          <h1>An error has occurred :-(</h1>
+          <h1>An error has occurred :-</h1>
           <h2>Usual error causes</h2>
           <ol>
             <li>
@@ -128,5 +128,8 @@
         }
       }
     </script>
+
+    <!-- ✅ Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
   </body>
 </html>
