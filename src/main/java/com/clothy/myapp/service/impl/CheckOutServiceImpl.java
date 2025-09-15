@@ -4,6 +4,7 @@ import com.clothy.myapp.domain.Cart;
 import com.clothy.myapp.domain.CartItem;
 import com.clothy.myapp.domain.Customer;
 import com.clothy.myapp.domain.CustomerOrder;
+import com.clothy.myapp.domain.Product;
 import com.clothy.myapp.repository.CartItemRepository;
 import com.clothy.myapp.repository.CartRepository;
 import com.clothy.myapp.repository.ProductRepository;
@@ -12,14 +13,12 @@ import com.clothy.myapp.service.CheckOutService;
 import com.clothy.myapp.service.CustomerOrderService;
 import com.clothy.myapp.service.dto.CartItemDTO;
 import com.clothy.myapp.service.dto.CheckOutResultDTO;
-import com.clothy.myapp.web.rest.errors.AssociateCartItemsException;
-import com.clothy.myapp.web.rest.errors.CartNotFoundException;
-import com.clothy.myapp.web.rest.errors.CustomerNotFoundException;
-import com.clothy.myapp.web.rest.errors.OutOfStockException;
-import com.clothy.myapp.web.rest.errors.UpdateStockException;
+import com.clothy.myapp.web.rest.errors.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +96,10 @@ public class CheckOutServiceImpl implements CheckOutService {
     public CheckOutResultDTO checkOut(Long cartId) {
         List<CartItemDTO> allItems = cartItemService.findAll().stream().map(CartItemDTO::new).collect(Collectors.toList());
         List<CartItemDTO> cartItems = getCartItemDTOsForCart(cartId, allItems);
-
+        //CART EMPTY EXCEPTION
+        if (cartItems.isEmpty()) {
+            throw new CartEmptyException("Le panier est vide", Long.toString(cartId));
+        }
         StringBuilder detailsBuilder = new StringBuilder("Détails du checkout : ");
         boolean success = true;
         String errorMessage = "";
@@ -112,6 +114,83 @@ public class CheckOutServiceImpl implements CheckOutService {
             throw new CustomerNotFoundException("Aucun customer associé au cart ID: " + cartId);
         }
 
+        //Obtenir tous les produits du panier d'un customer
+        List<Long> productIds = cartItems.stream().map(CartItemDTO::getProductId).collect(Collectors.toList());
+
+        Map<Long, Integer> productQuantityMap = cartItems
+            .stream()
+            .collect(Collectors.groupingBy(CartItemDTO::getProductId, Collectors.summingInt(CartItemDTO::getQuantity)));
+
+        try {
+            //Obtention de tous les produits TRIES et VERROUILLES
+            List<Product> lockedProducts = productRepository.findAndLockProductsByIdsOrderedById(productIds);
+            //Si le nombre de product obtenu n'est pas egale au nombre de product dans le panier
+            if (lockedProducts.size() != productIds.size()) {
+                Set<Long> foundIds = lockedProducts.stream().map(Product::getId).collect(Collectors.toSet());
+                List<Long> missingIds = productIds.stream().filter(id -> !foundIds.contains(id)).collect(Collectors.toList());
+                throw new ProductNotFoundException("Produits non trouvés: " + missingIds);
+            }
+
+            //Verification du stock pour chaque produit
+            for (Product product : lockedProducts) {
+                Long productId = product.getId();
+                Integer requestedQuantity = productQuantityMap.get(productId);
+
+                if (product.getSku() < requestedQuantity) {
+                    errorMessage =
+                        "Stock insuffisant pour le produit " +
+                        productId +
+                        " (disponible: " +
+                        product.getSku() +
+                        ", demandé: " +
+                        requestedQuantity +
+                        ")";
+                    detailsBuilder.append("Échec - Produit ").append(productId).append(" : stock insuffisant; ");
+                    throw new OutOfStockException(errorMessage, Long.toString(productId), Integer.toString(requestedQuantity));
+                }
+            }
+
+            //Tous les produits ont un stock suffisant, maintenant mise à jour
+            for (Product product : lockedProducts) {
+                Long productId = product.getId();
+                Integer quantityToDeduct = productQuantityMap.get(productId);
+
+                System.out.println("Mise à jour stock pour produit=" + productId + ", quantité=" + quantityToDeduct);
+                product.setSku(product.getSku() - quantityToDeduct);
+                productRepository.save(product);
+
+                System.out.println("Stock mis à jour pour le produit " + productId + " (quantité retirée=" + quantityToDeduct + ")");
+                detailsBuilder.append("Produit ").append(productId).append(" : -").append(quantityToDeduct).append(" unités; ");
+            }
+
+            // Créer la commande client après la mise à jour réussie du stock
+            CustomerOrder order = createCustomerOrder(cartId, cartItems, customer);
+            System.out.println("Commande créée avec l'ID: " + order.getId() + " pour le customer ID: " + customer.getId());
+            detailsBuilder
+                .append("Commande #")
+                .append(order.getId())
+                .append(" créée pour customer #")
+                .append(customer.getId())
+                .append("; ");
+
+            // Associer tous les cart_items à la commande créée
+            associateCartItemsToOrder(cartId, order.getId());
+            System.out.println("Cart items associés à la commande " + order.getId());
+            detailsBuilder.append("Cart items associés à la commande; ");
+
+            CheckOutResultDTO result = new CheckOutResultDTO();
+            result.setSuccess(true);
+            result.setMessage("Checkout effectué, stock mis à jour, commande créée et cart items associés.");
+            cart.setIsCheckedOut(true);
+            return result;
+        } catch (OutOfStockException | ProductNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            errorMessage = "Erreur lors de la mise à jour du stock: " + e.getMessage();
+            System.err.println(errorMessage);
+            throw new UpdateStockException(errorMessage);
+        }
+        /*
         // Mise à jour du stock
         for (CartItemDTO item : cartItems) {
             Long productId = item.getProductId();
@@ -169,5 +248,6 @@ public class CheckOutServiceImpl implements CheckOutService {
         result.setSuccess(true);
         result.setMessage("Checkout effectué, stock mis à jour, commande créée et cart items associés.");
         return result;
+        */
     }
 }

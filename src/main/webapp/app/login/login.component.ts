@@ -50,5 +50,6 @@ export default class LoginComponent implements OnInit, AfterViewInit {
       },
       error: () => this.authenticationError.set(true),
     });
+    //Add merge connection here
   }
 }

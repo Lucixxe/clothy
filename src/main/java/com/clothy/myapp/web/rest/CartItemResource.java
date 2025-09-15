@@ -106,6 +106,14 @@ public class CartItemResource {
         return ResponseEntity.ok(cartDTO);
     }
 
+    /* 
+    @PostMapping("/merge")
+    public ResponseEntity<CartItemDTO> mergeCarts(@RequestBody List<CartItemDTO> guestCartItems)
+    {
+        String login = SecurityUtils.getCurrentUserLogin().orElseThrow();
+
+    } 
+    */
     /**
      * {@code PUT  /cart-items/:id} : Updates an existing cartItem.
      *
