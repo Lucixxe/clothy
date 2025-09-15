@@ -27,8 +27,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.aspectj.lang.annotation.Before;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -36,11 +36,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(MockitoJUnitRunner.class)
-public class CheckOutServiceIT {
+public class CheckOutServiceTest {
 
     @Mock
     private ProductRepository productRepository;
@@ -95,8 +96,6 @@ public class CheckOutServiceIT {
         mockOrder.setCustomer(customer);
 
         when(cartRepository.findById(160L)).thenReturn(Optional.of(cart));
-        when(cartItemService.findAll()).thenReturn(Arrays.asList(cartItem));
-        when(cartItemRepository.findAll()).thenReturn(Arrays.asList(cartItem));
         when(productRepository.findAndLockProductsByIdsOrderedById(Arrays.asList(product.getId()))).thenReturn(
             Optional.of(Arrays.asList(product)).orElse(Collections.emptyList())
         );
@@ -134,13 +133,12 @@ public class CheckOutServiceIT {
         cartItem.setQuantity(2);
         cartItem.setUnitPrice(BigDecimal.valueOf(10));
         cartItem.setLineTotal(BigDecimal.valueOf(20));
-        when(cartItemService.findAll()).thenReturn(Arrays.asList(cartItem));
-        when(cartRepository.findById(101L)).thenReturn(Optional.of(cart));
         when(productRepository.findAndLockProductsByIdsOrderedById(Arrays.asList(product.getId()))).thenReturn(
             Optional.of(Arrays.asList(product)).orElse(Collections.emptyList())
         );
+        when(cartItemRepository.getAllCartItemsForCart(101L)).thenReturn(Arrays.asList(cartItem));
+        when(cartRepository.findById(101L)).thenReturn(Optional.of(cart));
 
-        when(cartItemRepository.getAllCartItemsForCartNotInOrder(101L)).thenReturn(Arrays.asList(cartItem));
         assertThrows(OutOfStockException.class, () -> checkOutService.checkOut(cart.getId()));
     }
 
@@ -154,8 +152,6 @@ public class CheckOutServiceIT {
         cartItem.setQuantity(2);
         cartItem.setUnitPrice(BigDecimal.valueOf(10));
         cartItem.setLineTotal(BigDecimal.valueOf(20));
-        when(cartItemService.findAll()).thenReturn(Arrays.asList(cartItem));
-        when(cartRepository.findById(101L)).thenReturn(Optional.of(cart));
         assertThrows(CartEmptyException.class, () -> checkOutService.checkOut(cart.getId()));
     }
 
@@ -247,7 +243,6 @@ public class CheckOutServiceIT {
         Map<Long, CartItem> savedCartItems = new ConcurrentHashMap<>();
 
         // Mock cartItemService.findAll() - returns all cart items
-        when(cartItemService.findAll()).thenReturn(Arrays.asList(cartItem1, cartItem2));
 
         // Mock cart repository - return appropriate cart for each ID
         when(cartRepository.findById(cartId1)).thenReturn(Optional.of(cart1));

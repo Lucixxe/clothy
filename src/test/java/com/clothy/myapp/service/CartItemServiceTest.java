@@ -26,7 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(MockitoJUnitRunner.class)
-public class CartItemServiceIT {
+public class CartItemServiceTest {
 
     @Mock
     private CartItemRepository cartItemRepository;

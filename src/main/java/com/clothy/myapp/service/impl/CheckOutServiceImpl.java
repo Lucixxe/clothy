@@ -97,7 +97,7 @@ public class CheckOutServiceImpl implements CheckOutService {
     @Transactional
     public CheckOutResultDTO checkOut(Long cartId) {
         //List<CartItemDTO> allItems = cartItemService.findAll().stream().map(CartItemDTO::new).collect(Collectors.toList());
-        List<CartItem> cartItems = cartItemRepository.getAllCartItemsForCartNotInOrder(cartId);
+        List<CartItem> cartItems = cartItemRepository.getAllCartItemsForCart(cartId);
         //CART EMPTY EXCEPTION
         if (cartItems.isEmpty()) {
             throw new CartEmptyException("Le panier est vide", Long.toString(cartId));
