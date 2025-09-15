@@ -14,8 +14,8 @@ import com.clothy.myapp.repository.ProductRepository;
 import com.clothy.myapp.service.dto.CartItemDTO;
 import com.clothy.myapp.service.impl.CartItemServiceImpl;
 import java.util.Optional;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -25,7 +25,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-@RunWith(MockitoJUnitRunner.class)
 public class CartItemServiceTest {
 
     @Mock
@@ -39,11 +38,6 @@ public class CartItemServiceTest {
 
     @InjectMocks
     private CartItemServiceImpl cartItemServiceImpl;
-
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     public void testAddToCartwhenexists() {

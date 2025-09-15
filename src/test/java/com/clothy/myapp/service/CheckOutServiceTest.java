@@ -40,7 +40,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
-@RunWith(MockitoJUnitRunner.class)
 public class CheckOutServiceTest {
 
     @Mock
@@ -63,11 +62,6 @@ public class CheckOutServiceTest {
 
     @InjectMocks
     private CheckOutServiceImpl checkOutService;
-
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     public void testCreationCommande() {
@@ -136,8 +130,8 @@ public class CheckOutServiceTest {
         when(productRepository.findAndLockProductsByIdsOrderedById(Arrays.asList(product.getId()))).thenReturn(
             Optional.of(Arrays.asList(product)).orElse(Collections.emptyList())
         );
-        when(cartItemRepository.getAllCartItemsForCart(101L)).thenReturn(Arrays.asList(cartItem));
-        when(cartRepository.findById(101L)).thenReturn(Optional.of(cart));
+        when(cartItemRepository.getAllCartItemsForCartNotInOrder(101L)).thenReturn(Arrays.asList(cartItem));
+        when(cartRepository.findById(anyLong())).thenReturn(Optional.of(cart));
 
         assertThrows(OutOfStockException.class, () -> checkOutService.checkOut(cart.getId()));
     }
@@ -155,7 +149,7 @@ public class CheckOutServiceTest {
         assertThrows(CartEmptyException.class, () -> checkOutService.checkOut(cart.getId()));
     }
 
-    /* 
+    /*
     @Test
     public void testInit() throws InterruptedException {
         Long cartId1 = 100L;
@@ -194,7 +188,7 @@ public class CheckOutServiceTest {
         cartItem2.setQuantity(1);
     System.out.println("cartItemService is null: " + (cartItemService == null));
     System.out.println("checkOutService is null: " + (checkOutService == null));
-    
+
     when(cartItemService.findAll()).thenReturn(Arrays.asList(cartItem1, cartItem2));
     // ... rest of your test
     }
