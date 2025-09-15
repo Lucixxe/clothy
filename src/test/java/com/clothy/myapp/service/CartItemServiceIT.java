@@ -1,7 +1,6 @@
 package com.clothy.myapp.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,64 +12,90 @@ import com.clothy.myapp.repository.CartItemRepository;
 import com.clothy.myapp.repository.CartRepository;
 import com.clothy.myapp.repository.ProductRepository;
 import com.clothy.myapp.service.dto.CartItemDTO;
-import com.clothy.myapp.web.rest.CartResource;
-import java.math.BigDecimal;
+import com.clothy.myapp.service.impl.CartItemServiceImpl;
 import java.util.Optional;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 public class CartItemServiceIT {
-
-    @Mock
-    private CartRepository cartRepository;
 
     @Mock
     private CartItemRepository cartItemRepository;
 
     @Mock
+    private CartRepository cartRepository;
+
+    @Mock
     private ProductRepository productRepository;
 
     @InjectMocks
-    private CartItemService cartItemService;
+    private CartItemServiceImpl cartItemServiceImpl;
 
-    @Test
-    public void addToCart() {
-        Product product = new Product();
-        product.setId(1L);
-        product.setSku(5);
-        product.setPrice(BigDecimal.valueOf(250.000));
-
-        Cart cart = new Cart();
-        cart.setId(100L);
-        cart.setIsCheckedOut(false);
-
-        CartItem CartItem;
-        CartItemDTO cartItemDTO = cartItemService.ajoutPanier(cart, product.getId(), 2);
-
-        verify(cartItemRepository).save(any(CartItem.class));
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void incrementQuantityWhenExists() {
+    public void testAddToCartwhenexists() {
         Product product = new Product();
-        product.setId(1L);
+        product.setId(5L);
         product.setSku(5);
-        product.setPrice(BigDecimal.valueOf(250.000));
+        product.setPrice(new java.math.BigDecimal(150));
+        Integer quantity = 2;
+
         Cart cart = new Cart();
         cart.setId(100L);
         cart.setIsCheckedOut(false);
-        CartItem CartItem = new CartItem();
-        CartItem.setProduct(product);
-        CartItem.setCart(cart);
-        CartItem.setQuantity(2);
-        when(cartItemRepository.findByCartAndProduct(cart, product)).thenReturn(Optional.of(CartItem));
-        when(cartItemRepository.save(any(CartItem.class))).thenAnswer(inv -> inv.getArgument(0));
-        CartItemDTO cartItemDTO = cartItemService.ajoutPanier(cart, product.getId(), 2);
-        assertEquals(4, cartItemDTO.getQuantity());
+        CartItem cartItem = new CartItem();
+        cartItem.setQuantity(quantity);
+
+        when(productRepository.findById(5L)).thenReturn(Optional.of(product));
+        when(cartItemRepository.findByCartAndProduct(cart, product)).thenReturn(Optional.of(cartItem));
+        when(cartItemRepository.save(any(CartItem.class))).thenReturn(cartItem);
+
+        CartItemDTO dto = cartItemServiceImpl.ajoutPanier(cart, product.getId(), quantity);
+
+        assertEquals(4, cartItem.getQuantity());
+        assertEquals(product.getId(), dto.getProductId());
+    }
+
+    @Test
+    public void testNewItemInCart() {
+        Product product = new Product();
+        product.setId(5L);
+        product.setSku(5);
+        product.setPrice(new java.math.BigDecimal(150));
+        Integer quantity = 2;
+
+        Cart cart = new Cart();
+        cart.setId(100L);
+        cart.setIsCheckedOut(false);
+        CartItem cartItem = new CartItem();
+        cartItem.setQuantity(quantity);
+
+        when(productRepository.findById(5L)).thenReturn(Optional.of(product));
+        when(cartItemRepository.findByCartAndProduct(cart, product)).thenReturn(Optional.empty());
+        when(cartItemRepository.save(any(CartItem.class))).thenAnswer(inv -> {
+            CartItem item = inv.getArgument(0);
+            cartItem.setCart(item.getCart());
+            cartItem.setProduct(item.getProduct());
+            return item;
+        });
+
+        CartItemDTO dto = cartItemServiceImpl.ajoutPanier(cart, product.getId(), quantity);
+
+        assertEquals(2, cartItem.getQuantity());
+        assertEquals(product.getId(), dto.getProductId());
+        assertEquals(cartItem.getProduct(), product);
     }
 }

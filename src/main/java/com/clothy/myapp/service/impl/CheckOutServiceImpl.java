@@ -31,18 +31,24 @@ public class CheckOutServiceImpl implements CheckOutService {
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
 
-    @Autowired
     private CartItemService cartItemService;
 
-    @Autowired
     private CustomerOrderService customerOrderService;
 
-    @Autowired
     private CartItemRepository cartItemRepository;
 
-    public CheckOutServiceImpl(CartRepository cartRepository, ProductRepository productRepository) {
+    public CheckOutServiceImpl(
+        CartRepository cartRepository,
+        ProductRepository productRepository,
+        CartItemService crtitemService,
+        CustomerOrderService cstOS,
+        CartItemRepository carrepo
+    ) {
         this.cartRepository = cartRepository;
         this.productRepository = productRepository;
+        this.cartItemService = crtitemService;
+        this.customerOrderService = cstOS;
+        this.cartItemRepository = carrepo;
     }
 
     public List<CartItemDTO> getCartItemDTOsForCart(Long cartId, List<CartItemDTO> allItems) {
@@ -74,11 +80,7 @@ public class CheckOutServiceImpl implements CheckOutService {
             .orElseThrow(() -> new RuntimeException("CustomerOrder non trouvée avec l'ID: " + customerOrderId));
 
         // Récupérer tous les cart_items associés à ce cart
-        List<CartItem> cartItems = cartItemRepository
-            .findAll()
-            .stream()
-            .filter(item -> item.getCart() != null && item.getCart().getId().equals(cartId))
-            .collect(Collectors.toList());
+        List<CartItem> cartItems = cartItemRepository.getAllCartItemsForCart(cartId);
 
         System.out.println("Associating " + cartItems.size() + " cart items to order " + customerOrderId);
 

@@ -116,7 +116,7 @@ public class CartItemServiceImpl implements CartItemService {
     public CartItemDTO ajoutPanier(Cart cart, Long productId, Integer quantity) {
         Product product = productRepository
             .findById(productId)
-            .orElseThrow(() -> new ProductNotFoundException(Long.toString(productId), "Produit non trouvé"));
+            .orElseThrow(() -> new ProductNotFoundException(Long.toString(productId), "Produit non trouvé : " + productId));
 
         Optional<CartItem> existingItem = cartItemRepository.findByCartAndProduct(cart, product);
 
