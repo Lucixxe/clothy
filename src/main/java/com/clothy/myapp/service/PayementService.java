@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 public class PayementService {
 
     public Session createCheckoutSession(Long amount) throws Exception {
-        Stripe.apiKey = "clé privé stripe";
+        Stripe.apiKey = "api stripe test";
 
         SessionCreateParams params = SessionCreateParams.builder()
             .setMode(SessionCreateParams.Mode.PAYMENT)
-            .setSuccessUrl("http://localhost:4200/payment-success")
-            .setCancelUrl("http://localhost:4200/payment-cancel")
+            .setSuccessUrl("http://localhost:8080/payment-success")
+            .setCancelUrl("http://localhost:8080/payment-cancel")
             .addLineItem(
                 SessionCreateParams.LineItem.builder()
                     .setQuantity(1L)
