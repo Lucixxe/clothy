@@ -6,6 +6,8 @@ import { Subject, from, of } from 'rxjs';
 
 import { IUser } from 'app/entities/user/user.model';
 import { UserService } from 'app/entities/user/service/user.service';
+import { IUser } from 'app/entities/user/user.model';
+import { UserService } from 'app/entities/user/service/user.service';
 import { CustomerService } from '../service/customer.service';
 import { ICustomer } from '../customer.model';
 import { CustomerFormService } from './customer-form.service';
@@ -18,6 +20,7 @@ describe('Customer Management Update Component', () => {
   let activatedRoute: ActivatedRoute;
   let customerFormService: CustomerFormService;
   let customerService: CustomerService;
+  let userService: UserService;
   let userService: UserService;
 
   beforeEach(() => {
@@ -41,6 +44,7 @@ describe('Customer Management Update Component', () => {
     activatedRoute = TestBed.inject(ActivatedRoute);
     customerFormService = TestBed.inject(CustomerFormService);
     customerService = TestBed.inject(CustomerService);
+    userService = TestBed.inject(UserService);
     userService = TestBed.inject(UserService);
 
     comp = fixture.componentInstance;
@@ -78,6 +82,7 @@ describe('Customer Management Update Component', () => {
       comp.ngOnInit();
 
       expect(comp.usersSharedCollection).toContainEqual(user);
+      expect(comp.usersSharedCollection).toContainEqual(user);
       expect(comp.customer).toEqual(customer);
     });
   });
@@ -86,7 +91,7 @@ describe('Customer Management Update Component', () => {
     it('should call update service on save for existing entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<ICustomer>>();
-      const customer = { id: 26915 };
+      const customer = { id: 8289 };
       jest.spyOn(customerFormService, 'getCustomer').mockReturnValue(customer);
       jest.spyOn(customerService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -109,7 +114,7 @@ describe('Customer Management Update Component', () => {
     it('should call create service on save for new entity', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<ICustomer>>();
-      const customer = { id: 26915 };
+      const customer = { id: 8289 };
       jest.spyOn(customerFormService, 'getCustomer').mockReturnValue({ id: null });
       jest.spyOn(customerService, 'create').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
@@ -132,7 +137,7 @@ describe('Customer Management Update Component', () => {
     it('should set isSaving to false on error', () => {
       // GIVEN
       const saveSubject = new Subject<HttpResponse<ICustomer>>();
-      const customer = { id: 26915 };
+      const customer = { id: 8289 };
       jest.spyOn(customerService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ customer });
@@ -147,6 +152,18 @@ describe('Customer Management Update Component', () => {
       expect(customerService.update).toHaveBeenCalled();
       expect(comp.isSaving).toEqual(false);
       expect(comp.previousState).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Compare relationships', () => {
+    describe('compareUser', () => {
+      it('should forward to userService', () => {
+        const entity = { id: 3944 };
+        const entity2 = { id: 6275 };
+        jest.spyOn(userService, 'compareUser');
+        comp.compareUser(entity, entity2);
+        expect(userService.compareUser).toHaveBeenCalledWith(entity, entity2);
+      });
     });
   });
 

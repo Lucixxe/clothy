@@ -381,7 +381,7 @@ class CartItemResourceIT {
         CartItem partialUpdatedCartItem = new CartItem();
         partialUpdatedCartItem.setId(cartItem.getId());
 
-        partialUpdatedCartItem.isInOrder(UPDATED_IS_IN_ORDER);
+        partialUpdatedCartItem.unitPrice(UPDATED_UNIT_PRICE).lineTotal(UPDATED_LINE_TOTAL);
 
         restCartItemMockMvc
             .perform(

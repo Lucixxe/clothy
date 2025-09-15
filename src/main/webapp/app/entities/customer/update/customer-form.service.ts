@@ -75,7 +75,9 @@ export class CustomerFormService {
       adress: new FormControl(customerRawValue.adress, {
         validators: [Validators.required],
       }),
-      user: new FormControl(customerRawValue.user),
+      user: new FormControl(customerRawValue.user, {
+        validators: [Validators.required],
+      }),
     });
   }
 

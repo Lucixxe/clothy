@@ -34,7 +34,6 @@ public class CartResource {
     private static final Logger LOG = LoggerFactory.getLogger(CartResource.class);
 
     private static final String ENTITY_NAME = "cart";
-
     private final UserRepository userRepository;
 
     @Value("${jhipster.clientApp.name}")

@@ -15,7 +15,7 @@ describe('Cart e2e test', () => {
   const cartPageUrlPattern = new RegExp('/cart(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const cartSample = { cartKey: '63b62489-d522-4cd2-91f7-652398a556c6', createdAt: '2025-09-08T07:52:15.784Z', isCheckedOut: false };
+  const cartSample = { cartKey: 'af9d8544-518e-4f39-993d-c86304f2987e', createdAt: '2025-09-08T13:04:02.774Z', isCheckedOut: true };
 
   let cart;
   let customer;
@@ -24,23 +24,25 @@ describe('Cart e2e test', () => {
     cy.login(username, password);
   });
 
+  /* Disabled due to incompatibility
   beforeEach(() => {
     // create an instance at the required relationship entity:
     cy.authenticatedRequest({
       method: 'POST',
       url: '/api/customers',
       body: {
-        email: 'Philothee.Arnaud@hotmail.fr',
-        firstName: 'Denise',
-        lastName: 'Bertrand',
-        createdAt: '2025-09-08T07:11:00.356Z',
-        passwordHash: 'placide nonobstant ça',
-        adress: 'ha tromper',
+        email: 'Alcine.Meyer@hotmail.fr',
+        firstName: 'Eugénie',
+        lastName: 'Sanchez',
+        createdAt: '2025-09-07T22:27:51.891Z',
+        passwordHash: 'gestionnaire groin groin diplomate',
+        adress: "à l'encontre de blême dring",
       },
     }).then(({ body }) => {
       customer = body;
     });
   });
+   */
 
   beforeEach(() => {
     cy.intercept('GET', '/api/carts+(?*|)').as('entitiesRequest');
@@ -48,13 +50,16 @@ describe('Cart e2e test', () => {
     cy.intercept('DELETE', '/api/carts/*').as('deleteEntityRequest');
   });
 
+  /* Disabled due to incompatibility
   beforeEach(() => {
     // Simulate relationships api for better performance and reproducibility.
     cy.intercept('GET', '/api/customers', {
       statusCode: 200,
       body: [customer],
     });
+
   });
+   */
 
   afterEach(() => {
     if (cart) {
@@ -67,6 +72,7 @@ describe('Cart e2e test', () => {
     }
   });
 
+  /* Disabled due to incompatibility
   afterEach(() => {
     if (customer) {
       cy.authenticatedRequest({
@@ -77,6 +83,7 @@ describe('Cart e2e test', () => {
       });
     }
   });
+   */
 
   it('Carts menu should load Carts page', () => {
     cy.visit('/');
@@ -113,13 +120,14 @@ describe('Cart e2e test', () => {
     });
 
     describe('with existing value', () => {
+      /* Disabled due to incompatibility
       beforeEach(() => {
         cy.authenticatedRequest({
           method: 'POST',
           url: '/api/carts',
           body: {
             ...cartSample,
-            customer,
+            customer: customer,
           },
         }).then(({ body }) => {
           cart = body;
@@ -133,13 +141,24 @@ describe('Cart e2e test', () => {
             {
               statusCode: 200,
               body: [cart],
-            },
+            }
           ).as('entitiesRequestInternal');
         });
 
         cy.visit(cartPageUrl);
 
         cy.wait('@entitiesRequestInternal');
+      });
+       */
+
+      beforeEach(function () {
+        cy.visit(cartPageUrl);
+
+        cy.wait('@entitiesRequest').then(({ response }) => {
+          if (response?.body.length === 0) {
+            this.skip();
+          }
+        });
       });
 
       it('detail button click should load details Cart page', () => {
@@ -173,7 +192,8 @@ describe('Cart e2e test', () => {
         cy.url().should('match', cartPageUrlPattern);
       });
 
-      it('last delete button click should delete instance of Cart', () => {
+      // Reason: cannot create a required entity with relationship with required relationships.
+      it.skip('last delete button click should delete instance of Cart', () => {
         cy.get(entityDeleteButtonSelector).last().click();
         cy.getEntityDeleteDialogHeading('cart').should('exist');
         cy.get(entityConfirmDeleteButtonSelector).click();
@@ -198,12 +218,12 @@ describe('Cart e2e test', () => {
     });
 
     it('should create an instance of Cart', () => {
-      cy.get(`[data-cy="cartKey"]`).type('ca067de6-76de-4c1b-9919-49ef1e5c53e7');
-      cy.get(`[data-cy="cartKey"]`).invoke('val').should('match', new RegExp('ca067de6-76de-4c1b-9919-49ef1e5c53e7'));
+      cy.get(`[data-cy="cartKey"]`).type('2ddc16ee-b058-4fc6-91d8-cebd3cea42b8');
+      cy.get(`[data-cy="cartKey"]`).invoke('val').should('match', new RegExp('2ddc16ee-b058-4fc6-91d8-cebd3cea42b8'));
 
-      cy.get(`[data-cy="createdAt"]`).type('2025-09-08T07:45');
+      cy.get(`[data-cy="createdAt"]`).type('2025-09-08T04:54');
       cy.get(`[data-cy="createdAt"]`).blur();
-      cy.get(`[data-cy="createdAt"]`).should('have.value', '2025-09-08T07:45');
+      cy.get(`[data-cy="createdAt"]`).should('have.value', '2025-09-08T04:54');
 
       cy.get(`[data-cy="isCheckedOut"]`).should('not.be.checked');
       cy.get(`[data-cy="isCheckedOut"]`).click();

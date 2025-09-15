@@ -93,7 +93,7 @@ class CartResourceIT {
         // Add required entity
         Customer customer;
         if (TestUtil.findAll(em, Customer.class).isEmpty()) {
-            customer = CustomerResourceIT.createEntity();
+            customer = CustomerResourceIT.createEntity(em);
             em.persist(customer);
             em.flush();
         } else {
@@ -114,7 +114,7 @@ class CartResourceIT {
         // Add required entity
         Customer customer;
         if (TestUtil.findAll(em, Customer.class).isEmpty()) {
-            customer = CustomerResourceIT.createUpdatedEntity();
+            customer = CustomerResourceIT.createUpdatedEntity(em);
             em.persist(customer);
             em.flush();
         } else {
@@ -370,7 +370,7 @@ class CartResourceIT {
         Cart partialUpdatedCart = new Cart();
         partialUpdatedCart.setId(cart.getId());
 
-        partialUpdatedCart.cartKey(UPDATED_CART_KEY).createdAt(UPDATED_CREATED_AT);
+        partialUpdatedCart.cartKey(UPDATED_CART_KEY).createdAt(UPDATED_CREATED_AT).isCheckedOut(UPDATED_IS_CHECKED_OUT);
 
         restCartMockMvc
             .perform(

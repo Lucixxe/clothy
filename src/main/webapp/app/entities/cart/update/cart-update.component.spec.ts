@@ -49,10 +49,10 @@ describe('Cart Management Update Component', () => {
   describe('ngOnInit', () => {
     it('should call customer query and add missing value', () => {
       const cart: ICart = { id: 31845 };
-      const customer: ICustomer = { id: 26915 };
+      const customer: ICustomer = { id: 8289 };
       cart.customer = customer;
 
-      const customerCollection: ICustomer[] = [{ id: 26915 }];
+      const customerCollection: ICustomer[] = [{ id: 8289 }];
       jest.spyOn(customerService, 'query').mockReturnValue(of(new HttpResponse({ body: customerCollection })));
       const expectedCollection: ICustomer[] = [customer, ...customerCollection];
       jest.spyOn(customerService, 'addCustomerToCollectionIfMissing').mockReturnValue(expectedCollection);
@@ -67,7 +67,7 @@ describe('Cart Management Update Component', () => {
 
     it('should update editForm', () => {
       const cart: ICart = { id: 31845 };
-      const customer: ICustomer = { id: 26915 };
+      const customer: ICustomer = { id: 8289 };
       cart.customer = customer;
 
       activatedRoute.data = of({ cart });
@@ -149,8 +149,8 @@ describe('Cart Management Update Component', () => {
   describe('Compare relationships', () => {
     describe('compareCustomer', () => {
       it('should forward to customerService', () => {
-        const entity = { id: 26915 };
-        const entity2 = { id: 21032 };
+        const entity = { id: 8289 };
+        const entity2 = { id: 13667 };
         jest.spyOn(customerService, 'compareCustomer');
         comp.compareCustomer(entity, entity2);
         expect(customerService.compareCustomer).toHaveBeenCalledWith(entity, entity2);

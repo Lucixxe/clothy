@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.clothy.myapp.IntegrationTest;
 import com.clothy.myapp.domain.Customer;
+import com.clothy.myapp.domain.User;
 import com.clothy.myapp.repository.CustomerRepository;
 import com.clothy.myapp.repository.UserRepository;
 import com.clothy.myapp.service.CustomerService;
@@ -99,14 +100,20 @@ class CustomerResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Customer createEntity() {
-        return new Customer()
+    public static Customer createEntity(EntityManager em) {
+        Customer customer = new Customer()
             .email(DEFAULT_EMAIL)
             .firstName(DEFAULT_FIRST_NAME)
             .lastName(DEFAULT_LAST_NAME)
             .createdAt(DEFAULT_CREATED_AT)
             .passwordHash(DEFAULT_PASSWORD_HASH)
             .adress(DEFAULT_ADRESS);
+        // Add required entity
+        User user = UserResourceIT.createEntity();
+        em.persist(user);
+        em.flush();
+        customer.setUser(user);
+        return customer;
     }
 
     /**
@@ -115,19 +122,25 @@ class CustomerResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Customer createUpdatedEntity() {
-        return new Customer()
+    public static Customer createUpdatedEntity(EntityManager em) {
+        Customer updatedCustomer = new Customer()
             .email(UPDATED_EMAIL)
             .firstName(UPDATED_FIRST_NAME)
             .lastName(UPDATED_LAST_NAME)
             .createdAt(UPDATED_CREATED_AT)
             .passwordHash(UPDATED_PASSWORD_HASH)
             .adress(UPDATED_ADRESS);
+        // Add required entity
+        User user = UserResourceIT.createEntity();
+        em.persist(user);
+        em.flush();
+        updatedCustomer.setUser(user);
+        return updatedCustomer;
     }
 
     @BeforeEach
     void initTest() {
-        customer = createEntity();
+        customer = createEntity(em);
     }
 
     @AfterEach
@@ -157,6 +170,8 @@ class CustomerResourceIT {
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertCustomerUpdatableFieldsEquals(returnedCustomer, getPersistedCustomer(returnedCustomer));
 
+        assertCustomerMapsIdRelationshipPersistedValue(customer, returnedCustomer);
+
         insertedCustomer = returnedCustomer;
     }
 
@@ -175,6 +190,45 @@ class CustomerResourceIT {
 
         // Validate the Customer in the database
         assertSameRepositoryCount(databaseSizeBeforeCreate);
+    }
+
+    @Test
+    @Transactional
+    void updateCustomerMapsIdAssociationWithNewId() throws Exception {
+        // Initialize the database
+        insertedCustomer = customerRepository.saveAndFlush(customer);
+        long databaseSizeBeforeCreate = getRepositoryCount();
+        // Add a new parent entity
+        User user = UserResourceIT.createEntity();
+        em.persist(user);
+        em.flush();
+
+        // Load the customer
+        Customer updatedCustomer = customerRepository.findById(customer.getId()).orElseThrow();
+        assertThat(updatedCustomer).isNotNull();
+        // Disconnect from session so that the updates on updatedCustomer are not directly saved in db
+        em.detach(updatedCustomer);
+
+        // Update the User with new association value
+        updatedCustomer.setUser(user);
+
+        // Update the entity
+        restCustomerMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, updatedCustomer.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(om.writeValueAsBytes(updatedCustomer))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the Customer in the database
+        assertSameRepositoryCount(databaseSizeBeforeCreate);
+        /**
+         * Validate the id for MapsId, the ids must be same
+         * Uncomment the following line for assertion. However, please note that there is a known issue and uncommenting will fail the test.
+         * Please look at https://github.com/jhipster/generator-jhipster/issues/9100. You can modify this test as necessary.
+         * assertThat(testCustomer.getId()).isEqualTo(testCustomer.getUser().getId());
+         */
     }
 
     @Test
@@ -433,7 +487,7 @@ class CustomerResourceIT {
         Customer partialUpdatedCustomer = new Customer();
         partialUpdatedCustomer.setId(customer.getId());
 
-        partialUpdatedCustomer.email(UPDATED_EMAIL).adress(UPDATED_ADRESS);
+        partialUpdatedCustomer.lastName(UPDATED_LAST_NAME).passwordHash(UPDATED_PASSWORD_HASH);
 
         restCustomerMockMvc
             .perform(

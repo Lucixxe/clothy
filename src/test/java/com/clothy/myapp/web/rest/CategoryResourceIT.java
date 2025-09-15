@@ -314,7 +314,7 @@ class CategoryResourceIT {
         Category partialUpdatedCategory = new Category();
         partialUpdatedCategory.setId(category.getId());
 
-        partialUpdatedCategory.name(UPDATED_NAME).slug(UPDATED_SLUG).isActive(UPDATED_IS_ACTIVE);
+        partialUpdatedCategory.slug(UPDATED_SLUG).isActive(UPDATED_IS_ACTIVE);
 
         restCategoryMockMvc
             .perform(

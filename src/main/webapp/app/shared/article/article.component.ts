@@ -20,6 +20,6 @@ export class ArticleComponent {
 
   getProductImage(): string {
     // Image par défaut pour tous les produits
-    return this.product.image ? `data:${this.product.imageContentType};base64,${this.product.image}` : 'assets/images/default-product.png';
+    return this.product.image ? `base64,${this.product.image}` : 'assets/images/default-product.png';
   }
 }
