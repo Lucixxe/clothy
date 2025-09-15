@@ -1,5 +1,5 @@
 <div class="article-card" (click)="goToProduct()">
-  <img [src]="getProductImage()" [alt]="product.name" class="product-img" />
+  <img [src]="product.image" [alt]="product.name" class="product-img" style="max-width: 150px; max-height: 150px; object-fit: cover" />
   <div class="product-info">
     <h3>{{ product.name || 'Produit' }}</h3>
     <p class="category">{{ product.categories?.[0]?.name || 'Catégorie' }}</p>
