@@ -8,6 +8,8 @@ import { ProductService } from 'app/entities/product/service/product.service';
 import { ICartItem } from '../entities/cart-item/cart-item.model';
 import { IProduct } from 'app/entities/product/product.model';
 import { CartItemService } from 'app/entities/cart-item/service/cart-item.service';
+import { loadStripe } from '@stripe/stripe-js';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-cart-page',
@@ -23,8 +25,9 @@ export class CartPageComponent implements OnInit {
   itemsICart: ICartItem[] = [];
   IdCart: number = 0;
   total = 0;
+  constructor(private http: HttpClient) {}
 
-  private accountService = inject(AccountService);
+  public accountService = inject(AccountService);
   private router = inject(Router);
   private productService = inject(ProductService);
   private cartService = inject(CartService);
@@ -113,9 +116,23 @@ export class CartPageComponent implements OnInit {
     this.total = 0;
   }
 
-  goToPayment(): void {
+  async goToPayment() {
     if (this.accountService.isAuthenticated()) {
-      this.router.navigate(['/payement']);
+      const stripe = await loadStripe('pk_test_...'); // clé publique
+      const token = localStorage.getItem('jhi-authenticationtoken');
+
+      this.http
+        .post(
+          'http://localhost:8080/api/payment/create-checkout-session?amount=' + this.total * 100,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            responseType: 'text',
+          },
+        )
+        .subscribe(async (url: string) => {
+          window.location.href = url; // redirection vers Stripe Checkout
+        });
     } else {
       alert('Vous devez être connecté pour passer au paiement.');
       this.router.navigate(['/login']);

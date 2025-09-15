@@ -1,32 +1,60 @@
 <h2 class="cart-title">Votre panier</h2>
 
 <div class="cart-container">
-  <div *ngIf="itemsICart.length === 0" class="cart-empty">
+  <!-- Panier vide pour non connecté -->
+  <div *ngIf="!accountService.isAuthenticated() && items.length === 0" class="cart-empty">
     <i class="fa fa-shopping-cart fa-2x"></i>
     <p>Votre panier est vide.</p>
   </div>
 
-  <div *ngFor="let item of itemsICart" class="cart-item-card">
-    <div class="cart-item-info">
-      <span class="cart-item-name">{{ item.product?.name }}</span>
-      <span class="cart-item-price">{{ item.product?.price }} €</span>
-      <span class="cart-item-qty">
-        <button (click)="decreaseQty(item)">−</button>
-        x {{ item.quantity }}
-        <button (click)="increaseQty(item)">+</button>
-      </span>
+  <!-- Panier non connecté -->
+  <div *ngIf="!accountService.isAuthenticated()">
+    <div *ngFor="let item of items" class="cart-item-card">
+      <div class="cart-item-info">
+        <span class="cart-item-name">{{ item.name }}</span>
+        <span class="cart-item-price">{{ item.price }} €</span>
+        <span class="cart-item-qty">
+          <button (click)="decreaseQty(item)">−</button>
+          x {{ item.quantity }}
+          <button (click)="increaseQty(item)">+</button>
+        </span>
+      </div>
+      <button class="cart-remove-btn" (click)="remove(item.id)"><i class="fa fa-trash"></i> Retirer</button>
     </div>
-    <button class="cart-remove-btn" (click)="remove(item.id)"><i class="fa fa-trash"></i> Retirer</button>
+    <div *ngIf="items.length > 0" class="cart-total">
+      <p>
+        Total : <strong>{{ total }} €</strong>
+      </p>
+      <button class="cart-clear-btn" (click)="clear()"><i class="fa fa-trash"></i> Vider le panier</button>
+      <button class="payement" (click)="goToPayment()"><i class="fa fa-credit-card"></i> Passer au paiement</button>
+    </div>
   </div>
 
-  <div *ngIf="itemsICart.length > 0" class="cart-total">
-    <p>
-      Total : <strong>{{ total }} €</strong>
-    </p>
-    <button class="cart-clear-btn" (click)="clear()"><i class="fa fa-trash"></i> Vider le panier</button>
-
-    <!-- Bouton sécurisé pour le paiement -->
-    <button class="payement" (click)="goToPayment()"><i class="fa fa-credit-card"></i> Passer au paiement</button>
+  <!-- Panier connecté -->
+  <div *ngIf="accountService.isAuthenticated()">
+    <div *ngIf="itemsICart.length === 0" class="cart-empty">
+      <i class="fa fa-shopping-cart fa-2x"></i>
+      <p>Votre panier est vide.</p>
+    </div>
+    <div *ngFor="let item of itemsICart" class="cart-item-card">
+      <div class="cart-item-info">
+        <span class="cart-item-name">{{ item.product?.name }}</span>
+        <span class="cart-item-price">{{ item.product?.price }} €</span>
+        <span class="cart-item-qty">
+          <button (click)="decreaseQty(item)">−</button>
+          x {{ item.quantity }}
+          <button (click)="increaseQty(item)">+</button>
+        </span>
+      </div>
+      <button class="cart-remove-btn" (click)="remove(item.id)"><i class="fa fa-trash"></i> Retirer</button>
+    </div>
+    <div *ngIf="itemsICart.length > 0" class="cart-total">
+      <p>
+        Total : <strong>{{ total }} €</strong>
+      </p>
+      <button class="cart-clear-btn" (click)="clear()"><i class="fa fa-trash"></i> Vider le panier</button>
+      <button class="payement" (click)="goToPayment()"><i class="fa fa-credit-card"></i> Passer au paiement</button>
+    </div>
   </div>
 </div>
 

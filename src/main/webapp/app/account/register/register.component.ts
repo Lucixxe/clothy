@@ -88,7 +88,7 @@ export default class RegisterComponent implements AfterViewInit {
           this.success.set(true);
           this.router.navigate(['/']); // ✅ redirection vers la page d'accueil après succès
         },
-        error: response => this.processError(response),
+        error: response => console.error('Registration error: ', response),
       });
 
     console.log(this.firstNameInput, ' ', password, ' ', email);

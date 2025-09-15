@@ -1,51 +1,37 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AccountService } from 'app/core/auth/account.service';
+import { loadStripe } from '@stripe/stripe-js';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'jhi-payement',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './payement.component.html',
-  styleUrls: ['./payement.component.scss'],
+  template: `<button (click)="checkout()">Payer maintenant</button>`,
 })
 export class PayementComponent implements OnInit {
-  payementForm: FormGroup;
-  submitted = false;
   private accountService = inject(AccountService);
   private router = inject(Router);
 
-  constructor(private fb: FormBuilder) {
-    this.payementForm = this.fb.group({
-      nom: ['', [Validators.required, Validators.minLength(2)]],
-      numeroCarte: ['', [Validators.required, Validators.pattern('^[0-9]{16}$')]],
-      dateExpiration: ['', [Validators.required, Validators.pattern('^(0[1-9]|1[0-2])\\/([0-9]{2})$')]],
-      cvv: ['', [Validators.required, Validators.pattern('^[0-9]{3,4}$')]],
-    });
-  }
+  constructor(private http: HttpClient) {}
 
-  ngOnInit(): void {
-    // Vérifie si l'utilisateur est connecté
-    if (!this.accountService.identity()) {
-      this.router.navigate(['/login']); // redirige vers login si non connecté
-    }
-  }
+  ngOnInit(): void {}
 
-  get f() {
-    return this.payementForm.controls;
-  }
+  async checkout() {
+    const stripe = await loadStripe('pk_test_...'); // clé publique
 
-  onSubmit(): void {
-    this.submitted = true;
+    const token = localStorage.getItem('jhi-authenticationtoken');
 
-    if (this.payementForm.invalid) {
-      return;
-    }
-
-    // Traitement du paiement
-    console.log('Paiement réussi : ', this.payementForm.value);
-    alert('Paiement effectué avec succès !');
+    this.http
+      .post(
+        'http://localhost:8080/api/payment/create-checkout-session?amount=5000',
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          responseType: 'text',
+        },
+      )
+      .subscribe(async (url: string) => {
+        window.location.href = url; // redirection vers Stripe Checkout
+      });
   }
 }
