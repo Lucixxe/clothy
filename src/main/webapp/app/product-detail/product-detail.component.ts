@@ -11,7 +11,7 @@ import { AccountService } from 'app/core/auth/account.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './product-detail.component.html',
-  styleUrls: ['./product-detail.component.scss'], // ❌ c’était "styleUrl" (au singulier)
+  styleUrls: ['./product-detail.component.scss'],
 })
 export class ProductDetailComponent implements OnInit {
   product: IProduct | null = null;
