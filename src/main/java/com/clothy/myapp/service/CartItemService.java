@@ -73,4 +73,6 @@ public interface CartItemService {
     public List<CartItem> findAllForCartItem(Long cartId);
 
     void deleteAllByCartId(Long cartId);
+
+    public List<CartItem> findAllForCartItemNotInOrder(Long cartId);
 }

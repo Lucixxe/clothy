@@ -17,7 +17,9 @@ export class PayementComponent implements OnInit {
   ngOnInit(): void {}
 
   async checkout() {
-    const stripe = await loadStripe('pk_test_...'); // clé publique
+    const stripe = await loadStripe(
+      'pk_test_51S7sx2RkxlAub16WafblID2ttD1zpzIgRSLAbYsRENxi1UueZZtPDMrZK8sR8Im0hvhzYhuqCKVFRFZAQDC9B3tL00Zd6tYxnP',
+    ); // clé publique
 
     const token = localStorage.getItem('jhi-authenticationtoken');
 

@@ -121,11 +121,13 @@ public class CartItemServiceImpl implements CartItemService {
         Optional<CartItem> existingItem = cartItemRepository.findByCartAndProduct(cart, product);
         CartItem cartItem = existingItem.orElse(createNewCartItem(cart, product, quantity));
 
-        if (existingItem.isPresent()) {
+        if (existingItem.isPresent() && existingItem.get().getIsInOrder() == false) {
             // Only update if it was an existing item
             int newQuantity = cartItem.getQuantity() + quantity;
             cartItem.setQuantity(newQuantity);
             cartItem.setLineTotal(product.getPrice().multiply(BigDecimal.valueOf(newQuantity)));
+        } else {
+            cartItem = createNewCartItem(cart, product, quantity);
         }
         /*
 
@@ -171,5 +173,10 @@ public class CartItemServiceImpl implements CartItemService {
         for (CartItem c : listOfCustomerItems) {
             delete(c.getId());
         }
+    }
+
+    @Override
+    public List<CartItem> findAllForCartItemNotInOrder(Long cartId) {
+        return cartItemRepository.getAllCartItemsForCartNotInOrder(cartId);
     }
 }
