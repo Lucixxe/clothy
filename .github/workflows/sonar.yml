@@ -1,10 +1,16 @@
 name: SonarCloud Analysis
 
+#on:
+#  workflow_run:
+#   workflows: ['Backend Pipeline']
+#  types:
+#   - completed
+
 on:
-  workflow_run:
-    workflows: ['Backend Pipeline']
-    types:
-      - completed
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   sonar:
@@ -34,7 +40,4 @@ jobs:
           restore-keys: ${{ runner.os }}-maven
 
       - name: SonarCloud Scan
-        run: ./mvnw -Pprod clean verify sonar:sonar \
-          -Dsonar.projectKey=Lucixxe_clothy \
-          -Dsonar.organization=Lucixxe \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: ./mvnw -Pprod clean verify sonar:sonar -Dsonar.login=${{ secrets.SONAR_TOKEN }}
