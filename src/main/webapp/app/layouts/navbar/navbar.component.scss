@@ -112,3 +112,74 @@
   padding: 2px 6px;
   border-radius: 50%;
 }
+
+/* Styles pour le dropdown Entities (admin) */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-toggle {
+  text-decoration: none;
+  color: #edf2f4;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.dropdown-toggle:hover {
+  color: #ef233c;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #2b2d42;
+  border: 2px solid #8d99ae;
+  border-radius: 8px;
+  padding: 15px;
+  min-width: 250px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  display: none;
+
+  /* Affichage vertical des liens */
+  flex-direction: column;
+  gap: 5px;
+  list-style: none;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: flex;
+}
+
+.dropdown-menu li {
+  margin: 0;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 8px 15px;
+  color: #edf2f4;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.3s;
+  white-space: nowrap;
+  font-size: 14px;
+  border: 1px solid transparent;
+}
+
+.dropdown-item:hover {
+  background: #ef233c;
+  color: white;
+  border-color: #d90429;
+  transform: translateY(-2px);
+}
+
+.dropdown-item fa-icon {
+  margin-right: 8px;
+  color: inherit;
+}
