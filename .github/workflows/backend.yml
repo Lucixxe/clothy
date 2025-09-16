@@ -2,7 +2,7 @@ name: Backend Tests
 
 on:
   workflow_run:
-    workflows: ['Compile']
+    workflows: ['Package']
     types:
       - completed
 
