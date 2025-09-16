@@ -47,6 +47,12 @@ public interface ProductRepository extends ProductRepositoryWithBagRelationships
     @Query("SELECT p FROM Product p WHERE p.id IN :productIds ORDER BY p.id ASC")
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     List<Product> findAndLockProductsByIdsOrderedById(@Param("productIds") List<Long> productIds);
+
+    /*@Query("select p from Product p where p.category.id = :categoryId")
+    List<Product> findAllByCategoryId(@Param("categoryId") Long categoryId);*/
+
+    @Query("SELECT DISTINCT p FROM Product p JOIN p.categories c WHERE LOWER(c.name) = LOWER(:name)")
+    List<Product> findAllByCategoryName(@Param("name") String name);
 }
 /*
  * TRIER DONNESS POUR EVITER DEADLOCK

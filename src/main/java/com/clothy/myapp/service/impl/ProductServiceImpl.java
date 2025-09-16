@@ -87,4 +87,13 @@ public class ProductServiceImpl implements ProductService {
         LOG.debug("Request to delete Product : {}", id);
         productRepository.deleteById(id);
     }
+
+    /*@Override
+    public List<Product> getProductsByCategory(Long categoryId) {
+        return productRepository.findAllByCategoryId(categoryId);
+    }*/
+    @Override
+    public List<Product> getProductsByCategoryName(String name) {
+        return productRepository.findAllByCategoryName(name);
+    }
 }

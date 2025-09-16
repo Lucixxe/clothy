@@ -63,4 +63,8 @@ public interface ProductService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    /*public List<Product> getProductsByCategory(Long categoryId);*/
+
+    public List<Product> getProductsByCategoryName(String name);
 }
