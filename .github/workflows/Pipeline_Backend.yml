@@ -84,3 +84,16 @@ jobs:
           restore-keys: ${{ runner.os }}-maven
       - name: SonarCloud Scan
         run: ./mvnw -Pprod clean verify sonar:sonar -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.junit.reportPaths=target/surefire-reports -Dsonar.coverage.exclusions=**/*
+  deploy:
+    runs-on: ubuntu-latest
+    needs: sonar
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Heroku CLI # <- IMPORTANT!!! Make sure the cli is installed before using the action
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: 'clothy' # change to your app name
+          heroku_email: 'youssef7kkader@gmail.com'
