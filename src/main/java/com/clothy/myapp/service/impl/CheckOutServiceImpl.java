@@ -31,25 +31,31 @@ public class CheckOutServiceImpl implements CheckOutService {
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
 
-    @Autowired
     private CartItemService cartItemService;
 
-    @Autowired
     private CustomerOrderService customerOrderService;
 
-    @Autowired
     private CartItemRepository cartItemRepository;
 
-    public CheckOutServiceImpl(CartRepository cartRepository, ProductRepository productRepository) {
+    public CheckOutServiceImpl(
+        CartRepository cartRepository,
+        ProductRepository productRepository,
+        CartItemService crtitemService,
+        CustomerOrderService cstOS,
+        CartItemRepository carrepo
+    ) {
         this.cartRepository = cartRepository;
         this.productRepository = productRepository;
+        this.cartItemService = crtitemService;
+        this.customerOrderService = cstOS;
+        this.cartItemRepository = carrepo;
     }
 
     public List<CartItemDTO> getCartItemDTOsForCart(Long cartId, List<CartItemDTO> allItems) {
         return allItems.stream().filter(item -> item.getCartId() != null && item.getCartId().equals(cartId)).collect(Collectors.toList());
     }
 
-    private CustomerOrder createCustomerOrder(Long cartId, List<CartItemDTO> cartItems, Customer customer) {
+    private CustomerOrder createCustomerOrder(Long cartId, List<CartItem> cartItems, Customer customer) {
         CustomerOrder order = new CustomerOrder();
 
         // Générer un numéro de commande unique
@@ -74,11 +80,7 @@ public class CheckOutServiceImpl implements CheckOutService {
             .orElseThrow(() -> new RuntimeException("CustomerOrder non trouvée avec l'ID: " + customerOrderId));
 
         // Récupérer tous les cart_items associés à ce cart
-        List<CartItem> cartItems = cartItemRepository
-            .findAll()
-            .stream()
-            .filter(item -> item.getCart() != null && item.getCart().getId().equals(cartId))
-            .collect(Collectors.toList());
+        List<CartItem> cartItems = cartItemRepository.getAllCartItemsForCartNotInOrder(cartId);
 
         System.out.println("Associating " + cartItems.size() + " cart items to order " + customerOrderId);
 
@@ -94,8 +96,8 @@ public class CheckOutServiceImpl implements CheckOutService {
     @Override
     @Transactional
     public CheckOutResultDTO checkOut(Long cartId) {
-        List<CartItemDTO> allItems = cartItemService.findAll().stream().map(CartItemDTO::new).collect(Collectors.toList());
-        List<CartItemDTO> cartItems = getCartItemDTOsForCart(cartId, allItems);
+        //List<CartItemDTO> allItems = cartItemService.findAll().stream().map(CartItemDTO::new).collect(Collectors.toList());
+        List<CartItem> cartItems = cartItemRepository.getAllCartItemsForCartNotInOrder(cartId);
         //CART EMPTY EXCEPTION
         if (cartItems.isEmpty()) {
             throw new CartEmptyException("Le panier est vide", Long.toString(cartId));
@@ -115,15 +117,18 @@ public class CheckOutServiceImpl implements CheckOutService {
         }
 
         //Obtenir tous les produits du panier d'un customer
-        List<Long> productIds = cartItems.stream().map(CartItemDTO::getProductId).collect(Collectors.toList());
+        List<Long> productIds = cartItems.stream().map(cartItem -> cartItem.getProduct().getId()).collect(Collectors.toList());
 
         Map<Long, Integer> productQuantityMap = cartItems
             .stream()
-            .collect(Collectors.groupingBy(CartItemDTO::getProductId, Collectors.summingInt(CartItemDTO::getQuantity)));
+            .collect(
+                Collectors.groupingBy(cartItem -> cartItem.getProduct().getId(), Collectors.summingInt(cartItem -> cartItem.getQuantity()))
+            );
 
         try {
             //Obtention de tous les produits TRIES et VERROUILLES
             List<Product> lockedProducts = productRepository.findAndLockProductsByIdsOrderedById(productIds);
+            System.out.println("locked products :" + lockedProducts);
             //Si le nombre de product obtenu n'est pas egale au nombre de product dans le panier
             if (lockedProducts.size() != productIds.size()) {
                 Set<Long> foundIds = lockedProducts.stream().map(Product::getId).collect(Collectors.toSet());

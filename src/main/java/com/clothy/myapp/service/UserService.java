@@ -13,6 +13,7 @@ import com.clothy.myapp.security.AuthoritiesConstants;
 import com.clothy.myapp.security.SecurityUtils;
 import com.clothy.myapp.service.dto.AdminUserDTO;
 import com.clothy.myapp.service.dto.UserDTO;
+import com.clothy.myapp.web.rest.errors.DuplicateEmailException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
@@ -171,6 +172,10 @@ public class UserService {
             customer.setAdress(user.getImageUrl()); // Laisser vide temporairement pour tester
             customer.setUser(user);
 
+            Customer customerCheck = customerRepository.findByEmail(user.getEmail());
+            if (customerCheck != null) {
+                throw new DuplicateEmailException("l'Email existe deja dans notre base", user.getEmail());
+            }
             customerRepository.save(customer);
 
             Cart cart = new Cart();

@@ -55,6 +55,11 @@ const routes: Routes = [
     loadComponent: () => import('./articles-page/articles-page.component').then(m => m.ArticlesPageComponent),
     title: 'Articles-page',
   },
+  {
+    path: 'payment-success',
+    loadComponent: () => import('./payment-success/payment-success.component').then(m => m.PaymentSuccessComponent),
+    title: 'Payment Success',
+  },
   ...errorRoute,
 ];
 
