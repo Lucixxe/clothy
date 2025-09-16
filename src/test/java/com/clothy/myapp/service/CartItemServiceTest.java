@@ -52,6 +52,7 @@ public class CartItemServiceTest {
         cart.setIsCheckedOut(false);
         CartItem cartItem = new CartItem();
         cartItem.setQuantity(quantity);
+        cartItem.setIsInOrder(false);
 
         when(productRepository.findById(5L)).thenReturn(Optional.of(product));
         when(cartItemRepository.findByCartAndProduct(cart, product)).thenReturn(Optional.of(cartItem));
