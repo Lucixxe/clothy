@@ -230,6 +230,7 @@ public class CheckOutServiceTest {
         Product product = new Product();
         product.setId(productId);
         product.setSku(1); // Only 1 left!
+        product.setPrice(BigDecimal.valueOf(250));
 
         // Create carts and customers
         Customer customer1 = new Customer();
