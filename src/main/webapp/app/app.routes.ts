@@ -60,6 +60,11 @@ const routes: Routes = [
     loadComponent: () => import('./payment-success/payment-success.component').then(m => m.PaymentSuccessComponent),
     title: 'Payment Success',
   },
+  {
+    path: 'payment-cancel',
+    loadComponent: () => import('./payment-cancel/payment-cancel.component').then(m => m.PaymentCancelComponent),
+    title: 'Payment Cancel',
+  },
   ...errorRoute,
 ];
 

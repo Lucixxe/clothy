@@ -1,1 +1,9 @@
-<p>payment-cancel works!</p>
+<div class="payment-failed-container" style="text-align: center; margin-top: 50px">
+  <h1>Paiement Refusé ❌</h1>
+  <p>
+    Désolé, votre paiement pour la commande <strong>{{ orderId }}</strong> a échoué.
+    <br />
+    Veuillez réessayer ou utiliser un autre moyen de paiement.
+  </p>
+  <button (click)="goToHome()" style="padding: 10px 20px; font-size: 16px; cursor: pointer">Retour à l'accueil</button>
+</div>

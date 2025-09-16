@@ -1,0 +1,20 @@
+.payment-failed-container {
+  background-color: #fff5f5;
+  border: 2px solid #f44336;
+  border-radius: 10px;
+  padding: 30px;
+  max-width: 500px;
+  margin: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #d32f2f;
+}
