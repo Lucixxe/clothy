@@ -65,7 +65,12 @@ public class CheckOutServiceImpl implements CheckOutService {
         order.setCreatedAt(Instant.now());
 
         // Fixer le prix à 0 pour l'instant
-        order.setTotal(BigDecimal.ZERO);
+        BigDecimal total = cartItems
+            .stream()
+            .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        order.setTotal(total);
 
         // Associer le customer à la commande
         order.setCustomer(customer);
@@ -187,6 +192,7 @@ public class CheckOutServiceImpl implements CheckOutService {
             result.setSuccess(true);
             result.setMessage("Checkout effectué, stock mis à jour, commande créée et cart items associés.");
             cart.setIsCheckedOut(true);
+            cartRepository.save(cart);
             return result;
         } catch (OutOfStockException | ProductNotFoundException e) {
             throw e;
