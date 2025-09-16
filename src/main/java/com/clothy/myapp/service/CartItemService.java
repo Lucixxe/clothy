@@ -74,5 +74,6 @@ public interface CartItemService {
 
     void deleteAllByCartId(Long cartId);
 
+    //Pour le champ IsInOrder
     public List<CartItem> findAllForCartItemNotInOrder(Long cartId);
 }
