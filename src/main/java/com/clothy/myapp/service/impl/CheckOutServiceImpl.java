@@ -128,6 +128,7 @@ public class CheckOutServiceImpl implements CheckOutService {
         try {
             //Obtention de tous les produits TRIES et VERROUILLES
             List<Product> lockedProducts = productRepository.findAndLockProductsByIdsOrderedById(productIds);
+            System.out.println("locked products :" + lockedProducts);
             //Si le nombre de product obtenu n'est pas egale au nombre de product dans le panier
             if (lockedProducts.size() != productIds.size()) {
                 Set<Long> foundIds = lockedProducts.stream().map(Product::getId).collect(Collectors.toSet());

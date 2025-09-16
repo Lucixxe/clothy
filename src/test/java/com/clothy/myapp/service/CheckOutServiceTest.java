@@ -65,10 +65,19 @@ public class CheckOutServiceTest {
 
     @Test
     public void testCreationCommande() {
+        Product product2 = new Product();
+        product2.setId(5L);
+        product2.setSku(10);
+        product2.setPrice(BigDecimal.valueOf(250.000));
         Product product = new Product();
         product.setId(1L);
         product.setSku(5);
         product.setPrice(BigDecimal.valueOf(150.000));
+
+        Product product3 = new Product();
+        product3.setId(3L);
+        product3.setSku(5);
+        product3.setPrice(BigDecimal.valueOf(150.000));
 
         Customer customer = new Customer();
         customer.setId(3L);
@@ -85,18 +94,34 @@ public class CheckOutServiceTest {
         cartItem.setUnitPrice(BigDecimal.valueOf(10));
         cartItem.setLineTotal(BigDecimal.valueOf(20));
 
+        CartItem cartItem2 = new CartItem();
+        cartItem2.setProduct(product2);
+        cartItem2.setCart(cart);
+        cartItem2.setQuantity(2);
+        cartItem2.setUnitPrice(BigDecimal.valueOf(10));
+        cartItem2.setLineTotal(BigDecimal.valueOf(20));
+
+        CartItem cartItem3 = new CartItem();
+        cartItem3.setProduct(product3);
+        cartItem3.setCart(cart);
+        cartItem3.setQuantity(2);
+        cartItem3.setUnitPrice(BigDecimal.valueOf(10));
+        cartItem3.setLineTotal(BigDecimal.valueOf(20));
+
         CustomerOrder mockOrder = new CustomerOrder();
         mockOrder.setId(4L);
         mockOrder.setCustomer(customer);
 
         when(cartRepository.findById(160L)).thenReturn(Optional.of(cart));
-        when(productRepository.findAndLockProductsByIdsOrderedById(Arrays.asList(product.getId()))).thenReturn(
-            Optional.of(Arrays.asList(product)).orElse(Collections.emptyList())
-        );
+        when(
+            productRepository.findAndLockProductsByIdsOrderedById(Arrays.asList(product.getId(), product2.getId(), product3.getId()))
+        ).thenReturn(Optional.of(Arrays.asList(product, product2, product3)).orElse(Collections.emptyList()));
         when(customerOrderService.save(any(CustomerOrder.class))).thenReturn(mockOrder);
         when(customerOrderService.findOne(4L)).thenReturn(Optional.of(mockOrder));
-        when(cartItemRepository.save(any(CartItem.class))).thenReturn(cartItem);
-        when(cartItemRepository.getAllCartItemsForCartNotInOrder(160L)).thenReturn(Arrays.asList(cartItem));
+        when(cartItemRepository.save(cartItem)).thenReturn(cartItem);
+        when(cartItemRepository.save(cartItem2)).thenReturn(cartItem2);
+        when(cartItemRepository.save(cartItem3)).thenReturn(cartItem3);
+        when(cartItemRepository.getAllCartItemsForCartNotInOrder(160L)).thenReturn(Arrays.asList(cartItem, cartItem2, cartItem3));
 
         CheckOutResultDTO checkOutResultDTO = checkOutService.checkOut(cart.getId());
 
