@@ -2,7 +2,7 @@ package com.clothy.myapp.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-import com.clothy.myapp.security.*;
+import com.clothy.myapp.security.AuthoritiesConstants;
 import com.clothy.myapp.web.filter.SpaWebFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
