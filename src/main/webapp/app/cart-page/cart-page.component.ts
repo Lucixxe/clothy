@@ -41,7 +41,7 @@ export class CartPageComponent implements OnInit {
   loadCart(): void {
     if (!this.accountService.isAuthenticated()) {
       this.items = this.cartService.getItems();
-      this.total = this.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      this.updateTotal(); // Correction ici
     } else {
       this.cartService.getCurrentUserCartId().subscribe({
         next: cartId => {
@@ -65,7 +65,7 @@ export class CartPageComponent implements OnInit {
                 unitPrice: item.unitPrice ?? 0,
                 lineTotal: (item.unitPrice ?? 0) * (item.quantity ?? 1),
               }));
-              this.updateTotalICart();
+              this.updateTotal(); // Correction ici
             },
             error: () => {
               this.itemsICart = [];
@@ -81,8 +81,14 @@ export class CartPageComponent implements OnInit {
     }
   }
 
-  private updateTotalICart(): void {
-    this.total = this.itemsICart.reduce((sum, item) => sum + (item.lineTotal ?? 0), 0);
+  private updateTotal(): void {
+    if (!this.accountService.isAuthenticated()) {
+      // Pour les utilisateurs non connectés
+      this.total = this.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    } else {
+      // Pour les utilisateurs connectés
+      this.total = this.itemsICart.reduce((sum, item) => sum + (item.lineTotal ?? 0), 0);
+    }
   }
 
   // Actions sur le panier
@@ -91,14 +97,14 @@ export class CartPageComponent implements OnInit {
       // Utilisateur non connecté → panier local
       this.items = this.items.filter(item => item.id !== id);
       this.cartService.updateItems(this.items);
-      this.updateTotalICart();
+      this.updateTotal(); // Correction ici
     } else {
       // Utilisateur connecté → suppression via API
       this.cartItemService.delete(id).subscribe({
         next: () => {
           // Mise à jour du tableau local après suppression
           this.itemsICart = this.itemsICart.filter(item => item.id !== id);
-          this.updateTotalICart();
+          this.updateTotal(); // Correction ici
         },
         error: err => console.error('Erreur suppression du cartItem', err),
       });
@@ -143,11 +149,8 @@ export class CartPageComponent implements OnInit {
     if (!this.accountService.isAuthenticated()) {
       // Cas utilisateur non connecté → panier local
       if ('quantity' in item && item.quantity) item.quantity++;
-      if ('lineTotal' in item && 'unitPrice' in item) {
-        item.lineTotal = (item.unitPrice ?? 0) * (item.quantity ?? 1);
-      }
       this.cartService.updateItems(this.items);
-      this.updateTotalICart();
+      this.updateTotal(); // Correction ici
     } else {
       // Cas utilisateur connecté → mise à jour en base
       const updatedItem = {
@@ -160,7 +163,7 @@ export class CartPageComponent implements OnInit {
           if (res.body) {
             (item as ICartItem).quantity = res.body.quantity;
             (item as ICartItem).lineTotal = (item as ICartItem).unitPrice! * res.body.quantity!;
-            this.updateTotalICart();
+            this.updateTotal(); // Correction ici
           }
         },
         error: err => console.error('Erreur update quantité', err),
@@ -173,11 +176,8 @@ export class CartPageComponent implements OnInit {
       // Cas utilisateur non connecté → panier local
       if ('quantity' in item && item.quantity && item.quantity > 1) {
         item.quantity--;
-        if ('lineTotal' in item && 'unitPrice' in item) {
-          item.lineTotal = (item.unitPrice ?? 0) * (item.quantity ?? 1);
-        }
         this.cartService.updateItems(this.items);
-        this.updateTotalICart();
+        this.updateTotal(); // Correction ici
       }
     } else {
       // Cas utilisateur connecté → mise à jour en base
@@ -192,12 +192,13 @@ export class CartPageComponent implements OnInit {
             if (res.body) {
               (item as ICartItem).quantity = res.body.quantity;
               (item as ICartItem).lineTotal = (item as ICartItem).unitPrice! * res.body.quantity!;
-              this.updateTotalICart();
+              this.updateTotal();
             }
           },
           error: err => console.error('Erreur update quantité', err),
         });
       }
     }
+    this.updateTotal();
   }
 }
