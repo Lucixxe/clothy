@@ -159,7 +159,7 @@ public class UserService {
         return newUser;
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW) // Nouvelle transaction indépendante
+    @Transactional(propagation = Propagation.MANDATORY) // Nouvelle transaction indépendante
     public void createCustomerForUser(User user, String encryptedPassword) {
         try {
             Customer customer = new Customer();
