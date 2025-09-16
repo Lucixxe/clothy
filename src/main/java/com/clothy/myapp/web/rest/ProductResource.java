@@ -169,4 +169,15 @@ public class ProductResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    /*@GetMapping("/products/category/{categoryId}")
+    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable Long categoryId) {
+        List<Product> products = productService.getProductsByCategory(categoryId);
+        return ResponseEntity.ok(products);
+    }*/
+
+    @GetMapping("/category/{name}")
+    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable String name) {
+        return ResponseEntity.ok(productRepository.findAllByCategoryName(name));
+    }
 }

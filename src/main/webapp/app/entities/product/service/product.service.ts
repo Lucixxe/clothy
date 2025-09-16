@@ -71,4 +71,12 @@ export class ProductService {
     }
     return productCollection;
   }
+
+  getProductsByCategory(categoryId: number): Observable<IProduct[]> {
+    return this.http.get<IProduct[]>(`${this.resourceUrl}/category/${categoryId}`);
+  }
+
+  getByCategory(name: string): Observable<IProduct[]> {
+    return this.http.get<IProduct[]>(`/api/products/category/${name}`);
+  }
 }

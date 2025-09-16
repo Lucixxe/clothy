@@ -14,7 +14,7 @@ const routes: Routes = [
   {
     path: 'product',
     data: { pageTitle: 'clothyApp.product.home.title' },
-    loadChildren: () => import('./product/product.routes'),
+    loadChildren: () => import('./product/product.routes').then(m => m.default),
   },
   {
     path: 'customer',
