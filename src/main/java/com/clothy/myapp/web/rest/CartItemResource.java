@@ -91,7 +91,7 @@ public class CartItemResource {
 
     @GetMapping("/by-cart/{id}")
     public List<CartItem> getAllCartItemsForCartId(@PathVariable("id") Long cartId) {
-        return cartItemService.findAllForCartItem(cartId);
+        return cartItemService.findAllForCartItemNotInOrder(cartId);
     }
 
     @PostMapping("/creation-cartItem")
