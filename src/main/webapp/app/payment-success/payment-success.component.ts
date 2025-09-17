@@ -45,7 +45,7 @@ export class PaymentSuccessComponent implements OnInit {
             console.log('Checkout finalisé avec succès.');
           },
           error: err => {
-            console.error('Erreur lors du checkout :', err);
+            this.router.navigate(['/payment-cancel']);
           },
         });
       },
