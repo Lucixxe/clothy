@@ -68,6 +68,13 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
+            <th scope="col" jhiSortBy="description">
+              <div class="d-flex">
+                <span jhiTranslate="clothyApp.product.description">Description</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
             <th scope="col" jhiSortBy="category.name">
               <div class="d-flex">
                 <span jhiTranslate="clothyApp.product.category">Category</span>
@@ -87,6 +94,7 @@
               <td>{{ product.sku }}</td>
               <td>{{ product.price }}</td>
               <td>{{ product.image }}</td>
+              <td>{{ product.description }}</td>
               <td>
                 @for (category of product.categories; track $index; let last = $last) {
                   <span>

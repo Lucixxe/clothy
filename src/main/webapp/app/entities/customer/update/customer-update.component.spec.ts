@@ -3,9 +3,6 @@ import { HttpResponse, provideHttpClient } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, from, of } from 'rxjs';
-
-import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/service/user.service';
 import { IUser } from 'app/entities/user/user.model';
 import { UserService } from 'app/entities/user/service/user.service';
 import { CustomerService } from '../service/customer.service';
@@ -20,7 +17,6 @@ describe('Customer Management Update Component', () => {
   let activatedRoute: ActivatedRoute;
   let customerFormService: CustomerFormService;
   let customerService: CustomerService;
-  let userService: UserService;
   let userService: UserService;
 
   beforeEach(() => {

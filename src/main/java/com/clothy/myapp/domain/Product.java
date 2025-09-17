@@ -42,6 +42,9 @@ public class Product implements Serializable {
     @Column(name = "image")
     private String image;
 
+    @Column(name = "description")
+    private String description;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "rel_product__category",
@@ -119,6 +122,19 @@ public class Product implements Serializable {
         this.image = image;
     }
 
+    public String getDescription() {
+        return this.description;
+    }
+
+    public Product description(String description) {
+        this.setDescription(description);
+        return this;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Set<Category> getCategories() {
         return this.categories;
     }
@@ -170,6 +186,7 @@ public class Product implements Serializable {
             ", sku=" + getSku() +
             ", price=" + getPrice() +
             ", image='" + getImage() + "'" +
+            ", description='" + getDescription() + "'" +
             "}";
     }
 }

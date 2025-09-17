@@ -22,6 +22,10 @@
     {
       "fieldName": "image",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
     }
   ],
   "name": "Product",
