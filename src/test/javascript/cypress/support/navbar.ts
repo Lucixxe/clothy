@@ -13,27 +13,22 @@ import {
 } from './commands';
 
 Cypress.Commands.add('clickOnLoginItem', () => {
-  cy.get(navbarSelector).get(accountMenuSelector).click();
   return cy.get(navbarSelector).get(accountMenuSelector).get(loginItemSelector).click();
 });
 
 Cypress.Commands.add('clickOnLogoutItem', () => {
-  cy.get(navbarSelector).get(accountMenuSelector).click();
   return cy.get(navbarSelector).get(accountMenuSelector).get(logoutItemSelector).click();
 });
 
 Cypress.Commands.add('clickOnRegisterItem', () => {
-  cy.get(navbarSelector).get(accountMenuSelector).click();
   return cy.get(navbarSelector).get(accountMenuSelector).get(registerItemSelector).click();
 });
 
 Cypress.Commands.add('clickOnSettingsItem', () => {
-  cy.get(navbarSelector).get(accountMenuSelector).click();
   return cy.get(navbarSelector).get(accountMenuSelector).get(settingsItemSelector).click();
 });
 
 Cypress.Commands.add('clickOnPasswordItem', () => {
-  cy.get(navbarSelector).get(accountMenuSelector).click();
   return cy.get(navbarSelector).get(accountMenuSelector).get(passwordItemSelector).click();
 });
 
