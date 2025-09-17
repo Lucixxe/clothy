@@ -123,6 +123,15 @@
         padding: 20px;
       }
     }
+    .error-box {
+      background-color: #fdecea;
+      color: #b71c1c;
+      border: 1px solid #f5c2c0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 10px 0;
+      font-weight: 500;
+    }
   </style>
 
   <h2>Créer un compte Clothy</h2>
@@ -149,6 +158,9 @@
     <div class="terms">
       <input type="checkbox" id="terms" formControlName="terms" />
       <label for="terms">J'accepte la <a href="#">charte d'utilisation</a></label>
+    </div>
+    <div *ngIf="errorMessage" class="error-box">
+      {{ errorMessage }}
     </div>
     <div *ngIf="!registerForm.controls['terms'].value && submitted" style="color: red; font-size: 14px">Vous devez accepter la charte</div>
 

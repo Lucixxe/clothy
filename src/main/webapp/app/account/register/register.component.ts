@@ -24,6 +24,7 @@ export default class RegisterComponent implements AfterViewInit {
   errorUserExists = signal(false);
   success = signal(false);
   submitted = false;
+  errorMessage: string | null = null;
 
   registerForm = new FormGroup({
     firstName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -88,7 +89,10 @@ export default class RegisterComponent implements AfterViewInit {
           this.success.set(true);
           this.router.navigate(['/']); // ✅ redirection vers la page d'accueil après succès
         },
-        error: response => console.error('Registration error: ', response),
+        error: response => {
+          // Récupère le message d'erreur de l'API ou message générique
+          this.errorMessage = response?.error?.message || 'Une erreur est survenue lors de l’inscription.';
+        },
       });
 
     console.log(this.firstNameInput, ' ', password, ' ', email);
