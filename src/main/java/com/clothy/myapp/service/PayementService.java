@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class PayementService {
 
     public Session createCheckoutSession(Long amount) throws Exception {
-        Stripe.apiKey = "sk_test_51S7vEeFGOPXjlvLi0VuI8Y4FqXjQz6drLnaCxXaqpatAeMqzIf0zPtBdRJGPPDYdCVLh0JLuUqtp5p2XltU8P7ZI00MpOgxiy8";
+        Stripe.apiKey = "";
 
         SessionCreateParams params = SessionCreateParams.builder()
             .setMode(SessionCreateParams.Mode.PAYMENT)
