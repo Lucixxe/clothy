@@ -13,8 +13,8 @@ public class PayementService {
 
         SessionCreateParams params = SessionCreateParams.builder()
             .setMode(SessionCreateParams.Mode.PAYMENT)
-            .setSuccessUrl("http://localhost:8080/payment-success")
-            .setCancelUrl("http://localhost:8080/payment-cancel")
+            .setSuccessUrl("https://clothy-a3b2d8314e46.herokuapp.com/payment-success")
+            .setCancelUrl("https://clothy-a3b2d8314e46.herokuapp.com/payment-cancel")
             .addLineItem(
                 SessionCreateParams.LineItem.builder()
                     .setQuantity(1L)
