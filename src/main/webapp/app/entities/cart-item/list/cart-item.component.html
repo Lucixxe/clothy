@@ -30,7 +30,7 @@
     </div>
   } @else {
     <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
+      <table class="table table-striped" aria-describedby="page-heading" data-cy="entityTable">
         <thead>
           <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
             <th scope="col" jhiSortBy="id">
@@ -91,7 +91,7 @@
         </thead>
         <tbody>
           @for (cartItem of cartItems(); track trackId(cartItem)) {
-            <tr data-cy="entityTable">
+            <tr>
               <td>
                 <a [routerLink]="['/cart-item', cartItem.id, 'view']">{{ cartItem.id }}</a>
               </td>

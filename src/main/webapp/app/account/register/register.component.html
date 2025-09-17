@@ -137,22 +137,29 @@
   <h2>Créer un compte Clothy</h2>
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
     <label for="firstName">Prénom</label>
-    <input type="text" id="firstName" formControlName="firstName" placeholder="Votre prénom" required />
+    <input type="text" id="firstName" formControlName="firstName" placeholder="Votre prénom" required data-cy="firstname" />
 
     <label for="lastName">Nom</label>
-    <input type="text" id="lastName" formControlName="lastName" placeholder="Votre nom" required />
+    <input type="text" id="lastName" formControlName="lastName" placeholder="Votre nom" required data-cy="lastname" />
 
     <label for="email">Email</label>
-    <input type="email" id="email" formControlName="email" placeholder="exemple@email.com" required />
+    <input type="email" id="email" formControlName="email" placeholder="exemple@email.com" required data-cy="email" />
 
     <label for="address">Adresse</label>
     <input type="text" id="address" formControlName="address" placeholder="Votre adresse" required />
 
     <label for="password">Mot de passe</label>
-    <input type="password" id="password" formControlName="password" placeholder="Mot de passe" required />
+    <input type="password" id="password" formControlName="password" placeholder="Mot de passe" required data-cy="firstPassword" />
 
     <label for="confirmPassword">Confirmer le mot de passe</label>
-    <input type="password" id="confirmPassword" formControlName="confirmPassword" placeholder="Confirmer le mot de passe" required />
+    <input
+      type="password"
+      id="confirmPassword"
+      formControlName="confirmPassword"
+      placeholder="Confirmer le mot de passe"
+      required
+      data-cy="secondPassword"
+    />
     <div *ngIf="passwordMismatch()" style="color: red; font-size: 14px">Les mots de passe ne correspondent pas</div>
 
     <div class="terms">
@@ -164,7 +171,7 @@
     </div>
     <div *ngIf="!registerForm.controls['terms'].value && submitted" style="color: red; font-size: 14px">Vous devez accepter la charte</div>
 
-    <button type="submit" [disabled]="registerForm.invalid">S'inscrire</button>
+    <button type="submit" [disabled]="registerForm.invalid" data-cy="submit">S'inscrire</button>
 
     <div class="login-link">Déjà un compte ? <a href="#">Se connecter</a></div>
   </form>
