@@ -191,13 +191,13 @@ jhipster:
   clientApp:
     name: 'clothyApp'
   # By default CORS is disabled. Uncomment to enable.
-  # cors:
-  #   allowed-origins: "http://localhost:8100,http://localhost:9000"
-  #   allowed-methods: "*"
-  #   allowed-headers: "*"
-  #   exposed-headers: "Authorization,Link,X-Total-Count,X-${jhipster.clientApp.name}-alert,X-${jhipster.clientApp.name}-error,X-${jhipster.clientApp.name}-params"
-  #   allow-credentials: true
-  #   max-age: 1800
+  cors:
+    allowed-origins: 'http://localhost:8100,http://localhost:9000,https://js.stripe.com'
+    allowed-methods: '*'
+    allowed-headers: '*'
+    exposed-headers: 'Authorization,Link,X-Total-Count,X-${jhipster.clientApp.name}-alert,X-${jhipster.clientApp.name}-error,X-${jhipster.clientApp.name}-params'
+    allow-credentials: true
+    max-age: 1800
   mail:
     from: Clothy@localhost
   api-docs:
@@ -213,7 +213,7 @@ jhipster:
     license: unlicensed
     license-url:
   security:
-    content-security-policy: "default-src 'self'; frame-src 'self' data: https://js.stripe.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https://images.unsplash.com https://s3.eu-central-2.wasabisys.com; font-src 'self' data: https://cdnjs.cloudflare.com; connect-src 'self' https://js.stripe.com http://localhost:8080;"
+    content-security-policy: "default-src 'self'; frame-src 'self' data: https://js.stripe.com https://*.stripe.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com https://js.stripe.com https://*.stripe.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https://images.unsplash.com https://s3.eu-central-2.wasabisys.com; font-src 'self' data: https://cdnjs.cloudflare.com; connect-src 'self' https://js.stripe.com https://*.stripe.com https://api.stripe.com http://localhost:8080;"
 
 # jhipster-needle-add-application-yaml-document
 ---
