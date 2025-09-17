@@ -86,10 +86,10 @@
     <div class="footer-section">
       <h3>Navigation</h3>
       <ul>
-        <li><a href="#">Accueil</a></li>
-        <li><a href="#">Hommes</a></li>
-        <li><a href="#">Femmes</a></li>
-        <li><a href="#">Nouveautés</a></li>
+        <li><a routerLink="/">Accueil</a></li>
+        <li><a [routerLink]="['/articles-page']" [queryParams]="{ category: 'homme' }">Homme</a></li>
+        <li><a [routerLink]="['/articles-page']" [queryParams]="{ category: 'femme' }">Femme</a></li>
+        <li><a [routerLink]="['/articles-page']" [queryParams]="{ category: 'enfants' }">Enfants</a></li>
       </ul>
     </div>
 

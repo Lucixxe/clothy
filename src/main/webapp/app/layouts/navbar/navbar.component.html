@@ -12,7 +12,7 @@
     <a href="#">Accueil</a>
     <a [routerLink]="['/articles-page']" [queryParams]="{ category: 'homme' }">Homme</a>
     <a [routerLink]="['/articles-page']" [queryParams]="{ category: 'femme' }">Femme</a>
-    <a [routerLink]="['/articles-page']" [queryParams]="{ category: 'enfant' }">Enfants</a>
+    <a [routerLink]="['/articles-page']" [queryParams]="{ category: 'enfants' }">Enfants</a>
 
     <div class="dropdown" *jhiHasAnyAuthority="'ROLE_ADMIN'">
       <a href="#" class="dropdown-toggle">Entities</a>
