@@ -335,11 +335,22 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
                 pbDetail.setDetail("Le produit n'est plus en stock");
                 pbDetail.setProperty("ProductId", ex.getproductId());
                 pbDetail.setProperty("Quantite", ex.getQuantity());
+                pbDetail.setProperty("Name", ex.getName());
                 return pbDetail;
             }
         };
         return ResponseEntity.status(err.getStatusCode()).body(err.getBody());
     }
+
+    /*
+     * {
+     * "title" : "Produit n'a plus de stock"
+     * "detail" : ""le produit n'est plus en stock"
+     * "ProductId" : "id"
+     * "Quantite" : "quantity"
+     * "Name" : "product name"
+     * }
+     */
 
     @ExceptionHandler(UpdateStockException.class)
     public ResponseEntity<ProblemDetail> handleUpdateStockException(@Nonnull UpdateStockException ex) {

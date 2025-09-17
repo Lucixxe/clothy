@@ -8,6 +8,7 @@ import com.clothy.myapp.repository.CartRepository;
 import com.clothy.myapp.repository.ProductRepository;
 import com.clothy.myapp.service.CartItemService;
 import com.clothy.myapp.service.dto.CartItemDTO;
+import com.clothy.myapp.web.rest.errors.OutOfStockException;
 import com.clothy.myapp.web.rest.errors.ProductNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
@@ -117,6 +118,15 @@ public class CartItemServiceImpl implements CartItemService {
         Product product = productRepository
             .findById(productId)
             .orElseThrow(() -> new ProductNotFoundException(Long.toString(productId), "Produit non trouvé : " + productId));
+
+        if (product.getSku() == 0) {
+            throw new OutOfStockException(
+                "Impossible d'ajouter le produit au panier car il est en rupture de stock",
+                Long.toString(productId),
+                Integer.toString(quantity),
+                product.getName()
+            );
+        }
 
         Optional<CartItem> existingItem = cartItemRepository.findByCartAndProduct(cart, product);
         CartItem cartItem = existingItem.orElse(createNewCartItem(cart, product, quantity));
