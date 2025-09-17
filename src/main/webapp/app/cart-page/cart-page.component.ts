@@ -26,6 +26,7 @@ export class CartPageComponent implements OnInit {
   itemsICart: ICartItem[] = [];
   IdCart: number = 0;
   total = 0;
+  errorMessage: string | null = null;
   constructor(private http: HttpClient) {}
 
   public accountService = inject(AccountService);
@@ -167,7 +168,10 @@ export class CartPageComponent implements OnInit {
             this.updateTotal(); // Correction ici
           }
         },
-        error: err => console.error('Erreur update quantité', err),
+        error: response => {
+          this.errorMessage = response?.error?.message || 'stock epuisé !!';
+          alert(this.errorMessage);
+        },
       });
     }
   }
