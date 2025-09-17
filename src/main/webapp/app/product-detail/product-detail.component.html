@@ -13,7 +13,11 @@
 
       <div class="product-info">
         <h1>{{ product.name }}</h1>
-        <p class="category">{{ product.categories?.[0]?.name || product.categories || 'Catégorie' }}</p>
+        @if (product.categories?.length) {
+          <span *ngFor="let cat of product.categories; let last = last"> {{ cat.name }}<span *ngIf="!last">, </span> </span>
+        } @else {
+          Catégorie
+        }
         <p class="sku">SKU: {{ product.sku || 'N/A' }}</p>
         <div class="price">{{ product.price }} €</div>
         <p class="description">On a pas mis de description pour le moment.</p>
