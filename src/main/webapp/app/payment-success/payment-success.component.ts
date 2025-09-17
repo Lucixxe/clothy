@@ -45,17 +45,9 @@ export class PaymentSuccessComponent implements OnInit {
             console.log('Checkout finalisé avec succès.');
           },
           error: err => {
-            console.error('Erreur lors du checkout :', err);
+            this.router.navigate(['/payment-cancel']);
           },
         });
-        /*this.cartService.clearCart(cartId).subscribe({
-            next: () => {
-              console.log('Panier vidé avec succès.');
-            },
-            error: err => {
-              console.error('Erreur lors de la suppression des éléments du panier :', err);
-            },
-          });*/
       },
       error: () => {
         console.error("Erreur lors de la récupération du panier de l'utilisateur.");

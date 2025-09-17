@@ -7,7 +7,10 @@ import com.clothy.myapp.repository.CartItemRepository;
 import com.clothy.myapp.repository.CartRepository;
 import com.clothy.myapp.repository.ProductRepository;
 import com.clothy.myapp.service.CartItemService;
+import com.clothy.myapp.service.CheckOutService;
 import com.clothy.myapp.service.dto.CartItemDTO;
+import com.clothy.myapp.web.rest.errors.OutOfStockException;
+import com.clothy.myapp.web.rest.errors.OutOfStockException;
 import com.clothy.myapp.web.rest.errors.ProductNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
@@ -118,15 +121,25 @@ public class CartItemServiceImpl implements CartItemService {
             .findById(productId)
             .orElseThrow(() -> new ProductNotFoundException(Long.toString(productId), "Produit non trouvé : " + productId));
 
+        if (product.getSku() == null || product.getSku() <= 0) {
+            throw new OutOfStockException("Produit en rupture de stock", Long.toString(productId), Integer.toString(quantity));
+        }
         Optional<CartItem> existingItem = cartItemRepository.findByCartAndProduct(cart, product);
         CartItem cartItem = existingItem.orElse(createNewCartItem(cart, product, quantity));
 
         if (existingItem.isPresent() && existingItem.get().getIsInOrder() == false) {
             // Only update if it was an existing item
+
             int newQuantity = cartItem.getQuantity() + quantity;
+            if (newQuantity > product.getSku()) {
+                throw new OutOfStockException("Produit en rupture de stock", Long.toString(productId), Integer.toString(quantity));
+            }
             cartItem.setQuantity(newQuantity);
             cartItem.setLineTotal(product.getPrice().multiply(BigDecimal.valueOf(newQuantity)));
         } else {
+            if (quantity > product.getSku()) {
+                throw new OutOfStockException("Produit en rupture de stock", Long.toString(productId), Integer.toString(quantity));
+            }
             cartItem = createNewCartItem(cart, product, quantity);
         }
         /*

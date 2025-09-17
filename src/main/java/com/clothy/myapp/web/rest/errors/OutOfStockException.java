@@ -4,6 +4,7 @@ public class OutOfStockException extends RuntimeException {
 
     String productId;
     String quantity;
+    String productName;
 
     public OutOfStockException(String message, String productId, String quantity) {
         super(message);
@@ -17,5 +18,9 @@ public class OutOfStockException extends RuntimeException {
 
     public String getQuantity() {
         return quantity;
+    }
+
+    public String getName() {
+        return productName;
     }
 }

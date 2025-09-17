@@ -17,6 +17,7 @@ export class ProductDetailComponent implements OnInit {
   product: IProduct | null = null;
   loading = true;
   addedToCart = false;
+  errorMessage: string | null = null;
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -62,7 +63,9 @@ export class ProductDetailComponent implements OnInit {
     } else {
       this.cartItemService.addToCart(product.id, 1).subscribe({
         next: () => alert(`${product.name} added to cart!`),
-        error: err => console.error('Error adding to cart', err),
+        error: response => {
+          this.errorMessage = response?.error?.message || 'stock epuisé !!';
+        },
       });
     }
   }

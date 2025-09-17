@@ -122,7 +122,7 @@ public class CheckOutServiceImpl implements CheckOutService {
         }
 
         //Obtenir tous les produits du panier d'un customer
-        List<Long> productIds = cartItems.stream().map(cartItem -> cartItem.getProduct().getId()).collect(Collectors.toList());
+        List<Long> productIds = cartItems.stream().map(cartItem -> cartItem.getProduct().getId()).sorted().collect(Collectors.toList());
 
         Map<Long, Integer> productQuantityMap = cartItems
             .stream()

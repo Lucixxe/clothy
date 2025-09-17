@@ -10,6 +10,122 @@
     color: #ef233c;
   }
 
+  .price-filter {
+    background: #fff;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f0f0f0;
+
+    .price-range-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+
+      .filter-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #555;
+        white-space: nowrap;
+        min-width: 120px;
+      }
+
+      .slider-container {
+        position: relative;
+        flex: 1;
+        height: 20px;
+
+        .price-slider {
+          position: absolute;
+          width: 100%;
+          height: 4px;
+          background: transparent;
+          outline: none;
+          -webkit-appearance: none;
+          pointer-events: none;
+
+          &::-webkit-slider-track {
+            background: #ddd;
+            height: 4px;
+            border-radius: 2px;
+          }
+
+          &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #ef233c;
+            cursor: pointer;
+            pointer-events: auto;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+
+            &:hover {
+              transform: scale(1.1);
+              box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            }
+          }
+
+          &::-moz-range-track {
+            background: #ddd;
+            height: 4px;
+            border-radius: 2px;
+            border: none;
+          }
+
+          &::-moz-range-thumb {
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #ef233c;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+          }
+
+          &.min-slider {
+            z-index: 1;
+          }
+
+          &.max-slider {
+            z-index: 2;
+          }
+        }
+
+        // Style pour la barre de progression entre les deux curseurs
+        &::before {
+          content: '';
+          position: absolute;
+          top: 8px;
+          left: 0;
+          height: 4px;
+          background: #ef233c;
+          border-radius: 2px;
+          z-index: 0;
+        }
+      }
+    }
+
+    // Responsive design
+    @media (max-width: 768px) {
+      padding: 12px 15px;
+
+      .price-range-container {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+
+        .filter-label {
+          text-align: center;
+          min-width: auto;
+        }
+      }
+    }
+  }
+
   .loading {
     text-align: center;
     padding: 60px 0;
