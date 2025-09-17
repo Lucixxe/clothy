@@ -1,27 +1,35 @@
 <div class="signup-container">
-  <h2>Connexion à Clothy</h2>
+  <h2 data-cy="loginTitle">Connexion à Clothy</h2>
 
-  <div *ngIf="authenticationError()" class="alert alert-danger">
+  <div *ngIf="authenticationError()" class="alert alert-danger" data-cy="loginError">
     <strong>Erreur d'authentification !</strong> Veuillez vérifier vos identifiants de connexion.
   </div>
 
   <form [formGroup]="loginForm" (ngSubmit)="login()">
     <label for="username">Nom d'utilisateur</label>
-    <input type="text" id="username" formControlName="username" placeholder="Votre nom d'utilisateur" required />
+    <input
+      type="text"
+      id="username"
+      formControlName="username"
+      placeholder="Votre nom d'utilisateur"
+      required
+      data-cy="username"
+      #username
+    />
 
     <label for="password">Mot de passe</label>
-    <input type="password" id="password" formControlName="password" placeholder="Mot de passe" required />
+    <input type="password" id="password" formControlName="password" placeholder="Mot de passe" required data-cy="password" />
 
     <div class="terms">
       <input type="checkbox" id="rememberMe" formControlName="rememberMe" />
       <label for="rememberMe">Garder la session ouverte</label>
     </div>
 
-    <button type="submit" [disabled]="loginForm.invalid">Connexion</button>
+    <button type="submit" [disabled]="loginForm.invalid" data-cy="submit">Connexion</button>
 
     <div class="login-links">
       <div class="mt-2">
-        <a routerLink="/account/reset/request">Avez-vous oublié votre mot de passe ?</a>
+        <a routerLink="/account/reset/request" data-cy="forgetYourPasswordSelector">Avez-vous oublié votre mot de passe ?</a>
       </div>
       <div class="mt-1">
         Vous n'avez pas encore de compte ?

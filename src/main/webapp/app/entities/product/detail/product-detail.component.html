@@ -31,6 +31,10 @@
           <dd>
             <span>{{ productRef.image }}</span>
           </dd>
+          <dt><span jhiTranslate="clothyApp.product.description">Description</span></dt>
+          <dd>
+            <span>{{ productRef.description }}</span>
+          </dd>
           <dt><span jhiTranslate="clothyApp.product.category">Category</span></dt>
           <dd>
             @for (category of productRef.categories; track $index; let last = $last) {

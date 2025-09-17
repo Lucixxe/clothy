@@ -1,4 +1,4 @@
-<header class="header">
+<header class="header" data-cy="navbar">
   <div class="logo">
     <span class="brand">Clothy</span>
   </div>
@@ -14,7 +14,7 @@
     <a [routerLink]="['/articles-page']" [queryParams]="{ category: 'femme' }">Femme</a>
     <a [routerLink]="['/articles-page']" [queryParams]="{ category: 'enfants' }">Enfants</a>
 
-    <div class="dropdown" *jhiHasAnyAuthority="'ROLE_ADMIN'">
+    <div class="dropdown" *jhiHasAnyAuthority="'ROLE_ADMIN'" data-cy="entity">
       <a href="#" class="dropdown-toggle">Entities</a>
       <div class="dropdown-menu">
         <li>
@@ -94,17 +94,37 @@
     </div>
   </nav>
 
-  <div class="auth-buttons">
+  <div class="auth-buttons" data-cy="accountMenu">
     <!-- Si pas connecté -->
     <ng-container *ngIf="!account()">
-      <a class="alert-link" routerLink="/login">Se Connecter</a>
-      <a class="alert-link" routerLink="/account/register">S'Inscrire</a>
+      <a class="alert-link" routerLink="/login" data-cy="login">Se Connecter</a>
+      <a class="alert-link" routerLink="/account/register" data-cy="register">S'Inscrire</a>
     </ng-container>
 
     <!-- Si connecté -->
     <ng-container *ngIf="account() as user">
-      <span>Bonjour, {{ user.firstName || user.login }}</span>
-      <button class="btn-logout" (click)="logout()">Se Déconnecter</button>
+      <!-- Menu Administration pour les admins -->
+      <div class="dropdown" *jhiHasAnyAuthority="'ROLE_ADMIN'" data-cy="adminMenu">
+        <a href="#" class="dropdown-toggle alert-link">Administration</a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" routerLink="/admin/user-management">Gestion des utilisateurs</a>
+          <a class="dropdown-item" routerLink="/admin/metrics">Métriques</a>
+          <a class="dropdown-item" routerLink="/admin/health">Diagnostics</a>
+          <a class="dropdown-item" routerLink="/admin/configuration">Configuration</a>
+          <a class="dropdown-item" routerLink="/admin/logs">Logs</a>
+          <a class="dropdown-item" routerLink="/admin/docs">API</a>
+        </div>
+      </div>
+
+      <!-- Menu Compte utilisateur -->
+      <div class="dropdown">
+        <a href="#" class="dropdown-toggle alert-link">{{ user.firstName || user.login }}</a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" routerLink="/account/settings" data-cy="settings">Paramètres</a>
+          <a class="dropdown-item" routerLink="/account/password" data-cy="passwordItem">Mot de passe</a>
+          <button class="dropdown-item btn-logout" (click)="logout()" data-cy="logout">Se Déconnecter</button>
+        </div>
+      </div>
     </ng-container>
   </div>
 </header>

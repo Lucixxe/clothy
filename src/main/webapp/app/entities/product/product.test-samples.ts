@@ -20,6 +20,7 @@ export const sampleWithFullData: IProduct = {
   sku: 21233,
   price: 2026.75,
   image: 'comme ah',
+  description: 'altruiste commis de cuisine relire',
 };
 
 export const sampleWithNewData: NewProduct = {

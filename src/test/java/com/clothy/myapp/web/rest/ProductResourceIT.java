@@ -55,6 +55,9 @@ class ProductResourceIT {
     private static final String DEFAULT_IMAGE = "AAAAAAAAAA";
     private static final String UPDATED_IMAGE = "BBBBBBBBBB";
 
+    private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
+    private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
+
     private static final String ENTITY_API_URL = "/api/products";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -90,7 +93,7 @@ class ProductResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Product createEntity() {
-        return new Product().name(DEFAULT_NAME).sku(DEFAULT_SKU).price(DEFAULT_PRICE).image(DEFAULT_IMAGE);
+        return new Product().name(DEFAULT_NAME).sku(DEFAULT_SKU).price(DEFAULT_PRICE).image(DEFAULT_IMAGE).description(DEFAULT_DESCRIPTION);
     }
 
     /**
@@ -100,7 +103,7 @@ class ProductResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Product createUpdatedEntity() {
-        return new Product().name(UPDATED_NAME).sku(UPDATED_SKU).price(UPDATED_PRICE).image(UPDATED_IMAGE);
+        return new Product().name(UPDATED_NAME).sku(UPDATED_SKU).price(UPDATED_PRICE).image(UPDATED_IMAGE).description(UPDATED_DESCRIPTION);
     }
 
     @BeforeEach
@@ -218,7 +221,8 @@ class ProductResourceIT {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].sku").value(hasItem(DEFAULT_SKU)))
             .andExpect(jsonPath("$.[*].price").value(hasItem(sameNumber(DEFAULT_PRICE))))
-            .andExpect(jsonPath("$.[*].image").value(hasItem(DEFAULT_IMAGE)));
+            .andExpect(jsonPath("$.[*].image").value(hasItem(DEFAULT_IMAGE)))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -253,7 +257,8 @@ class ProductResourceIT {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.sku").value(DEFAULT_SKU))
             .andExpect(jsonPath("$.price").value(sameNumber(DEFAULT_PRICE)))
-            .andExpect(jsonPath("$.image").value(DEFAULT_IMAGE));
+            .andExpect(jsonPath("$.image").value(DEFAULT_IMAGE))
+            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION));
     }
 
     @Test
@@ -275,7 +280,7 @@ class ProductResourceIT {
         Product updatedProduct = productRepository.findById(product.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedProduct are not directly saved in db
         em.detach(updatedProduct);
-        updatedProduct.name(UPDATED_NAME).sku(UPDATED_SKU).price(UPDATED_PRICE).image(UPDATED_IMAGE);
+        updatedProduct.name(UPDATED_NAME).sku(UPDATED_SKU).price(UPDATED_PRICE).image(UPDATED_IMAGE).description(UPDATED_DESCRIPTION);
 
         restProductMockMvc
             .perform(
@@ -351,7 +356,7 @@ class ProductResourceIT {
         Product partialUpdatedProduct = new Product();
         partialUpdatedProduct.setId(product.getId());
 
-        partialUpdatedProduct.name(UPDATED_NAME).sku(UPDATED_SKU).image(UPDATED_IMAGE);
+        partialUpdatedProduct.name(UPDATED_NAME).sku(UPDATED_SKU).image(UPDATED_IMAGE).description(UPDATED_DESCRIPTION);
 
         restProductMockMvc
             .perform(
@@ -379,7 +384,12 @@ class ProductResourceIT {
         Product partialUpdatedProduct = new Product();
         partialUpdatedProduct.setId(product.getId());
 
-        partialUpdatedProduct.name(UPDATED_NAME).sku(UPDATED_SKU).price(UPDATED_PRICE).image(UPDATED_IMAGE);
+        partialUpdatedProduct
+            .name(UPDATED_NAME)
+            .sku(UPDATED_SKU)
+            .price(UPDATED_PRICE)
+            .image(UPDATED_IMAGE)
+            .description(UPDATED_DESCRIPTION);
 
         restProductMockMvc
             .perform(

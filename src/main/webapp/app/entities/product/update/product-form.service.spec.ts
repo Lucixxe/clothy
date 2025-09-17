@@ -24,6 +24,7 @@ describe('Product Form Service', () => {
             sku: expect.any(Object),
             price: expect.any(Object),
             image: expect.any(Object),
+            description: expect.any(Object),
             categories: expect.any(Object),
           }),
         );
@@ -39,6 +40,7 @@ describe('Product Form Service', () => {
             sku: expect.any(Object),
             price: expect.any(Object),
             image: expect.any(Object),
+            description: expect.any(Object),
             categories: expect.any(Object),
           }),
         );

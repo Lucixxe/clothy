@@ -1,23 +1,75 @@
-/* ==========================================================================
-Main page styles
-========================================================================== */
+best-sellers {
+  margin: 3rem 0;
 
-.hipster {
-  display: inline-block;
-  width: 347px;
-  height: 497px;
-  background: url('../../content/images/jhipster_family_member_3.svg') no-repeat center top;
-  background-size: contain;
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ef233c;
+  }
 }
 
-/* wait autoprefixer update to allow simple generation of high pixel density media query */
-@media only screen and (-webkit-min-device-pixel-ratio: 2),
-  only screen and (-moz-min-device-pixel-ratio: 2),
-  only screen and (-o-min-device-pixel-ratio: 2/1),
-  only screen and (min-resolution: 192dpi),
-  only screen and (min-resolution: 2dppx) {
-  .hipster {
-    background: url('../../content/images/jhipster_family_member_3.svg') no-repeat center top;
-    background-size: contain;
+.carousel-container {
+  overflow: hidden;
+  width: 100%;
+}
+
+.carousel {
+  display: flex;
+  gap: 2rem;
+  animation: scroll 20s linear infinite;
+}
+
+.product-card {
+  flex: 0 0 350px; /* largeur fixe plus grande */
+  height: 420px; /* hauteur augmentée */
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  img {
+    width: 100%;
+    height: 250px; /* image plus grande */
+    object-fit: cover;
+  }
+
+  .product-info {
+    padding: 1rem;
+    text-align: center;
+
+    h4 {
+      font-size: 1.3rem;
+      margin: 0.5rem 0;
+    }
+
+    p {
+      margin: 0.3rem 0;
+      color: #666;
+      font-size: 1rem;
+    }
+
+    .price {
+      color: #ef233c;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
   }
 }

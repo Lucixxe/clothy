@@ -164,5 +164,25 @@
       <p>La mode qui vous ressemble – Hommes, Femmes et Tendances</p>
       <button routerLink="/articles-page">Découvrir la collection</button>
     </section>
+
+    <section class="best-sellers">
+      <h2><i class="fa-solid fa-fire"></i> Meilleures ventes</h2>
+
+      <div class="carousel-container">
+        <div class="carousel">
+          <div class="product-card" *ngFor="let product of bestSellers">
+            <img
+              src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80"
+              alt="Chemise élégante"
+            />
+            <div class="product-info">
+              <h4>{{ product.name }}</h4>
+              <p>{{ product.description }}</p>
+              <p class="price">{{ product.price | currency: 'EUR' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </body>
 </html>

@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterModule, Routes } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
+import { ProductService } from 'app/entities/product/service/product.service';
 import SharedModule from 'app/shared/shared.module';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
@@ -21,6 +21,8 @@ export default class HomeComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   private readonly accountService = inject(AccountService);
+  private readonly productService = inject(ProductService);
+  bestSellers: any[] = [];
   private readonly router = inject(Router);
 
   ngOnInit(): void {
@@ -28,6 +30,9 @@ export default class HomeComponent implements OnInit, OnDestroy {
       .getAuthenticationState()
       .pipe(takeUntil(this.destroy$))
       .subscribe(account => this.account.set(account));
+    this.productService.query().subscribe(response => {
+      this.bestSellers = (response.body ?? []).slice(0, 5);
+    });
   }
 
   login(): void {
