@@ -3,19 +3,18 @@ package com.clothy.myapp.service;
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
-import java.util.*;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PayementService {
 
     public Session createCheckoutSession(Long amount) throws Exception {
-        Stripe.apiKey = "";
+        Stripe.apiKey = "sk_test_51S7vEeFGOPXjlvLi0VuI8Y4FqXjQz6drLnaCxXaqpatAeMqzIf0zPtBdRJGPPDYdCVLh0JLuUqtp5p2XltU8P7ZI00MpOgxiy8";
 
         SessionCreateParams params = SessionCreateParams.builder()
             .setMode(SessionCreateParams.Mode.PAYMENT)
-            .setSuccessUrl("http://localhost:8080/payment-success")
-            .setCancelUrl("http://localhost:8080/payment-cancel")
+            .setSuccessUrl("https://clothy-a3b2d8314e46.herokuapp.com/payment-success")
+            .setCancelUrl("https://clothy-a3b2d8314e46.herokuapp.com/payment-cancel")
             .addLineItem(
                 SessionCreateParams.LineItem.builder()
                     .setQuantity(1L)

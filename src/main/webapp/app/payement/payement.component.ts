@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AccountService } from 'app/core/auth/account.service';
 import { loadStripe } from '@stripe/stripe-js';
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'jhi-payement',
@@ -17,15 +18,13 @@ export class PayementComponent implements OnInit {
   ngOnInit(): void {}
 
   async checkout() {
-    const stripe = await loadStripe(
-      'pk_test_51S7sx2RkxlAub16WafblID2ttD1zpzIgRSLAbYsRENxi1UueZZtPDMrZK8sR8Im0hvhzYhuqCKVFRFZAQDC9B3tL00Zd6tYxnP',
-    ); // clé publique
+    const stripe = await loadStripe(environment.stripePublicKey);
 
     const token = localStorage.getItem('jhi-authenticationtoken');
 
     this.http
       .post(
-        'http://localhost:8080/api/payment/create-checkout-session?amount=5000',
+        `${environment.apiUrl}/api/payment/create-checkout-session?amount=5000`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -33,7 +32,7 @@ export class PayementComponent implements OnInit {
         },
       )
       .subscribe(async (url: string) => {
-        window.location.href = url; // redirection vers Stripe Checkout
+        window.location.href = url;
       });
   }
 }

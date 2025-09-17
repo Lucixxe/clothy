@@ -10,6 +10,7 @@ import { IProduct } from 'app/entities/product/product.model';
 import { CartItemService } from 'app/entities/cart-item/service/cart-item.service';
 import { loadStripe } from '@stripe/stripe-js';
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-cart-page',
@@ -124,12 +125,12 @@ export class CartPageComponent implements OnInit {
 
   async goToPayment() {
     if (this.accountService.isAuthenticated()) {
-      const stripe = await loadStripe('pk_test_...'); // clé publique
+      const stripe = await loadStripe(environment.stripePublicKey);
       const token = localStorage.getItem('jhi-authenticationtoken');
 
       this.http
         .post(
-          'http://localhost:8080/api/payment/create-checkout-session?amount=' + this.total * 100,
+          `${environment.apiUrl}/api/payment/create-checkout-session?amount=${this.total * 100}`,
           {},
           {
             headers: { Authorization: `Bearer ${token}` },
