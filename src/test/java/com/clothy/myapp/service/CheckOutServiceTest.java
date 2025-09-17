@@ -114,7 +114,7 @@ public class CheckOutServiceTest {
 
         when(cartRepository.findById(160L)).thenReturn(Optional.of(cart));
         when(
-            productRepository.findAndLockProductsByIdsOrderedById(Arrays.asList(product.getId(), product2.getId(), product3.getId()))
+            productRepository.findAndLockProductsByIdsOrderedById(Arrays.asList(product.getId(), product3.getId(), product2.getId()))
         ).thenReturn(Optional.of(Arrays.asList(product, product2, product3)).orElse(Collections.emptyList()));
         when(customerOrderService.save(any(CustomerOrder.class))).thenReturn(mockOrder);
         when(customerOrderService.findOne(4L)).thenReturn(Optional.of(mockOrder));
