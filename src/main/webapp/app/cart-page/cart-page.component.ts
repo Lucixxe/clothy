@@ -125,7 +125,7 @@ export class CartPageComponent implements OnInit {
 
   async goToPayment() {
     if (this.accountService.isAuthenticated()) {
-      const stripe = await loadStripe('pk_test_...'); // clé publique
+      const stripe = await loadStripe(environment.stripePublicKey);
       const token = localStorage.getItem('jhi-authenticationtoken');
 
       this.http
