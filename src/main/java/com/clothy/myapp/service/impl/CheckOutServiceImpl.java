@@ -64,7 +64,7 @@ public class CheckOutServiceImpl implements CheckOutService {
         // Définir la date de création
         order.setCreatedAt(Instant.now());
 
-        // Fixer le prix à 0 pour l'instant
+        // Fixer le prix
         BigDecimal total = cartItems
             .stream()
             .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
@@ -101,9 +101,9 @@ public class CheckOutServiceImpl implements CheckOutService {
     @Override
     @Transactional
     public CheckOutResultDTO checkOut(Long cartId) {
-        //List<CartItemDTO> allItems = cartItemService.findAll().stream().map(CartItemDTO::new).collect(Collectors.toList());
+        //Récupération de tous les produits NON COMMANDES d'un panier
         List<CartItem> cartItems = cartItemRepository.getAllCartItemsForCartNotInOrder(cartId);
-        //CART EMPTY EXCEPTION
+        //S'il n'y a pas de produits
         if (cartItems.isEmpty()) {
             throw new CartEmptyException("Le panier est vide", Long.toString(cartId));
         }
@@ -121,9 +121,10 @@ public class CheckOutServiceImpl implements CheckOutService {
             throw new CustomerNotFoundException("Aucun customer associé au cart ID: " + cartId);
         }
 
-        //Obtenir tous les produits du panier d'un customer
+        //Obtenir tous les produits du panier d'un customer (triés pour sécurité)
         List<Long> productIds = cartItems.stream().map(cartItem -> cartItem.getProduct().getId()).sorted().collect(Collectors.toList());
 
+        // Accés rapide de ProductId -> Quantity
         Map<Long, Integer> productQuantityMap = cartItems
             .stream()
             .collect(
@@ -131,10 +132,10 @@ public class CheckOutServiceImpl implements CheckOutService {
             );
 
         try {
-            //Obtention de tous les produits TRIES et VERROUILLES
+            //Obtention de tous les produits VERROUILLES DANS UN CERTAIN ORDRE
             List<Product> lockedProducts = productRepository.findAndLockProductsByIdsOrderedById(productIds);
             System.out.println("locked products :" + lockedProducts);
-            //Si le nombre de product obtenu n'est pas egale au nombre de product dans le panier
+            //Si le nombre de product obtenu n'est pas egale au nombre de product dans le panier (normalement pas le cas)
             if (lockedProducts.size() != productIds.size()) {
                 Set<Long> foundIds = lockedProducts.stream().map(Product::getId).collect(Collectors.toSet());
                 List<Long> missingIds = productIds.stream().filter(id -> !foundIds.contains(id)).collect(Collectors.toList());
@@ -201,64 +202,5 @@ public class CheckOutServiceImpl implements CheckOutService {
             System.err.println(errorMessage);
             throw new UpdateStockException(errorMessage);
         }
-        /*
-        // Mise à jour du stock
-        for (CartItemDTO item : cartItems) {
-            Long productId = item.getProductId();
-            Integer quantity = item.getQuantity();
-            System.out.println("Tentative MAJ stock pour produit=" + productId + ", quantité demandée=" + quantity);
-            try {
-                int updated = productRepository.decrementStockAtomic(productId, quantity);
-                System.out.println("Résultat MAJ=" + updated);
-
-                if (updated == 0) {
-                    System.out.println("Stock insuffisant pour le produit " + productId + " (demande=" + quantity + ")");
-                    success = false;
-                    errorMessage = "Stock insuffisant pour le produit " + productId + "et avec quantite " + quantity;
-                    detailsBuilder.append("Échec - Produit ").append(productId).append(" : stock insuffisant; ");
-                    throw new OutOfStockException(errorMessage, Long.toString(productId), Integer.toString(quantity));
-                } else {
-                    System.out.println("Stock mis à jour pour le produit " + productId + " (quantité retirée=" + quantity + ")");
-                    detailsBuilder.append("Produit ").append(productId).append(" : -").append(quantity).append(" unités; ");
-                }
-            } catch (Exception e) {
-                success = false;
-                errorMessage = "Erreur lors de la mise à jour du stock: " + e.getMessage();
-                System.err.println(errorMessage);
-                throw new UpdateStockException(errorMessage);
-            }
-        }
-
-        // Créer la commande client après la mise à jour réussie du stock
-        CustomerOrder order;
-        try {
-            order = createCustomerOrder(cartId, cartItems, customer);
-            System.out.println("Commande créée avec l'ID: " + order.getId() + " pour le customer ID: " + customer.getId());
-            detailsBuilder
-                .append("Commande #")
-                .append(order.getId())
-                .append(" créée pour customer #")
-                .append(customer.getId())
-                .append("; ");
-        } catch (Exception e) {
-            System.err.println("Erreur lors de la création de la commande: " + e.getMessage());
-            throw new UpdateStockException("Erreur lors de la création de la commande: " + e.getMessage());
-        }
-
-        // Associer tous les cart_items à la commande créée
-        try {
-            associateCartItemsToOrder(cartId, order.getId());
-            System.out.println("Cart items associés à la commande " + order.getId());
-            detailsBuilder.append("Cart items associés à la commande; ");
-        } catch (Exception e) {
-            System.err.println("Erreur lors de l'association des cart items: " + e.getMessage());
-            throw new AssociateCartItemsException("Erreur lors de l'association des cart items: " + e.getMessage());
-        }
-
-        CheckOutResultDTO result = new CheckOutResultDTO();
-        result.setSuccess(true);
-        result.setMessage("Checkout effectué, stock mis à jour, commande créée et cart items associés.");
-        return result;
-        */
     }
 }
