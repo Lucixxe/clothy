@@ -32,7 +32,7 @@ export class ProductDetailComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.productService.find(+id).subscribe({
-        next: response => {
+        next: (response: any) => {
           this.product = response.body;
           this.loading = false;
         },
