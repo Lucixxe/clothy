@@ -171,7 +171,7 @@
       <div class="carousel-container">
         <div class="carousel">
           <div class="product-card" *ngFor="let product of bestSellers">
-            <img [src]="product.image" alt="{{ product.name }}" />
+            <img [src]="product.image" alt="{{ product.name }}" (click)="goToProduct(product)" />
             <div class="product-info">
               <h4>{{ product.name }}</h4>
               <p>{{ product.description }}</p>

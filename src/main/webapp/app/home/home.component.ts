@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterModule, Routes } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -6,6 +6,8 @@ import { ProductService } from 'app/entities/product/service/product.service';
 import SharedModule from 'app/shared/shared.module';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
+import { ArticleComponent } from 'app/shared/article/article.component';
+import { IProduct } from 'app/entities/product/product.model';
 
 @Component({
   selector: 'jhi-home',
@@ -13,7 +15,7 @@ import { Account } from 'app/core/auth/account.model';
 
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
-  imports: [SharedModule, RouterModule],
+  imports: [SharedModule, RouterModule, ArticleComponent],
 })
 export default class HomeComponent implements OnInit, OnDestroy {
   account = signal<Account | null>(null);
@@ -24,7 +26,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
   private readonly productService = inject(ProductService);
   bestSellers: any[] = [];
   private readonly router = inject(Router);
-
   ngOnInit(): void {
     this.accountService
       .getAuthenticationState()
@@ -34,7 +35,9 @@ export default class HomeComponent implements OnInit, OnDestroy {
       this.bestSellers = (response.body ?? []).slice(0, 5);
     });
   }
-
+  goToProduct(product: IProduct): void {
+    this.router.navigate(['/product', product.id]);
+  }
   login(): void {
     this.router.navigate(['/login']);
   }
