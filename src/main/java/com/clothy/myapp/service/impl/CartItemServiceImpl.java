@@ -9,6 +9,7 @@ import com.clothy.myapp.repository.ProductRepository;
 import com.clothy.myapp.service.CartItemService;
 import com.clothy.myapp.service.CheckOutService;
 import com.clothy.myapp.service.dto.CartItemDTO;
+import com.clothy.myapp.web.rest.errors.BadRequestAlertException;
 import com.clothy.myapp.web.rest.errors.OutOfStockException;
 import com.clothy.myapp.web.rest.errors.OutOfStockException;
 import com.clothy.myapp.web.rest.errors.ProductNotFoundException;
@@ -69,8 +70,22 @@ public class CartItemServiceImpl implements CartItemService {
             .findById(cartItem.getId())
             .map(existingCartItem -> {
                 if (cartItem.getQuantity() != null) {
-                    existingCartItem.setQuantity(cartItem.getQuantity());
+                    // Vérifier le stock du produit
+                    int stockDisponible = existingCartItem.getProduct().getSku();
+                    int newQuantity = cartItem.getQuantity();
+
+                    if (newQuantity > stockDisponible) {
+                        throw new BadRequestAlertException(
+                            "Quantité demandée supérieure au stock disponible (" + stockDisponible + ")",
+                            "cartItem",
+                            "stockinsuffisant"
+                        );
+                    }
+
+                    existingCartItem.setQuantity(newQuantity);
+                    existingCartItem.setLineTotal(existingCartItem.getUnitPrice().multiply(BigDecimal.valueOf(newQuantity)));
                 }
+
                 if (cartItem.getUnitPrice() != null) {
                     existingCartItem.setUnitPrice(cartItem.getUnitPrice());
                 }

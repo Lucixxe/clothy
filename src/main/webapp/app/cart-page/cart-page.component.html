@@ -19,6 +19,9 @@
           <button (click)="increaseQty(item)">+</button>
         </span>
       </div>
+      <div *ngIf="errorMessage" class="error-box">
+        {{ errorMessage }}
+      </div>
       <button class="cart-remove-btn" (click)="remove(item.id)"><i class="fa fa-trash"></i> Retirer</button>
     </div>
     <div *ngIf="items.length > 0" class="cart-total">
