@@ -31,18 +31,16 @@ export class ProductDetailComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.productService
-        .findAll()(+id)
-        .subscribe({
-          next: response => {
-            this.product = response.body;
-            this.loading = false;
-          },
-          error: () => {
-            this.loading = false;
-            this.router.navigate(['/articles-page']);
-          },
-        });
+      this.productService.find(+id).subscribe({
+        next: (response: any) => {
+          this.product = response.body;
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+          this.router.navigate(['/articles-page']);
+        },
+      });
     } else {
       this.router.navigate(['/articles-page']);
     }
