@@ -152,7 +152,7 @@ export class CartPageComponent implements OnInit {
       // Cas utilisateur non connecté → panier local
       if ('quantity' in item && item.quantity) item.quantity++;
       this.cartService.updateItems(this.items);
-      this.updateTotal(); // Correction ici
+      this.updateTotal();
     } else {
       // Cas utilisateur connecté → mise à jour en base
       const updatedItem = {
@@ -165,7 +165,7 @@ export class CartPageComponent implements OnInit {
           if (res.body) {
             (item as ICartItem).quantity = res.body.quantity;
             (item as ICartItem).lineTotal = (item as ICartItem).unitPrice! * res.body.quantity!;
-            this.updateTotal(); // Correction ici
+            this.updateTotal();
           }
         },
         error: response => {
@@ -182,10 +182,9 @@ export class CartPageComponent implements OnInit {
       if ('quantity' in item && item.quantity && item.quantity > 1) {
         item.quantity--;
         this.cartService.updateItems(this.items);
-        this.updateTotal(); // Correction ici
+        this.updateTotal();
       }
     } else {
-      // Cas utilisateur connecté → mise à jour en base
       if ((item as ICartItem).quantity && (item as ICartItem).quantity! > 1) {
         const updatedItem = {
           id: (item as ICartItem).id,
